@@ -144,7 +144,7 @@ DATABASES['default'].update(db_from_env)
 
 LOGIN_REDIRECT_URL = 'home/'
 
-LOGOUT_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = ''
 
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 
