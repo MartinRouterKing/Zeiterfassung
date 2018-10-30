@@ -1,0 +1,70 @@
+<!-- templates/base.html -->
+{% load widget_tweaks %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Charts.js JS -->
+  <script src="{% static 'base/js/chart.min.js' %}"></script>
+
+    <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="{% static 'base/css/bootstrap-4.1.3.min.css' %}" type="text/css">
+
+  <!-- FullCalendar JS -->
+  <script src="{% static 'base/js/fullcalendar-3.9.0.moment.min.js' %}"></script>
+
+
+  <style>
+  body {background-color: rgb(250, 250, 250);}
+  </style>
+
+
+</head>
+
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="#">Arbeitszeiterfassung</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'calendar' %}">Calendar</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'input' %}">Eingabe</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'overview' %}">Übersicht</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">Analyse</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'options' %}">Optionen</a>
+          </li>
+
+          {% endif %}
+
+        </ul>
+      </div>
+    </nav>
+  </header>
+<body>
+
+   <main>
+     {% block content %}
+    {% endblock %}
+  </main>
+
+</body>
+</html>

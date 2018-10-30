@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+
+{% load fullcalendar_tags %}
+
+{% block content %}
+
+    <head>
+
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+        {% fullcalendar_css %}
+        {% fullcalendar_print_css %}
+        {% fullcalendar_jquery %}
+        {% fullcalendar_jquery_ui %}
+        {% fullcalendar_javascript %}
+
+        {% calendar_init calendar_config_options %}
+
+ <style>
+
+ html, body {
+  background-color: rgb(250, 250, 250);
+  font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+  font-size: 14px;
+}
+.fc-widget-header{
+    background-color:blue;
+}
+#external-events {
+  max-height: 510px;
+  overflow: auto;
+}
+
+#id_element .fc-event {
+  height: 40px;
+  margin: 1em 0;
+  cursor: move;
+  margin: 10px
+}
+
+.fc-toolbar.fc-header-toolbar {
+    background-color: #3f83bd;
+}
+
+	.closeon {
+	  color:black;
+		position: absolute;
+		top: 0;
+		right: 0;
+    width:13px;
+    height: 13px;
+    text-align:center;
+    border-radius:50%;
+    font-size: 10px;
+		cursor: pointer;
+        background-color: #FFF
+	}
+
+</style>
+    </head>
+<body>
+<div class="container">
+<div class="row">
+    <div class="col-sm-3">
+        <div class="panel panel-default" id='external-events'>
+            <div class="panel-heading">
+                     <form method="post">
+                    <select class="form-control" id = "id_categories" name="categories" style="width:100%;max-width:90%;">
+                        {% for cat in categorie %}
+                        <option id="opt" value={{cat.id}}>{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                </form>
+                <div id = "id_element" class=form-control">
+                </div>
+                <input class="form-control" type='checkbox' id='drop-remove' />
+                <label class="form-control" for='drop-remove'>remove after drop</label>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-9">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div id='calendar-container'>
+                    <div id='calendar'></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+
+    $("#id_categories").change(function () {
+      var categoriesId = $(this).val();                         // get the selected country ID from the HTML input
+      console.log(categoriesId);
+      $.ajax({                                                  // initialize an AJAX request
+        url: 'load_elements/',                                  // set the url of the request (= localhost:8000/hr/ajax/element/)
+        data: {
+          'categories': categoriesId                            // add the country id to the GET parameters
+        },
+        success: function (data) {                              // `data` is the return of the `load_element` view function
+          $("#id_element").html(data)
+
+         $('#id_element .fc-event').each(function() {
+
+                                                                // store data so the calendar knows to render an event upon drop
+           $(this).data('event', {
+            title: $.trim($(this).text()),                      // use the element's text as the event title
+            id: $(this).attr('id'),
+            stick: true,                      // maintain when user navigates (see docs on the renderEvent method)
+            duration: '01:00:00'              // will set the duration during drag of event
+            });
+
+        $('#id_element .fc-event').draggable({
+
+        helper: 'clone',
+        zIndex: 999,
+        revert: true,      // will cause the event to go back to its
+        revertDuration: 0  //  original position after the drag
+        });
+
+        });
+        }
+        });
+     });
+
+</script>
+
+
+
+<script type="text/javascript">
+    $(function() {
+
+  // initialize the external events
+  // -----------------------------------------------------------------
+
+  $('#id_element .fc-event').each(function() {
+
+    // store data so the calendar knows to render an event upon drop
+    $(this).data('event', {
+      title: $.trim($(this).text()), // use the element's text as the event title
+      id: $(this).attr('id'),
+      stick: true, // maintain when user navigates (see docs on the renderEvent method)
+      duration: '01:00:00' // will set the duration during drag of event
+     });
+
+    // make the event draggable using jQuery UI
+
+    $(this).draggable({
+      zIndex: 999,
+      revert: true,      // will cause the event to go back to its
+      revertDuration: 0  //  original position after the drag
+    });
+    });
+
+  // initialize the calendar
+  // -----------------------------------------------------------------
+
+  function saveMyData(event){
+    $.ajax({
+          type: 'POST',
+          url: 'post/',
+          data: {
+                title: event.title,
+                start: event.start.toString(),
+                end:   event.end.toString(),
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+          },
+    });
+    }
+
+
+  function deleteMyData(event){
+    $.ajax({
+          type: 'POST',
+          url: 'post/',
+          data: {
+                title: event.title,
+                start: event.start.toString(),
+                end:   event.end.toString(),
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+          },
+    });
+    }
+
+  $('#calendar').fullCalendar({
+
+    defaultView: 'agendaWeek',
+    slotLabelFormat: [
+        'MMMM YYYY', // top level of text
+        'HH:mm'        // lower level of text
+    ],
+    columnHeaderText: function(mom) {
+    if (mom.weekday() === 1) {
+      return 'Montag';}
+      if (mom.weekday() === 2) {
+      return 'Dienstag';}
+      if (mom.weekday() === 3) {
+      return 'Mittwoch';}
+      if (mom.weekday() === 4) {
+      return 'Donnerstag';}
+      if (mom.weekday() === 5) {
+      return 'Freitag';}
+      if (mom.weekday() === 6) {
+      return 'Samstag';}
+      if (mom.weekday() === 0) {
+      return 'Sonntag';}
+     },
+    allDaySlot: false,
+    slotDuration: '00:30:00',
+    weekends: false,
+    minTime: '06:00:00',
+    maxTime: '22:00:00',
+    nowIndicator: true,
+    eventTextColor: '#F8F8FF',
+    themeSystem: 'bootstrap4',
+    height: $(window).height()*0.83,
+    events: [
+            {% for i in events %}
+                {
+                    title: "{{ i.title}}",
+                    start: "{{ i.start|date:"c" }}",
+                    end: "{{ i.end|date:"c" }}",
+                    allDay: "{{ all_day }}",
+                },
+                {% endfor %}
+            ],
+            eventRender: function (event, element, view) {
+
+            if (view.name == 'listDay') {
+                element.find(".fc-list-item-time").append("<span class='closeon'>x</span>");
+            } else {
+                element.find(".fc-content").prepend("<span class='closeon'>x</span>");
+            }
+            element.find(".closeon").on('click', function () {
+                deleteMyData(event);
+                $('#calendar').fullCalendar('removeEvents', event._id);
+            });
+        },
+    weekNumbers: true,
+    color: 'blue',
+    textColor: 'withe',
+    editable: true,
+    eventLimit: true,
+
+    droppable: true, // this allows things to be dropped onto the calendar
+
+
+    select: function (start, end, allDay) {
+            var title = prompt('Event Title:');
+            if (title) {
+                calendar.fullCalendar('renderEvent', {
+                    title: title,
+                    start: start,
+                    end: end,
+                    }, true);
+                }
+
+                calendar.fullCalendar('unselect');
+                saveMyData({'title': title, 'start': start, 'end': end});
+            },
+
+    drop: function(date, jsEvent, ui, resourceId ) {
+      saveMyData({'title': $.trim($(this).text()) , 'start': date , 'end': date});
+      // is the "remove after drop" checkbox checked?
+      if ($('#drop-remove').is(':checked')) {
+        // if so, remove the element from the "Draggable Events" list
+        $(this).remove();
+      }
+    },
+
+    eventDrop: function (event, delta, revertFunc, jsEvent, ui, view) {
+               saveMyData(event);
+           },
+
+    eventResize: function (event, delta, revertFunc, jsEvent, ui, view) {
+                 saveMyData(event);
+             }
+  });
+});
+
+</script>
+</body>
+{% endblock %}

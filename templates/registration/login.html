@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+
+<head>
+
+  <link rel="stylesheet" href="{% static 'login/css/bootstrap3.3.7.min.css' %}" type="text/css" />
+
+</head>
+
+
+<body>
+
+<div class="container-fluid">
+  <div class="panel panel-default">
+    <div class="panel-heading">Login</div>
+    <div class="panel-body">
+      <form method="post">
+        {% csrf_token %}
+        {{ form.username|add_label_class:'Username' }}
+        {{ form.username|add_class:'form-control' }}
+        {{ form.password|add_label_class:'Password' }}
+        {{ form.password|add_class:'form-control' }}
+        <button type="submit" class="btn btn-secondary btn-lg btn-block" >Login</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+</body>
+
+{% endblock %}
