@@ -162,6 +162,7 @@
           type: 'POST',
           url: 'post/',
           data: {
+                action: 'save',
                 title: event.title,
                 start: event.start.toString(),
                 end:   event.end.toString(),
@@ -176,6 +177,7 @@
           type: 'POST',
           url: 'post/',
           data: {
+                action: 'delete',
                 title: event.title,
                 start: event.start.toString(),
                 end:   event.end.toString(),

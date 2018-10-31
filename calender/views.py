@@ -39,12 +39,6 @@ from .forms import CalenderForm
 
 def all_events(request):
 
-        #new_title = form.cleaned_data['title']
-        #new_start = form.cleaned_data['start']
-        #new_end = form.cleaned_data['end']
-        #print(new_title)
-        #print(new_start)
-        #print(new_end)
     categorie = Categorie.objects.all()
     events = CalendarEvent.objects.all()
     get_event_types = CalendarEvent.objects.only('title')
@@ -61,15 +55,23 @@ def all_events(request):
 def postview(request):
 
     if request.method == 'POST':
+        action = request.POST['action']
+        if action == 'save':
+            print('save')
+            title = request.POST['title']
+            start = request.POST['start']
+            end = request.POST['end']
+            start = datetime.datetime.strptime(start, '%a %b %d %Y %H:%M:%S %Z%z')
+            end = datetime.datetime.strptime(end, '%a %b %d %Y %H:%M:%S %Z%z')
+            print(title)
+            print(start)
+            print(end)
+            print("time_change")
+            print(start.date())
+            print(start.time())
 
-        title = request.POST['title']
-        start = request.POST['start']
-        end = request.POST['end']
-        start = datetime.datetime.strptime(start, '%a %b %d %Y %H:%M:%S %Z%z')
-        end = datetime.datetime.strptime(end, '%a %b %d %Y %H:%M:%S %Z%z')
-        print(title)
-        print(start)
-        print(end)
+        if action == 'delete':
+            print('delete')
 
     return render(request,'index.html',{})
 
