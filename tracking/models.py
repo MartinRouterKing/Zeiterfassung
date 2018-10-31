@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 class Workingtime(models.Model):
     user_id = models.OneToOneField(User, on_delete=models.CASCADE)
-    time = models.IntegerField(("Arbeitszeit pro Woche"), blank=True)
+    workingtime = models.IntegerField(("Arbeitszeit pro Woche"), blank=True)
 
     def __int__(self):
         return self.time
