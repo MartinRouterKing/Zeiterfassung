@@ -5,9 +5,9 @@ from tracking.models import Tracking, Element, Categorie, Workingtime
 class Worktimefrom(forms.ModelForm):
     class Meta:
         model = Workingtime
-        fields = ['time',]
+        fields = ['workingtime',]
         widgets = {
-            'time': TimePickerInput()
+            'workingtime': TimePickerInput()
         }
 
 class Categorieform(forms.ModelForm):
