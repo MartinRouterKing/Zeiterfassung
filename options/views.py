@@ -24,7 +24,7 @@ def options(request):
         work_time_form = Worktimefrom(request.POST)
 
         if work_time_form.is_valid():
-            work_time = work_time_form.cleaned_data['time']
+            work_time = work_time_form.cleaned_data['workingtime']
 
             try:
                 Workingtime.objects.all().delete()
@@ -34,7 +34,7 @@ def options(request):
 
             wkt = Workingtime(
                 user_id=request.user,
-                workigtime=work_time
+                workingtime=work_time
             )
 
             wkt.save()
