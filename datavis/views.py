@@ -14,7 +14,7 @@ def Analyticsview(request):
     '''
 
     working_time = Workingtime.objects.filter(user_id=request.user.id)
-    working_time = int(working_time.values_list('time')[0][0] *4.35)
+    working_time = int(working_time.values_list('workingtime')[0][0] *4.35)
 
     '''
     Calculation the current month for further calculations
