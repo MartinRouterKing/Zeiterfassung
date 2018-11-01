@@ -15,7 +15,7 @@ def Analyticsview(request):
 
     working_time = Workingtime.objects.filter(user_id=request.user.id)
     working_time = int(working_time.values_list('workingtime')[0][0] *4.35)
-
+    print(working_time)
     '''
     Calculation the current month for further calculations
     '''
@@ -48,7 +48,8 @@ def Analyticsview(request):
     '''
     Calculation working time per month in percent
     '''
-    working_time_perc = int(list_hours[currentmonth-2]/working_time *100)
+
+    working_time_perc = int(list_hours[currentmonth-1]/working_time *100)
     print(working_time_perc)
 
     '''
