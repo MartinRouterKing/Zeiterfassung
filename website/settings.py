@@ -102,10 +102,10 @@ WSGI_APPLICATION = 'website.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',          # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'd4bi74sfuvagc9',                           # Or path to database file if using sqlite3.
+        'NAME': 'uegltbbumvuzwa',                           # Or path to database file if using sqlite3.
         'USER': 'lhrwubtyyadjgk',                           # Not used with sqlite3.
-        'PASSWORD': '7bca5e9631522cb44326232065289553312f0c97f469270c3559c440105e5247',                  # Not used with sqlite3.
-        'HOST': 'ec2-54-204-14-96.compute-1.amazonaws.com',                      # Set to empty string for localhost. Not used with sqlite3.
+        'PASSWORD': '6f23dd180618a382ba187006a084f12ec9230ed879b49a00ec3c1d8605966242',                  # Not used with sqlite3.
+        'HOST': 'ec2-75-101-138-165.compute-1.amazonaws.com',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '5432',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
