@@ -1,26 +1,28 @@
 import django_tables2 as tables
-from .models import Tracking
+from calender.models import CalendarEvent
 
 class TrackingTable(tables.Table):
 
-    start_time = tables.TimeColumn(format='G:i:s')
-    end_time = tables.TimeColumn(format='G:i:s')
-    hours =tables.TimeColumn(format='H:i')
-    categories = tables.Column()
-    element = tables.Column()
+    user_id = tables.Column(verbose_name='Name')
+    start = tables.DateTimeColumn(verbose_name='Start', format='d.m.Y, H:i')
+    end = tables.DateTimeColumn(verbose_name='Ende', format='d.m.Y, H:i')
+    hours = tables.Column(verbose_name='Stunden')
+    title = tables.Column(verbose_name='Kategorie')
+    type = tables.Column(verbose_name='Typ')
+    note = tables.Column(verbose_name='Notiz')
 
     class Meta:
-        model = Tracking
+        model = CalendarEvent
 
-        fields=['id',
+        fields=[
+                'id',
                 'user_id',
-                'date',
-                'start_time',
-                'end_time',
+                'start',
+                'end',
                 'hours',
-                'categories',
-                'element',
-                'notiz']
+                'title',
+                'type',
+                'note']
 
         attrs = {'class': 'table table-hover'}
 

@@ -37,7 +37,6 @@
 
     $("#id_categories").change(function () {
       var categoriesId = $(this).val();                         // get the selected country ID from the HTML input
-      console.log(categoriesId);
       $.ajax({                                                  // initialize an AJAX request
         url: 'load_elements/',                                  // set the url of the request (= localhost:8000/hr/ajax/element/)
         data: {
@@ -47,11 +46,10 @@
           $("#id_element").html(data)
 
          $('#id_element .fc-event').each(function() {
-
                                                                 // store data so the calendar knows to render an event upon drop
            $(this).data('event', {
             title: $.trim($(this).text()),                      // use the element's text as the event title
-            id: $(this).attr('id'),
+            type: categoriesId,
             stick: true,                      // maintain when user navigates (see docs on the renderEvent method)
             duration: '01:00:00'              // will set the duration during drag of event
             });
@@ -82,9 +80,9 @@
   $('#id_element .fc-event').each(function() {
 
     // store data so the calendar knows to render an event upon drop
+
     $(this).data('event', {
       title: $.trim($(this).text()), // use the element's text as the event title
-      id: $(this).attr('id'),
       stick: true, // maintain when user navigates (see docs on the renderEvent method)
       duration: '01:00:00' // will set the duration during drag of event
      });
@@ -107,9 +105,12 @@
           url: 'post/',
           data: {
                 action: 'save',
+                id: event.id,
                 title: event.title,
+                type: event.type,
                 start: event.start.toString(),
                 end:   event.end.toString(),
+                note: event.note,
                 csrfmiddlewaretoken: '{{ csrf_token }}'
           },
     });
@@ -122,13 +123,17 @@
           url: 'post/',
           data: {
                 action: 'delete',
+                id: event.id,
                 title: event.title,
                 start: event.start.toString(),
                 end:   event.end.toString(),
+                note: event.note,
                 csrfmiddlewaretoken: '{{ csrf_token }}'
           },
     });
     }
+
+   var latest_id = {{ latest_id }};
 
   $('#calendar').fullCalendar({
 
@@ -155,7 +160,6 @@
      },
     allDaySlot: false,
     slotDuration: '00:30:00',
-    weekends: false,
     minTime: '06:00:00',
     maxTime: '22:00:00',
     nowIndicator: true,
@@ -165,9 +169,11 @@
     events: [
             {% for i in events %}
                 {
+                    id: "{{i.id}}",
                     title: "{{ i.title}}",
                     start: "{{ i.start|date:"c" }}",
                     end: "{{ i.end|date:"c" }}",
+                    note: "{{ i.note }}",
                     allDay: "{{ all_day }}",
                 },
                 {% endfor %}
@@ -193,22 +199,32 @@
     droppable: true, // this allows things to be dropped onto the calendar
 
 
-    select: function (start, end, allDay) {
-            var title = prompt('Event Title:');
-            if (title) {
-                calendar.fullCalendar('renderEvent', {
-                    title: title,
-                    start: start,
-                    end: end,
-                    }, true);
-                }
+    eventClick: function( event, jsEvent, view ) {
+        var notiz = prompt("Notiz:", event.note);
+        console.log(event);
+        console.log();
+        event_new = event;
+        event_new.note = notiz;
+        $('#calendar').fullCalendar('removeEvents', event._id);
+        $('#calendar').fullCalendar( 'renderEvent', event_new , true );
+        console.log(event_new);
+        saveMyData(event_new);
+    },
 
-                calendar.fullCalendar('unselect');
-                saveMyData({'title': title, 'start': start, 'end': end});
+    eventReceive: function(event) {
+            latest_id++;
+            console.log(event);
+            event.id = latest_id;
+            event.note = ""
+            event_new =event;
+            $('#calendar').fullCalendar('removeEvents', event._id);
+            $('#calendar').fullCalendar( 'renderEvent', event_new , true )
+            saveMyData(event_new);
+            console.log(event_new)
+
             },
 
     drop: function(date, jsEvent, ui, resourceId ) {
-      saveMyData({'title': $.trim($(this).text()) , 'start': date , 'end': date});
       // is the "remove after drop" checkbox checked?
       if ($('#drop-remove').is(':checked')) {
         // if so, remove the element from the "Draggable Events" list

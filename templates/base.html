@@ -58,6 +58,7 @@
 	}
 
 </style>
+
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
@@ -72,12 +73,11 @@
   body {background-color: rgb(250, 250, 250);}
   </style>
 
-
 </head>
 
   <header>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="{% url 'input' %}">Arbeitszeiterfassung</a>
+      <a class="navbar-brand" href="{% url 'home' %}">Arbeitszeiterfassung</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -91,9 +91,6 @@
             <a class="nav-link" href="{% url 'calendar' %}">Calendar</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'input' %}">Eingabe</a>
-          </li>
-          <li class="nav-item">
             <a class="nav-link" href="{% url 'overview' %}">Übersicht</a>
           </li>
           <li class="nav-item">
@@ -104,17 +101,22 @@
           </li>
 
           {% endif %}
+            {% if user.is_superuser %}
 
+          <li class="nav-item">
+            <a class="nav-link" href="/admin">Admin</a>
+          </li>
+            {% endif %}
         </ul>
       </div>
     </nav>
   </header>
 <body>
 
-   <main>
+
      {% block content %}
      {% endblock %}
-  </main>
+
 
 
 </body>

@@ -1,0 +1,8 @@
+{% load render_table from django_tables2 %}
+{% load querystring from django_tables2 %}
+
+   <div class="table-container" id="panel_id">
+            <div class="panel-heading">
+              {% render_table table %}
+            </div>
+        </div>

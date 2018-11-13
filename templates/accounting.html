@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+
+
+{% block content %}
+
+
+<form method="post">
+    <select class="form-control" id = "id_user">
+        <option selected="selected">--Alle--</option>
+        {% for u in form %}
+        <option>{{ u }}</option>
+        {% endfor %}
+    </select>
+</form>
+
+<script>
+
+    $("#id_user").change(function () {
+      var userId = $(this).val();
+      var selected = $('#test').val();
+      console.log(userId);
+      $.ajax({
+        type: "POST",
+        url: "table/",
+        data:{
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            'user': userId,
+            'ca': selected
+            },
+            success: function (data) {                          // `data` is the return of the `load_element` view function
+          $("#id_table").html(data);                      // replace the contents of the city input with the data that came from the server
+        }
+        });
+    });
+
+
+</script>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+
+
+<form method="post" id="id_cat">
+<select id="test" class="form-control" multiple data-live-search="true" multiple data-actions-box="true">
+    {% for cat in categories %}
+        <option>{{ cat }}</option>
+        {% endfor %}
+    </select>
+</form>
+
+
+<container id="id_table" >
+
+
+</container>
+
+<script>
+    $('select').selectpicker();
+
+   $('#test').on('change', function () {
+      var selected = $(this).val();
+      var userId = $('#userId').val();
+      console.log($(this).val());
+      $.ajax({
+        type: "POST",
+        url: "table/",
+        data:{
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            'ca': selected,
+            'user': userId
+            },
+            success: function (data) {                          // `data` is the return of the `load_element` view function
+          $("#id_table").html(data);                      // replace the contents of the city input with the data that came from the server
+        }
+        });
+    });
+
+
+</script>
+
+
+{% endblock %}

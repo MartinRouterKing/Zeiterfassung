@@ -1,52 +1,25 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 from .models import CalendarEvent
 from tracking.models import Categorie, Element
-from fullcalendar.util import events_to_json, calendar_options
-import datetime
-import json
-import dateutil.parser
-
-# This is just an example for this demo. You may get this value
-# from a separate file or anywhere you want
-
-OPTIONS = """{
-    header: {
-      left: 'prev,next today',
-      center: 'title',
-      right: 'month,agendaWeek,agendaDay'
-    },
-    
-    editable: true,
-    droppable: true, // this allows things to be dropped onto the calendar
-    drop: function() {
-      // is the "remove after drop" checkbox checked?
-      if ($('#drop-remove').is(':checked')) {
-        // if so, remove the element from the "Draggable Events" list
-        $(this).remove();
-      }
-    }"""
-
-#def index(request):
-#    event_url = 'all_events/'
-#    return render(request, 'demo/index.html',{})
-
-#def all_events(request):
-#    events = CalendarEvent.objects.all()
-#    return HttpResponse(events_to_json(events), content_type='application/json')
-
-from .forms import CalenderForm
+from datetime import datetime, timedelta
+from django.contrib.auth.models import User
 
 def all_events(request):
-
+    today = datetime.now() - timedelta(days=14)
     categorie = Categorie.objects.all()
-    events = CalendarEvent.objects.all()
+    events = CalendarEvent.objects.filter(start__gte=today)
+    print(events)
     get_event_types = CalendarEvent.objects.only('title')
+
+    try:
+        event_id = CalendarEvent.objects.latest('id').id + 1
+    except:
+        event_id = 1
 
     context = {
         'categorie': categorie,
-
         "events": events,
+        "latest_id": event_id,
         "get_event_types": get_event_types,
     }
 
@@ -57,21 +30,40 @@ def postview(request):
     if request.method == 'POST':
         action = request.POST['action']
         if action == 'save':
-            print('save')
+            id = request.POST['id']
             title = request.POST['title']
+            type = request.POST['type']
             start = request.POST['start']
             end = request.POST['end']
-            start = datetime.datetime.strptime(start, '%a %b %d %Y %H:%M:%S %Z%z')
-            end = datetime.datetime.strptime(end, '%a %b %d %Y %H:%M:%S %Z%z')
-            print(title)
-            print(start)
-            print(end)
-            print("time_change")
-            print(start.date())
-            print(start.time())
+            note = request.POST['note']
+            start = datetime.strptime(start, '%a %b %d %Y %H:%M:%S %Z%z')
+            end = datetime.strptime(end, '%a %b %d %Y %H:%M:%S %Z%z')
+
+            hours = (end - start).seconds/3600
+
+            user_id = User.objects.get(id=request.user.id)
+            cat = Categorie.objects.get(id=type)
+            q = CalendarEvent(
+                user_id=user_id,
+                title=title,
+                type=cat,
+                start=start,
+                end=end,
+                hours=hours,
+                note=note,
+                all_day=False
+            )
+
+            q.id = id
+            q.save()
 
         if action == 'delete':
-            print('delete')
+            id = request.POST['id']
+            print(id)
+
+            instance = CalendarEvent.objects.get(id=id)
+            print(instance.id)
+            instance.delete()
 
     return render(request,'index.html',{})
 

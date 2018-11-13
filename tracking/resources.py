@@ -1,8 +1,8 @@
 from import_export import resources
-from .models import Tracking
+from calender.models import CalendarEvent
 
 
 class TrackingRessource(resources.ModelResource):
     class Meta:
-        model = Tracking
-        fields = ('user_id', 'date', 'hours')
+        model = CalendarEvent
+        fields = ('user_id', 'title', 'type', 'start', 'end', 'note')

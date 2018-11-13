@@ -1,10 +1,6 @@
-from django.views.generic import TemplateView
-from django.contrib.auth.models import User
 from tracking.models import Tracking, Categorie, Workingtime
-import arrow
-from django.contrib.auth.models import User
+from calender.models import CalendarEvent
 from django.shortcuts import render
-from .forms import Choice
 from datetime import datetime
 
 def Analyticsview(request):
@@ -12,15 +8,16 @@ def Analyticsview(request):
     '''
     Get the contractual working time per month from database
     '''
+    try:
+        working_time = Workingtime.objects.filter(user_id=request.user.id)
+        working_time = int(working_time.values_list('workingtime')[0][0] * 4.35)
+    except:
+        working_time = 1
 
-    working_time = Workingtime.objects.filter(user_id=request.user.id)
-    working_time = int(working_time.values_list('workingtime')[0][0] *4.35)
-    print(working_time)
     '''
     Calculation the current month for further calculations
     '''
     currentmonth = datetime.now().month
-    print(currentmonth)
 
     '''
     Get the working data from the database and calculation of the 
@@ -31,17 +28,17 @@ def Analyticsview(request):
         obj_hours       -> working hours
         obj_categories  -> categories of the working activity
     '''
-    obj = Tracking.objects.filter(user_id=request.user.id)
-    obj_date = obj.values_list('date')
+    obj = CalendarEvent.objects.filter(user_id=request.user.id)
+    obj_date = obj.values_list('start')
     obj_hours = obj.values_list('hours')
-    obj_categories = obj.values_list('categories')
+    obj_categories = obj.values_list('type')
     list_hours = []
 
     for i in range(1, 13):
         a = 0
         for date, hour in zip(obj_date, obj_hours):
             if i == date[0].month:
-                a = a + hour[0].hour
+                a = a + hour[0]
         list_hours.append(a)
 
 
@@ -50,12 +47,11 @@ def Analyticsview(request):
     '''
 
     working_time_perc = int(list_hours[currentmonth-1]/working_time *100)
-    print(working_time_perc)
 
     '''
     Calculation overtime for the current month.
     '''
-    print(list_hours[currentmonth-2])
+
     if working_time < list_hours[currentmonth-2]:
       overtime = (list_hours[currentmonth]-working_time)/100
     else:
@@ -70,23 +66,23 @@ def Analyticsview(request):
     list_cat = []
     list_cat_label= []
 
-    for oe in list(set(obj_categories)):
-        caz = Categorie.objects.filter(pk=oe[0])
-        list_cat_label.append(str(caz[0]))
+    #for oe in list(set(obj_categories)):
+    list_cat_label = Categorie.objects.all()
+        #list_cat_label.append(str(caz[0]))
 
+    #for i in range(len(list_cat_label)):
+    #    list_cat_label[i] = list_cat_label[i][:10]
 
-    for i in range(len(list_cat_label)):
-        list_cat_label[i] = list_cat_label[i][:10]
-
-
-    for c in range(1,len(list_cat_label)+1):
+    for c in range(1, len(list_cat_label) + 1):
 
         h = 0
         for hour, cat in zip(obj_hours, obj_categories):
-
+            print(cat[0])
+            print(c)
             if cat[0] == c:
-                h = h + (hour[0].hour / sum(list_hours))*100
+                h = h + (hour[0] / sum(list_hours))*100
                 h = round(h, 2)
+                print(h)
         list_cat.append(h)
 
 
@@ -116,5 +112,4 @@ def Analyticsview(request):
 
 TODO: 
         - labels ausbessern, akktuell sind labels in html harcodes
-        - 
 """

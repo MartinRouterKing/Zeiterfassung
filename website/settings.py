@@ -31,7 +31,8 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'calender',
+    'accounting.apps.AccountingConfig',
+    'calender.apps.CalenderConfig',
     'fullcalendar',
     'import_export',
     'django_filters',
@@ -45,7 +46,6 @@ INSTALLED_APPS = [
     'bootstrap_datepicker_plus',
     'bootstrap3',
     'django_tables2',
-    'timetracking.apps.TimetrackingConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

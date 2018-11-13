@@ -8,9 +8,7 @@ from django.db import IntegrityError
 
 def load_elements(request):
     categories_id = request.GET.get('categories')
-    print(categories_id)
     element = Element.objects.filter(categories_id=categories_id).order_by('categories')
-    print(element)
     return render(request, 'input_element_list_options.html',
                   {'element': element}
                   )
