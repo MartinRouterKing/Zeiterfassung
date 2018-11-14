@@ -1,36 +1,67 @@
 {% extends "base.html" %}
 
 {% block content %}
-<body>
+<head>
+<style>
+
+.test{
+    background-color: rgba(2,8,24,0.8);
+    margin: 10px;
+}
+
+th, td, h2{
+    color: white
+}
+.fc-time-grid-event{
+    background-color: #343a40;
+    border: 1px solid #343a40;
+    border-left: 5px solid Navy;
+}
+
+.fc-event{
+    background-color: #343a40;
+    border: 1px solid #343a40;
+    border-left: 5px solid Navy;
+}
+
+
+</style>
+</head>
+
 <div class="container">
-<div class="row">
-    <div class="col-sm-3">
-        <div class="panel panel-default" id='external-events'>
-            <div class="panel-heading">
-                     <form method="post">
-                    <select class="form-control" id = "id_categories" name="categories" style="width:100%;max-width:90%;">
-                        {% for cat in categorie %}
-                        <option id="opt" value={{cat.id}}>{{ cat }}</option>
-                        {% endfor %}
-                    </select>
-                </form>
-                <div id = "id_element" class=form-control">
-                </div>
-                <input class="form-control" type='checkbox' id='drop-remove' />
-                <label class="form-control" for='drop-remove'>remove after drop</label>
+  <!-- Content here -->
+    <div class="row">
+        <div class="col">
+            <div class="test" id='external-events'>
+                    <span class= "align-baseline">
+                        <div>
+                            <form method="post">
+                                <select class="form-control" id = "id_categories" name="categories" style="width:100%;max-width:90%;">
+                                    {% for cat in categorie %}
+                                    <option id="opt" value={{cat.id}}>{{ cat }}</option>
+                                    {% endfor %}
+                                </select>
+                            </form>
+                            <div id = "id_element" class=form-control">
+                            </div>
+                            <input class="form-control" type='checkbox' id='drop-remove' />
+                            <label class="form-control" for='drop-remove'>remove after drop</label>
+                        </div>
+                    </span>
             </div>
         </div>
-    </div>
-    <div class="col-sm-9">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <div id='calendar-container'>
-                    <div id='calendar'></div>
+        <div class="col-9">
+                <div class="test">
+                    <div>
+                <span class= "align-baseline">
+                    <div id='calendar-container'>
+                        <div id='calendar'></div>
+                    </div>
+                </span>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 </div>
 
 <script>
@@ -163,7 +194,7 @@
     minTime: '06:00:00',
     maxTime: '22:00:00',
     nowIndicator: true,
-    eventTextColor: '#F8F8FF',
+    eventTextColor: 'white',
     themeSystem: 'bootstrap4',
     height: $(window).height()*0.83,
     events: [
@@ -171,6 +202,7 @@
                 {
                     id: "{{i.id}}",
                     title: "{{ i.title}}",
+                    type: "{{ i.type.id }}",
                     start: "{{ i.start|date:"c" }}",
                     end: "{{ i.end|date:"c" }}",
                     note: "{{ i.note }}",
@@ -191,8 +223,8 @@
             });
         },
     weekNumbers: true,
-    color: 'blue',
-    textColor: 'withe',
+    color: 'white',
+    textColor: 'white',
     editable: true,
     eventLimit: true,
 
@@ -201,27 +233,21 @@
 
     eventClick: function( event, jsEvent, view ) {
         var notiz = prompt("Notiz:", event.note);
-        console.log(event);
-        console.log();
         event_new = event;
         event_new.note = notiz;
         $('#calendar').fullCalendar('removeEvents', event._id);
         $('#calendar').fullCalendar( 'renderEvent', event_new , true );
-        console.log(event_new);
         saveMyData(event_new);
     },
 
     eventReceive: function(event) {
             latest_id++;
-            console.log(event);
             event.id = latest_id;
             event.note = ""
             event_new =event;
             $('#calendar').fullCalendar('removeEvents', event._id);
             $('#calendar').fullCalendar( 'renderEvent', event_new , true )
             saveMyData(event_new);
-            console.log(event_new)
-
             },
 
     drop: function(date, jsEvent, ui, resourceId ) {
@@ -237,11 +263,11 @@
            },
 
     eventResize: function (event, delta, revertFunc, jsEvent, ui, view) {
+                 console.log(event)
                  saveMyData(event);
              }
   });
 });
 
 </script>
-</body>
 {% endblock %}

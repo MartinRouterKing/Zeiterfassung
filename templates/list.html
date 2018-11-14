@@ -8,33 +8,44 @@
 <!doctype html>
 <html>
     <head>
-          <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-        <link rel="stylesheet" href="{% static
-        'ticket/static/css/screen.css' %}" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
         <style>
+
 body {background-color: rgb(250, 250, 250);}
 
 .panel_id{
 overflow: auto
 }
 
+.test{
+    background-color: rgba(2,8,24,0.8);
+    margin: 10px;
+}
+
+td{
+   color: white
+}
 
 </style>
-    </head>
 
+    </head>
     <body>
 
+<div class="table-container" id="panel_id">
+  <!-- Content here -->
+            <div class="test">
 
-        <div class="table-container" id="panel_id">
-            <div class="panel-heading">
-                <a class="btn btn-primary" href="{% querystring '_export'='xlsx' %}" role="button">Download</a>
+                    <div>
+                        <a class="btn btn-primary" href="{% querystring '_export'='xlsx' %}" role="button">Download</a>
+                        {% render_table table %}
+                    </div>
 
-              {% render_table table %}
             </div>
-        </div>
+</div>
 
     </body>
 </html>

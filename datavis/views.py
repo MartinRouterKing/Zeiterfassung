@@ -45,8 +45,12 @@ def Analyticsview(request):
     '''
     Calculation working time per month in percent
     '''
-
-    working_time_perc = int(list_hours[currentmonth-1]/working_time *100)
+    from django.db.models import Sum
+    print(currentmonth)
+    hours_user = CalendarEvent.objects.filter(user_id=request.user.id)
+    hours_user_month = hours_user.filter(start__month=currentmonth).aggregate(Sum('hours'))
+    print(hours_user_month)
+    working_time_perc = int(hours_user_month['hours__sum']/working_time *100)
 
     '''
     Calculation overtime for the current month.

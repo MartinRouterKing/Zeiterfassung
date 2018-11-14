@@ -1,10 +1,9 @@
 from django.shortcuts import render
-from .forms import UserForm
 from django.contrib.auth.models import User
 from tracking.models import Categorie, Element, Tracking
 from django_tables2.config import RequestConfig
 from .tables import TrackingTable
-from django_tables2.export.export import TableExport
+from calender.models import CalendarEvent
 
 from .filters import TrackingFilter
 
@@ -62,10 +61,10 @@ def ajaxtable(request):
         Get the Tracking data correspoonding on the user choice
         '''
         if user_name== '--Alle--':
-            obj = Tracking.objects.all()
+            obj = CalendarEvent.objects.all()
 
         else:
-            obj = Tracking.objects.filter(user_id__username=user_name)
+            obj = CalendarEvent.objects.filter(user_id__username=user_name)
 
 
         '''
@@ -77,7 +76,8 @@ def ajaxtable(request):
         id = 1
         data = []
         for ele in elements:
-            t = obj.filter(element__element=ele).aggregate(Sum('hours'))
+            print(ele)
+            t = obj.filter(title=ele).aggregate(Sum('hours'))
 
             data.append({'id': id, 'Kategorie': ele, 'Gesamt': t['hours__sum']})
             id = id + 1
