@@ -46,10 +46,10 @@ def Analyticsview(request):
     Calculation working time per month in percent
     '''
     from django.db.models import Sum
-    print(currentmonth)
+
     hours_user = CalendarEvent.objects.filter(user_id=request.user.id)
     hours_user_month = hours_user.filter(start__month=currentmonth).aggregate(Sum('hours'))
-    print(hours_user_month)
+
     working_time_perc = int(hours_user_month['hours__sum']/working_time *100)
 
     '''
@@ -70,12 +70,8 @@ def Analyticsview(request):
     list_cat = []
     list_cat_label= []
 
-    #for oe in list(set(obj_categories)):
     list_cat_label = Categorie.objects.all()
-        #list_cat_label.append(str(caz[0]))
 
-    #for i in range(len(list_cat_label)):
-    #    list_cat_label[i] = list_cat_label[i][:10]
 
     for c in range(1, len(list_cat_label) + 1):
 
@@ -89,21 +85,16 @@ def Analyticsview(request):
                 print(h)
         list_cat.append(h)
 
+    choice = 'line'
+    print(choice)
 
-
-    #(obj_list.aggregate(Sum('hours')))
-    # sum all hours per month in Querry
-
-
-    # variable Data
-    # Year = current Year or request year from form
-    # month = current month or request month
-
+    user = request.user
 
     if request.method =='GET':
         choice = request.GET.get('options')
-
+        print(choice)
     return render(request, 'home.html',{
+        'user': user,
         'list_hours': list_hours,
         'list_cat_label': list_cat_label,
         'list_cat': list_cat,

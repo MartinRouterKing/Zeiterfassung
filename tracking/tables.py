@@ -24,7 +24,7 @@ class TrackingTable(tables.Table):
                 'type',
                 'note']
 
-        attrs = {'class': 'table table-hover'}
+        attrs = {'class': 'table table-hover table-dark'}
 
 
 

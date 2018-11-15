@@ -7,16 +7,17 @@ from django.contrib.auth.models import User
 def all_events(request):
     today = datetime.now() - timedelta(days=14)
     categorie = Categorie.objects.all()
-    events = CalendarEvent.objects.filter(start__gte=today)
-    print(events)
+    events = CalendarEvent.objects.filter(user_id = request.user)
+    events.filter(start__gte=today)
     get_event_types = CalendarEvent.objects.only('title')
-
+    user = request.user
     try:
         event_id = CalendarEvent.objects.latest('id').id + 1
     except:
         event_id = 1
 
     context = {
+        'user': user,
         'categorie': categorie,
         "events": events,
         "latest_id": event_id,

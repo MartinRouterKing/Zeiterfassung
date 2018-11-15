@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<head>
+
 <style>
 
 .test{
@@ -20,14 +20,16 @@ th, td, h2{
 
 .fc-event{
     background-color: #343a40;
-    border: 1px solid #343a40;
-    border-left: 5px solid Navy;
+
 }
+
+  body {
+  background-attachment: fixed;
+  padding-top: 0px;
+  }
 
 
 </style>
-</head>
-
 <div class="container">
   <!-- Content here -->
     <div class="row">
@@ -65,7 +67,6 @@ th, td, h2{
 </div>
 
 <script>
-
     $("#id_categories").change(function () {
       var categoriesId = $(this).val();                         // get the selected country ID from the HTML input
       $.ajax({                                                  // initialize an AJAX request
@@ -86,7 +87,6 @@ th, td, h2{
             });
 
         $('#id_element .fc-event').draggable({
-
         helper: 'clone',
         zIndex: 999,
         revert: true,      // will cause the event to go back to its
@@ -168,25 +168,27 @@ th, td, h2{
 
   $('#calendar').fullCalendar({
 
-    defaultView: 'agendaWeek',
+    defaultView: (function (){ if($(window).width()<=768){
+        return defaultView = 'agendaDay';} else { return defaultView = 'agendaWeek';}})(),
+
     slotLabelFormat: [
         'MMMM YYYY', // top level of text
         'HH:mm'        // lower level of text
     ],
     columnHeaderText: function(mom) {
-    if (mom.weekday() === 1) {
+    if (mom.weekday() === 0) {
       return 'Montag';}
-      if (mom.weekday() === 2) {
+      if (mom.weekday() === 1) {
       return 'Dienstag';}
-      if (mom.weekday() === 3) {
+      if (mom.weekday() === 2) {
       return 'Mittwoch';}
-      if (mom.weekday() === 4) {
+      if (mom.weekday() === 3) {
       return 'Donnerstag';}
-      if (mom.weekday() === 5) {
+      if (mom.weekday() === 4) {
       return 'Freitag';}
-      if (mom.weekday() === 6) {
+      if (mom.weekday() === 5) {
       return 'Samstag';}
-      if (mom.weekday() === 0) {
+      if (mom.weekday() === 6) {
       return 'Sonntag';}
      },
     allDaySlot: false,
@@ -196,7 +198,7 @@ th, td, h2{
     nowIndicator: true,
     eventTextColor: 'white',
     themeSystem: 'bootstrap4',
-    height: $(window).height()*0.83,
+    height: $(window).height()*0.9,
     events: [
             {% for i in events %}
                 {
@@ -210,12 +212,16 @@ th, td, h2{
                 },
                 {% endfor %}
             ],
-            eventRender: function (event, element, view) {
+            eventRender: function(event, element, view) {
+                var colors = ['#1abc9c', '#2ecc71', '#3498db', '#9b59b6', '#34495e', '#f1c40f', '#e67e22', '#e74c3c', '#95a5a6'];
+                var color = colors[event.type];
+                element.css({"border-left": "5px solid "  + color});
+
 
             if (view.name == 'listDay') {
-                element.find(".fc-list-item-time").append("<span class='closeon'>x</span>");
+                element.find(".fc-list-item-time").append("<span class='closeon'>&times;</span>");
             } else {
-                element.find(".fc-content").prepend("<span class='closeon'>x</span>");
+                element.find(".fc-content").prepend("<span class='closeon'>&times;</span>");
             }
             element.find(".closeon").on('click', function () {
                 deleteMyData(event);
@@ -224,9 +230,11 @@ th, td, h2{
         },
     weekNumbers: true,
     color: 'white',
+    firstDay: 1,
     textColor: 'white',
     editable: true,
     eventLimit: true,
+    handleWindowResize: true,
 
     droppable: true, // this allows things to be dropped onto the calendar
 
@@ -263,7 +271,6 @@ th, td, h2{
            },
 
     eventResize: function (event, delta, revertFunc, jsEvent, ui, view) {
-                 console.log(event)
                  saveMyData(event);
              }
   });

@@ -17,14 +17,12 @@
 
 body {background-color: rgb(250, 250, 250);}
 
-.panel_id{
-overflow: auto
+.table-container{
+display: table;
+background-color: rgba(2,8,24,0.8);
+margin: 10px;
 }
 
-.test{
-    background-color: rgba(2,8,24,0.8);
-    margin: 10px;
-}
 
 td{
    color: white
@@ -37,16 +35,9 @@ td{
 
 <div class="table-container" id="panel_id">
   <!-- Content here -->
-            <div class="test">
-
-                    <div>
-                        <a class="btn btn-primary" href="{% querystring '_export'='xlsx' %}" role="button">Download</a>
-                        {% render_table table %}
-                    </div>
-
-            </div>
+    <a class="btn btn-primary" href="{% querystring '_export'='xlsx' %}" role="button">Download</a>
+    {% render_table table %}
 </div>
-
     </body>
 </html>
 {% endblock %}
