@@ -4,6 +4,13 @@
 
 <style>
 
+.fc-title:hover{
+    z-index: 20 !important;
+    overflow: visible !important;
+    opacity: .99;
+    background-color: #007bff;
+}
+
 .test{
     background-color: rgba(2,8,24,0.8);
     margin: 10px;
@@ -19,13 +26,15 @@ th, td, h2{
 }
 
 .fc-event{
+
+    z-index: 0;
+    position: relative;
     background-color: #343a40;
-
 }
-
   body {
   background-attachment: fixed;
   padding-top: 0px;
+  z-index: 0;
   }
 
 
@@ -274,6 +283,23 @@ th, td, h2{
                  saveMyData(event);
              }
   });
+  var $tooltip = $("<div>").text("I'm a tooltip").addClass("tooltip");
+    $("#calendar").on("mouseenter",".fc-title", function(){
+        $('tc-title').append($tooltip);
+        console.log($(this));
+        $tooltip.position({
+            my:"left top",
+            at:"middle middle",
+            of:$(this),
+
+        });
+        console.log("in");
+    }).on("mouseleave",".fc-title", function(){
+        $tooltip = $tooltip.detach();
+        console.log("out");
+});
+
+
 });
 
 </script>

@@ -14,5 +14,6 @@ class ElementAdmin(ImportExportModelAdmin):
     class Meta:
         fields = ['categories', 'element']
 
+
 admin.site.register(Workingtime)
 admin.site.register(CalendarEvent)

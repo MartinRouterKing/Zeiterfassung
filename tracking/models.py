@@ -15,8 +15,22 @@ class Categorie(models.Model):
     def __str__(self):
         return self.cat
 
+class Wie(models.Model):
+    wie = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.wie
+
+class Obj(models.Model):
+    obj = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.obj
+
 class Element(models.Model):
     categories = models.ForeignKey(Categorie, on_delete=models.CASCADE)
+    wie = models.ForeignKey(Wie, on_delete=models.CASCADE, default=0)
+    obj = models.ForeignKey(Obj, on_delete=models.CASCADE, default=0)
     element = models.CharField(max_length=200)
 
     def __str__(self):
