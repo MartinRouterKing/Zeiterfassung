@@ -1,4 +1,4 @@
-from tracking.models import Tracking, Element, Categorie, Workingtime
+from tracking.models import Element, Categorie, Workingtime
 from django.contrib.auth.models import User
 from django.shortcuts import render,redirect
 from .forms import Choicefrom, Categorieform, Elementform, Worktimefrom

@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from tracking.models import Categorie, Element, Tracking
+from tracking.models import Categorie, Element
 from django_tables2.config import RequestConfig
 from .tables import TrackingTable
 from calender.models import CalendarEvent
 
-from .filters import TrackingFilter
+
 
 
 def accounting(request):

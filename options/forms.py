@@ -1,6 +1,6 @@
 from bootstrap_datepicker_plus import TimePickerInput
 from django import forms
-from tracking.models import Tracking, Element, Categorie, Workingtime
+from tracking.models import Element, Categorie, Workingtime
 
 class Worktimefrom(forms.ModelForm):
     class Meta:
@@ -29,7 +29,7 @@ class Elementform(forms.ModelForm):
 
 class Choicefrom(forms.ModelForm):
     class Meta:
-        model = Tracking
+        model = Element
         fields = ['categories', 'element']
 
     def __init__(self, *args, **kwargs):
