@@ -1,79 +1,99 @@
 {% extends 'base.html' %}
+
 {% block content %}
 {% load bootstrap3 %}       {# import bootstrap3 #}
 {% bootstrap_css %}         {# Embed Bootstrap CSS #}
 {% bootstrap_javascript jquery='full' %}  {# Embed Bootstrap JS+jQuery #}
 {{ form.media }}            {# Adds date-picker required JS and CSS #}
-<!DOCTYPE html>
-<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Options</title>
 
-    <style>
-    body {background-color: rgb(250, 250, 250)};
-    </style>
+<style>
+    .test{
+    background-color: rgba(2,8,24,0.8);
+    margin: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.fav-changer{
+    margin-top: 10px;
+    margin-bottom: -5px;
+}
+
+.glyphicon{
+    color: #337ab7;
+}
+
+#Worktimeform{
+    margin: 70px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+label{
+    color: white;
+}
+
+.glyphicon-star{
+    color: gold;
+}
+
+</style>
 
 </head>
 
-<body>
-
-<div class="bg"></div>
-    <div class="container-fluid">
-        <div class="panel panel-default">
-        <div class="panel-heading">Vorschau</div>
-            <div class="panel-body">
-                <form method="post" id="choiceForm" data-element-url="{% url 'ajax_load_element' %}" novalidate>
-                    {% csrf_token %}
-
-                    {{ choice_form.as_p }}
-                    <button class="btn btn-primary" onclick="return popitup('addcategories/')">Add Categories</button>
-                    <button class="btn btn-primary" onclick="return popitup('addelements/')">Add Elements</button>
-                </form>
-            </div>
+<div class="test">
+    <div class="container">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{message.tags}} fade in" role="alert">
+            <Strong {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</Strong>
+            {% endfor %}
+            {% endif %}
         </div>
-  </div>
-
-
-<div class="container-fluid">
-    {% if messages %}
-    {% for message in messages %}
-    <div class="alert alert-{{message.tags}} fade in" role="alert">
-        <strong{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</Strong>
-        {% endfor %}
-        {% endif %}
+            <form method="post" id="Worktimeform">
+                {% csrf_token %}
+                {{ work_time_form.as_p }}
+                <button type="submit" class="btn btn-primary" >Eingabe</button>
+            </form>
     </div>
-    <div class="panel-body">
-        <div class="container-fluid">
-            <div class="panel panel-default">
-                <div class="panel-heading">Arbeitszeit pro Woche</div>
-            <div class="panel-body">
+</div>
 
-                <form method="post" id="Worktimeform">
-                    {% csrf_token %}
-                    {{ work_time_form.as_p }}
-                    <button type="submit" class="btn btn-primary" >Eingabe</button>
-                </form>
-            </div>
-        </div>
+<div class="test">
+    <div class="container">
+        <span style="color:white"><STRONG>Auswahl der Typen</STRONG></span>
+        <form method="post" id="choiceForm" data-element-url="{% url 'ajax_load_element' %}" novalidate>
+            {% csrf_token %}
+            {{ choice_form.categories}}
+            <span style="color:white"><STRONG>Kategorie auswählen und den Favoriten Hinzufügen</STRONG></span>
+            <select class="form-control" id="id_element" name="groups_old"  multiple="multiple" >
+
+            </select>
+
+            <center>
+                <div class = "fav-changer">
+                <a><span onclick="favadd()" style="font-size: 150%" class="glyphicon glyphicon-arrow-down"></span></a>
+                <a><span onclick="favremove()" style="font-size: 150%" class="glyphicon glyphicon-arrow-up"></span></a>
+                </div>
+            </center>
+
+            <span style="color:gold" class="glyphicon glyphicon-star"><span style="color:white"><STRONG>Favoriten</STRONG></span></span>
+            <select class="form-control" id="favorite" name="groups_old" multiple="multiple" >
+            </select>
+
+        </form>
+        <button type="button" onclick="savefav()" class="btn btn-primary" >Speichern</button>
     </div>
+</div>
 
-<script>
-$(function () {$('#datetimepicker1')});
-</script>
-
-<script language="javascript" type="text/javascript">
-<!--
-function popitup(url) {
-    newwindow=window.open(url,'{{title}}','height=500,width=500');
-    if (window.focus) {newwindow.focus()}
-    return false};
-</script>
-
-<script>
+        <script>
     $("#id_categories").attr('class', 'form-control');
-    $("#id_element").attr('class', 'form-control');
+
     $("#id_categories").change(function () {
+      $('#favorite').find('option').remove();
       var url = $("#choiceForm").attr("data-element-url");  // get the url of the `load_elements` view
       var categoriesId = $(this).val();  // get the selected country ID from the HTML input
 
@@ -87,8 +107,64 @@ function popitup(url) {
         }
       });
     });
+
+    function favadd(){
+    console.log("add");
+
+    var cat = document.getElementById("id_element");
+    var text = cat.options[cat.selectedIndex].text;
+    cat.remove(cat.selectedIndex);
+    console.log(text)
+
+    var x = document.getElementById("favorite");
+    var option = document.createElement("option");
+    option.text = text;
+    x.add(option);
+
+    }
+
+    function favremove(){
+    console.log("remove");
+
+    var fav = document.getElementById("favorite");
+    var text = fav.options[fav.selectedIndex].text;
+    fav.remove(fav.selectedIndex);
+    console.log(text)
+
+    var x = document.getElementById("id_element");
+    var option = document.createElement("option");
+    option.text = text;
+    x.add(option);
+    }
+
+    function savefav(){
+        console.log("save");
+        var cat = document.getElementById("id_categories");
+        var cat = cat.options[cat.selectedIndex].text;
+
+        var fav = document.getElementById("favorite");
+        txt = [];
+            for (i = 0; i < fav.length; i++) {
+            txt = txt + ", " + fav.options[i].value;
+        console.log(txt);
+        };
+
+        $.ajax({
+            type: "POST",
+            url: 'addfavorites/',
+            data: {
+            'favorites': txt,
+            'categorie': cat,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+
+        });
+    }
+
+
+
+
 </script>
 
-</body>
-</html>
+
 {% endblock %}

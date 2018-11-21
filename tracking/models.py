@@ -35,3 +35,11 @@ class Element(models.Model):
 
     def __str__(self):
         return self.element
+
+class FavoriteElement(models.Model):
+    user_id = models.OneToOneField(User, on_delete=models.CASCADE)
+    fav_element = models.ForeignKey(Element, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user_id
+

@@ -4,6 +4,7 @@
 <!DOCTYPE html>
 <html>
 {% load fullcalendar_tags %}
+
 <head>
           <!-- FullCalendar JS -->
           <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
@@ -64,6 +65,23 @@ nav {
         background-color: #676b70
 	}
 
+
+		.favorite {
+	  color: white;
+		position: absolute;
+		top: 0px;
+		right: 0;
+    text-align:center;
+    border-radius:10%;
+    font-size: 18px;
+		cursor: pointer;
+        background-color: #676b70
+	}
+
+.glyphicon glyphicon-log-out{
+    margin: 20px;
+}
+
 </style>
 
   <meta charset="utf-8">
@@ -74,7 +92,6 @@ nav {
 
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-
 
   <style>
   body {
@@ -110,12 +127,12 @@ nav {
                 </li>
                 {% if user.is_superuser %}
                 <li class="nav-item">
-                    <a class="nav-link" href="/admin">Admin</a>
+                    <a class="nav-link" href="/admin"><span class="glyphicon glyphicon-wrench"></span>Admin</a>
                 </li>
                 {% endif %}
             </ul>
             <ul class="navbar-nav navbar-right">
-                <li><a class="nav-link" href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+                <li><a class="nav-link" href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
             </ul>
             {% endif %}
         </div>
@@ -125,6 +142,10 @@ nav {
 <body>
      {% block content %}
      {% endblock %}
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
 </body>
 
 </html>

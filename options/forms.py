@@ -23,7 +23,7 @@ class Elementform(forms.ModelForm):
         model = Element
         fields = ['categories', 'element']
         widgets = {
-            'element': forms.TextInput(attrs={'class': 'form-control'})
+            'element': forms.TextInput()
         }
 
 

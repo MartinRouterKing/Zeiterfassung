@@ -2,7 +2,13 @@
 
 {% block content %}
 
-<style>
+<head>
+
+
+<link crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" rel="stylesheet">
+
+    <style>
+
 
 .fc-title:hover{
     z-index: 20 !important;
@@ -26,24 +32,70 @@ th, td, h2{
 }
 
 .fc-event{
-
     z-index: 0;
     position: relative;
     background-color: #343a40;
 }
-  body {
-  background-attachment: fixed;
-  padding-top: 0px;
-  z-index: 0;
-  }
 
+
+
+
+/* Required Styling */
+
+label input[type="checkbox"] {
+  display: none;
+}
+
+.custom-checkbox {
+  margin-left: 2em;
+  position: relative;
+  cursor: pointer;
+}
+
+.custom-checkbox .glyphicon {
+  color: gold;
+  position: absolute;
+  top: 0.4em;
+  left: -1.25em;
+  font-size: 0.75em;
+}
+
+.custom-checkbox .glyphicon-star-empty {
+  color: gray;
+}
+
+.custom-checkbox .glyphicon-star {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.custom-checkbox:hover .glyphicon-star{
+  opacity: 0.5;
+}
+
+.custom-checkbox input[type="checkbox"]:checked ~ .glyphicon-star {
+  opacity: 1;
+}
 
 </style>
+
+</head>
+
+
+
 <div class="container">
   <!-- Content here -->
     <div class="row">
         <div class="col">
             <div class="test" id='external-events'>
+
+                <label for="id-of-input" id="id_favorite" class="custom-checkbox">
+                    <input type="checkbox" id="id-of-input" onclick="myFunction()"/>
+                    <i class="glyphicon glyphicon-star-empty"></i>
+                    <i class="glyphicon glyphicon-star"></i>
+                    <span style="color:white">Favoriten</span>
+                </label>
+
                     <span class= "align-baseline">
                         <div>
                             <form method="post">
@@ -54,11 +106,11 @@ th, td, h2{
                                 </select>
                             </form>
                             <div id = "id_element" class=form-control">
-                            </div>
+                            </div>  </div>
+                    </span>
                             <input class="form-control" type='checkbox' id='drop-remove' />
                             <label class="form-control" for='drop-remove'>remove after drop</label>
-                        </div>
-                    </span>
+
             </div>
         </div>
         <div class="col-9">
@@ -76,12 +128,23 @@ th, td, h2{
 </div>
 
 <script>
-    $("#id_categories").change(function () {
+    function myFunction() {
+  // Get the checkbox
+  var checkBox = document.getElementById("id-of-input");
+
+  // If the checkbox is checked, display the output text
+  if (checkBox.checked == true){
+    console.log("true");
+  } else {
+    console.log("false");
+
+     $("#id_categories").change(function () {
       var categoriesId = $(this).val();                         // get the selected country ID from the HTML input
       $.ajax({                                                  // initialize an AJAX request
         url: 'load_elements/',                                  // set the url of the request (= localhost:8000/hr/ajax/element/)
         data: {
-          'categories': categoriesId                            // add the country id to the GET parameters
+          'categories': categoriesId,                            // add the country id to the GET parameters
+          'checked': checkBox.checked
         },
         success: function (data) {                              // `data` is the return of the `load_element` view function
           $("#id_element").html(data)
@@ -106,6 +169,11 @@ th, td, h2{
         }
         });
      });
+  }
+}
+
+
+
 
 </script>
 
@@ -229,6 +297,9 @@ th, td, h2{
 
             if (view.name == 'listDay') {
                 element.find(".fc-list-item-time").append("<span class='closeon'>&times;</span>");
+
+
+
             } else {
                 element.find(".fc-content").prepend("<span class='closeon'>&times;</span>");
             }
@@ -303,4 +374,21 @@ th, td, h2{
 });
 
 </script>
+
+
+<script>
+
+      //Hamburger menu toggle
+  $(".navbar-nav li a").click(function (event) {
+    // check if window is small enough so dropdown is created
+    var toggle = $(".navbar-toggler").is(":visible");
+    if (toggle) {
+      $(".navbar-collapse").collapse('hide');
+    }
+  });
+
+</script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
 {% endblock %}

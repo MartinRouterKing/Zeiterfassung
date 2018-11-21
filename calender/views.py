@@ -71,7 +71,12 @@ def postview(request):
 def load_elements(request):
     if request.method == 'GET':
         categories_id = request.GET['categories']
-    element = Element.objects.filter(categories_id=categories_id).order_by('categories')
+        checked = request.GET['checked']
+        print(checked)
+    if checked == 'false':
+        element = Element.objects.filter(categories_id=categories_id).order_by('categories')
+    else:
+        element = ''
     print(element)
     return render(request, 'element_events.html',
                   {

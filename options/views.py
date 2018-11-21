@@ -87,6 +87,21 @@ def addelements(request):
                   {'elementsform': Elementform}
                   )
 
+def addfavortites(request):
+
+    if request.method == 'POST':
+
+        favorites = request.POST['favorites']
+        categorie = request.POST['categorie']
+        favorites = favorites.split(",")[1:]
+        print(categorie)
+        print(favorites)
+
+
+    return render(request, 'options.html')
+
+
+
 
 
 

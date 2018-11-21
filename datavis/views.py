@@ -50,7 +50,12 @@ def Analyticsview(request):
     hours_user = CalendarEvent.objects.filter(user_id=request.user.id)
     hours_user_month = hours_user.filter(start__month=currentmonth).aggregate(Sum('hours'))
 
-    working_time_perc = int(hours_user_month['hours__sum']/working_time *100)
+
+    if hours_user_month['hours__sum'] is not None:
+        working_time_perc = int(hours_user_month['hours__sum']/working_time *100)
+    else:
+        working_time_perc = 0
+
 
     '''
     Calculation overtime for the current month.
