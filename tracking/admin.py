@@ -1,4 +1,4 @@
-from .models import Categorie, Element, Workingtime, Obj, Wie
+from .models import Categorie, Element, Workingtime, Obj, Wie, FavoriteElement
 from import_export.admin import ImportExportModelAdmin
 from django.contrib import admin
 from calender.models import CalendarEvent
@@ -23,6 +23,11 @@ class ObjAdmin(ImportExportModelAdmin):
 class WieAdmin(ImportExportModelAdmin):
     class Meta:
         fields = ['wie']
+
+@admin.register(FavoriteElement)
+class FavoriteElementAdmin(ImportExportModelAdmin):
+    class Meta:
+        fields = ['user_id','fav_element']
 
 admin.site.register(Workingtime)
 admin.site.register(CalendarEvent)
