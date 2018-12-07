@@ -19,7 +19,7 @@
 
 .test{
     background-color: rgba(2,8,24,0.8);
-    margin: 10px;
+    padding: 10px;
 }
 
 th, td, h2{
@@ -36,8 +36,6 @@ th, td, h2{
     position: relative;
     background-color: #343a40;
 }
-
-
 
 
 /* Required Styling */
@@ -73,6 +71,7 @@ label input[type="checkbox"] {
   opacity: 0.5;
 }
 
+
 .custom-checkbox input[type="checkbox"]:checked ~ .glyphicon-star {
   opacity: 1;
 }
@@ -80,8 +79,6 @@ label input[type="checkbox"] {
 </style>
 
 </head>
-
-
 
 <div class="container">
   <!-- Content here -->
@@ -95,7 +92,6 @@ label input[type="checkbox"] {
                     <i class="glyphicon glyphicon-star"></i>
                     <span style="color:white">Favoriten</span>
                 </label>
-
                     <span class= "align-baseline">
                         <div>
                             <form method="post">
@@ -128,18 +124,10 @@ label input[type="checkbox"] {
 </div>
 
 <script>
-    function myFunction() {
-  // Get the checkbox
-  var checkBox = document.getElementById("id-of-input");
-
-  // If the checkbox is checked, display the output text
-  if (checkBox.checked == true){
-    console.log("true");
-  } else {
-    console.log("false");
 
      $("#id_categories").change(function () {
       var categoriesId = $(this).val();                         // get the selected country ID from the HTML input
+      var checkBox = document.getElementById("id-of-input");
       $.ajax({                                                  // initialize an AJAX request
         url: 'load_elements/',                                  // set the url of the request (= localhost:8000/hr/ajax/element/)
         data: {
@@ -167,13 +155,8 @@ label input[type="checkbox"] {
 
         });
         }
-        });
-     });
-  }
-}
-
-
-
+      });
+   });
 
 </script>
 
@@ -275,12 +258,12 @@ label input[type="checkbox"] {
     nowIndicator: true,
     eventTextColor: 'white',
     themeSystem: 'bootstrap4',
-    height: $(window).height()*0.9,
+    height: "auto",
     events: [
             {% for i in events %}
                 {
                     id: "{{i.id}}",
-                    title: "{{ i.title}}",
+                    title: "{{ i.title.element}}",
                     type: "{{ i.type.id }}",
                     start: "{{ i.start|date:"c" }}",
                     end: "{{ i.end|date:"c" }}",

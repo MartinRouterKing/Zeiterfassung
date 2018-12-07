@@ -3,7 +3,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
-from tracking.models import Categorie
+from tracking.models import Categorie, Element
 
 
 class CalendarEvent(models.Model):
@@ -29,7 +29,7 @@ class CalendarEvent(models.Model):
 
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     event_id = models.TextField(('Id'), blank=True, max_length=200)
-    title = models.CharField(_('Title'), blank=True, max_length=200)
+    title = models.ForeignKey(Element, on_delete=models.CASCADE)
     type = models.ForeignKey(Categorie, on_delete=models.CASCADE)
     start = models.DateTimeField(_('Start'))
     hours = models.IntegerField(('Workingtime'), blank=True)
@@ -40,7 +40,6 @@ class CalendarEvent(models.Model):
     class Meta:
         verbose_name = _('Event')
         verbose_name_plural = _('Events')
-
 
 
     def __unicode__(self):

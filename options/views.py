@@ -1,20 +1,33 @@
-from tracking.models import Element, Categorie, Workingtime
+from tracking.models import Element, Categorie, Workingtime, FavoriteElement, ElementTOKat
+from tracking.models import KategorieElement, Kategorie, Wie, Obj, Calc_Choices
 from django.contrib.auth.models import User
-from django.shortcuts import render,redirect
-from .forms import Choicefrom, Categorieform, Elementform, Worktimefrom
-import datetime
+from django.shortcuts import render
+from .forms import Choicefrom, Categorieform, editcatform, Worktimefrom, editcatchoiceform, CalcForm, calcchoiceform
 from django.contrib import messages
 from django.db import IntegrityError
 
+
+
 def load_elements(request):
     categories_id = request.GET.get('categories')
-    element = Element.objects.filter(categories_id=categories_id).order_by('categories')
+    user_id = User.objects.get(id=request.user.id)
+    favorites = FavoriteElement.objects.filter(user_id = user_id,fav_element__categories_id=categories_id).values_list('fav_element__element', flat=True)
+    element = Element.objects.filter(categories_id=categories_id).order_by('categories').exclude(element__in=favorites)
+
     return render(request, 'input_element_list_options.html',
                   {'element': element}
                   )
 
-def options(request):
+def load_favorites(request):
+    categories_id = request.GET.get('categories')
+    user_id = User.objects.get(id=request.user.id)
+    favorites = FavoriteElement.objects.filter(user_id=user_id, fav_element__categories_id=categories_id).values_list('fav_element__element', flat=True)
 
+    return render(request, 'load_favorites.html',
+                  {'favorites': favorites}
+                  )
+
+def options(request):
     choice_form = Choicefrom(request.POST)
 
     if request.method == 'POST':
@@ -34,11 +47,8 @@ def options(request):
                 user_id=request.user,
                 workingtime=work_time
             )
-
             wkt.save()
-
-
-            messages.success(request, ' Erfolgreich gespeichert')
+            messages.success(request, 'Arbeitszeit erfolgreich gespeichert')
 
     else:
         work_time_form = Worktimefrom()
@@ -50,42 +60,108 @@ def options(request):
                    })
 
 def addcategories(request):
+
+    '''
+    Add a new categorie the the Datamodel
+    ClickEvent popup a new window with the input mask
+
+    :param request: categorie (TextField)
+    :return: save the Text input to the Database
+    '''
+
     if request.method == 'POST':
         categorieform = Categorieform(request.POST)
         if categorieform.is_valid():
-            cat = categorieform.cleaned_data['cat']
+            cat = categorieform.cleaned_data['kategorie']
 
-            ca = Categorie(
-                cat = cat
+            ca = Kategorie(
+                kategorie = cat
             )
 
             ca.save()
 
             messages.success(request, ' Erfolgreich gespeichert')
 
-    return render(request, 'categorie_input.html',
-                  {
-                      'categorieform': Categorieform
-                  })
+        else:
+            messages.warning(request, ' Bitte Überprüfen Sie die Eingabe')
 
-def addelements(request):
-    if request.method == 'POST':
-        elementsform = Elementform(request.POST)
-        if elementsform.is_valid():
-            categories = elementsform.cleaned_data['categories']
-            elements = elementsform.cleaned_data['element']
-            ca = Element(
-                categories = categories,
-                element = elements
-            )
-
-            ca.save()
-
-            messages.success(request, ' Erfolgreich gespeichert')
-
-    return render(request, 'element_input.html',
-                  {'elementsform': Elementform}
+    return render(request, 'addcategories.html',
+                  {'categorieform': Categorieform}
                   )
+
+def editcategories(request):
+    '''
+    Edit the categories in the Datamodel
+    ClickEvent popup a new window with the input mask
+
+    :param request: choice and editform
+    :return: Uppdate the selected choice in the model
+    '''
+
+    choice = editcatchoiceform()
+    editform = editcatform()
+
+    if request.method == 'POST':
+        form = editcatform(request.POST)
+        choice = editcatchoiceform(request.POST)
+        if form.is_valid() and choice.is_valid():
+            txt = form.cleaned_data['kategorie']
+            edit = choice.cleaned_data['choice']
+            q = Kategorie.objects.get(kategorie=edit)
+            q. kategorie= txt
+            q.save()
+            messages.success(request, ' Erfolgreich gespeichert')
+        else:
+            messages.warning(request, ' Bitte Überprüfen Sie die Eingabe')
+
+    return render(request, 'editcategories.html',
+                  {'choice': choice,
+                   'editform': editform}
+                  )
+
+
+def deletecategories(request):
+
+    '''
+    Delete categories in the Datamodel
+    ClickEvent popup a new window with the input mask
+
+    :param request: choice
+    :return: Delete the selected categorie
+    '''
+
+    choice = editcatchoiceform()
+
+    if request.method == 'POST':
+        choice = editcatchoiceform(request.POST)
+        if choice.is_valid():
+            edit = choice.cleaned_data['choice']
+            Kategorie.objects.filter(kategorie=edit).delete()
+            messages.success(request, ' Erfolgreich Gelöscht')
+
+    return render(request, 'deletecategories.html',
+                  {'choice': choice}
+                  )
+
+
+#def addelements(request):
+#    if request.method == 'POST':
+#        elementsform = Elementform(request.POST)
+#        if elementsform.is_valid():
+#            categories = elementsform.cleaned_data['categories']
+#            elements = elementsform.cleaned_data['element']
+#            ca = Element(
+#                categories = categories,
+#                element = elements
+#            )
+#
+#            ca.save()
+#
+#            messages.success(request, ' Erfolgreich gespeichert')
+#
+#    return render(request, 'element_input.html',
+#                  {'elementsform': Elementform}
+#                  )
 
 def addfavortites(request):
 
@@ -94,21 +170,184 @@ def addfavortites(request):
         favorites = request.POST['favorites']
         categorie = request.POST['categorie']
         favorites = favorites.split(",")[1:]
-        print(categorie)
-        print(favorites)
+
+        FavoriteElement.objects.filter(fav_element__categories__cat=categorie).delete()
+
+        user_id = User.objects.get(id=request.user.id)
+
+        for i in favorites:
+            elem = Element.objects.get(categories__cat = categorie, element=i)
+
+            fav = FavoriteElement(
+                user_id = user_id,
+                fav_element = elem
+            )
+
+            fav.save()
 
 
-    return render(request, 'options.html')
+    return render(request, 'options.html',
+                  {'massage': messages}
+                  )
+
+def addcalc(request):
+
+    addform = CalcForm()
+    delform = calcchoiceform()
+
+    if request.method == 'POST':
+
+        calc = CalcForm(request.POST)
+        enf = calcchoiceform(request.POST)
+
+        if calc.is_valid():
+            calc = calc.cleaned_data['calc']
+            q = Calc_Choices(
+                 calc=calc
+            )
+
+            q.save()
+
+            messages.success(request, ' Erfolgreich Gespeichert')
+
+        if enf.is_valid():
+            enf = enf.cleaned_data['choice']
+
+            q = Calc_Choices.objects.get(calc=enf)
+            q.delete()
+
+            messages.success(request, 'Eintrag gelöscht')
+
+    return render(request, 'addcalc.html',
+                  {'addform': addform,
+                   'delform': delform}
+                  )
 
 
+def ajax_table(request):
+
+    typ = Categorie.objects.all()
+    kat_element = ElementTOKat.objects.all().order_by('katgroup__kategorie')
+    load_table = Element.objects.all()
+    calc_choices = Calc_Choices.objects.all()
+
+    return render(request, 'ajax_table.html',
+                  {
+                      'load_table': load_table,
+                      'typ': typ,
+                      'kat_element': kat_element,
+                      'calc_choices': calc_choices
+                  })
+
+def admin_options(request):
+
+    typ = Categorie.objects.all()
+    kat = Kategorie.objects.all().order_by('kategorie')
+    kat_element = ElementTOKat.objects.all().order_by('katgroup__kategorie')
+    load_table = Element.objects.all()
+
+    return render(request, 'admin_options.html',
+                  {
+                      'kat': kat,
+                      'load_table': load_table,
+                      'typ': typ,
+                      'kat_element': kat_element,
+                  })
+
+def load_favelements(request):
+
+    if request.method == 'POST':
+        cat = request.POST['categorie']
+
+        fav_kat_element = ElementTOKat.objects.filter(katgroup__kategorie=cat).values_list('ele', flat=True)
+        kat_element = KategorieElement.objects.exclude(id__in=fav_kat_element)
+
+    return render(request, 'load_elements_opt.html',
+                  {
+                   'kat_element': kat_element,
+                   'fav_kat_element': fav_kat_element}
+                  )
+
+def load_fav(request):
+
+    if request.method == 'POST':
+        cat = request.POST['categorie']
+
+        fav_kat_element = ElementTOKat.objects.filter(katgroup__kategorie=cat).values_list('ele__kat_element', flat=True)
 
 
+    return render(request, 'load_favelements.html',
+                  {
+                   'fav_kat_element': fav_kat_element}
+                  )
 
 
+def load_combination(request):
+
+    if request.method == 'POST':
+        data = request.POST
+
+        Element.objects.all().delete()
+
+        for i in data:
+            if i == 'csrfmiddlewaretoken':
+                continue
+            row =request.POST.getlist(str(i))
+
+            if row[5]=='true':
+                q = Element(
+                    element = KategorieElement.objects.get(kat_element=row[0]),
+                    wie = row[1],
+                    obj = row[2],
+                    kategorie= Kategorie.objects.get(kategorie=row[3]),
+                    categories= Categorie.objects.get(cat=row[4]),
+                    calc = Calc_Choices.objects.get(calc=row[6])
+                )
+
+                q.save()
+        # for i in data:
+            # for k in Categries:
+                # if k == i['categorie']:
+                    # save ele + verrechnung + WIE + OBJ NUMMER in ELEMENT
+
+    return render(request, 'admin_options.html',
+                  {}
+                  )
 
 
+def load_categorie(request):
 
+    if request.method == 'POST':
+        try:
+            favorites = request.POST['favorites']
+            favorites = favorites.split(",")[1:]
+        except:
+            favorites = None
 
+        categorie = request.POST['categorie']
+
+        cat = Kategorie.objects.get(kategorie=categorie)
+
+        from django.core.exceptions import ObjectDoesNotExist
+        try:
+           ElementTOKat.objects.filter(katgroup=cat).delete()
+
+        except (ObjectDoesNotExist):
+            pass
+        if favorites is not None:
+            for f in favorites:
+                fav = KategorieElement.objects.get(kat_element=f)
+
+                q = ElementTOKat(
+                    katgroup= cat,
+                    ele=fav
+                )
+
+                q.save()
+
+    return render(request, 'admin_options.html',
+                  {}
+                  )
 
 
 

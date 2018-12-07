@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import CalendarEvent
-from tracking.models import Categorie, Element
+from tracking.models import Categorie, Element, FavoriteElement
 from datetime import datetime, timedelta
 from django.contrib.auth.models import User
 
@@ -44,9 +44,15 @@ def postview(request):
 
             user_id = User.objects.get(id=request.user.id)
             cat = Categorie.objects.get(id=type)
+
+            print(type)
+            print(title)
+            ele = Element.objects.get(categories=type, element__kat_element=title)
+            print(ele)
+
             q = CalendarEvent(
                 user_id=user_id,
-                title=title,
+                title=ele,
                 type=cat,
                 start=start,
                 end=end,
@@ -76,9 +82,10 @@ def load_elements(request):
     if checked == 'false':
         element = Element.objects.filter(categories_id=categories_id).order_by('categories')
     else:
-        element = ''
-    print(element)
+        element = FavoriteElement.objects.filter(fav_element__categories_id=categories_id)
+
     return render(request, 'element_events.html',
                   {
-                      'element': element
+                      'element': element,
+                      'checked': checked
                   })

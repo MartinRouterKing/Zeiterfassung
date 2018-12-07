@@ -28,7 +28,6 @@
 }
 
 #Worktimeform{
-    margin: 70px;
     margin-top: 10px;
     margin-bottom: 10px;
 }
@@ -44,9 +43,6 @@ label{
 </style>
 
 </head>
-
-<div class="test">
-    <div class="container">
         {% if messages %}
         {% for message in messages %}
         <div class="alert alert-{{message.tags}} fade in" role="alert">
@@ -54,6 +50,8 @@ label{
             {% endfor %}
             {% endif %}
         </div>
+<div class="test">
+    <div class="container">
             <form method="post" id="Worktimeform">
                 {% csrf_token %}
                 {{ work_time_form.as_p }}
@@ -62,8 +60,17 @@ label{
     </div>
 </div>
 
+<div id="alert_div">
+
+</div>
+
 <div class="test">
     <div class="container">
+        {% if saved %}
+        <div class="alert alert-success">
+        <strong>Success!</strong> Indicates a successful or positive action.
+        </div>
+        {% endif %}
         <span style="color:white"><STRONG>Auswahl der Typen</STRONG></span>
         <form method="post" id="choiceForm" data-element-url="{% url 'ajax_load_element' %}" novalidate>
             {% csrf_token %}
@@ -90,7 +97,9 @@ label{
 </div>
 
         <script>
+
     $("#id_categories").attr('class', 'form-control');
+    $('#id_categories').prop("selectedIndex",0);
 
     $("#id_categories").change(function () {
       $('#favorite').find('option').remove();
@@ -108,33 +117,52 @@ label{
       });
     });
 
+
+    $("#id_categories").change(function () {
+      $('#favorite').find('option').remove();
+      var categoriesId = $(this).val();
+
+      $.ajax({
+        url: 'load_favorites/',
+        data: {
+          'categories': categoriesId
+        },
+        success: function (data) {
+          $("#favorite").html(data);
+        }
+      });
+    });
+
+
     function favadd(){
-    console.log("add");
 
     var cat = document.getElementById("id_element");
     var text = cat.options[cat.selectedIndex].text;
     cat.remove(cat.selectedIndex);
-    console.log(text)
+
 
     var x = document.getElementById("favorite");
     var option = document.createElement("option");
     option.text = text;
     x.add(option);
 
+    $('#id_element').prop("selectedIndex",0);
+
     }
 
     function favremove(){
-    console.log("remove");
 
     var fav = document.getElementById("favorite");
     var text = fav.options[fav.selectedIndex].text;
     fav.remove(fav.selectedIndex);
-    console.log(text)
 
     var x = document.getElementById("id_element");
     var option = document.createElement("option");
     option.text = text;
     x.add(option);
+
+    $('#favorite').prop("selectedIndex",0);
+
     }
 
     function savefav(){
@@ -145,7 +173,7 @@ label{
         var fav = document.getElementById("favorite");
         txt = [];
             for (i = 0; i < fav.length; i++) {
-            txt = txt + ", " + fav.options[i].value;
+            txt = txt + "," + fav.options[i].value;
         console.log(txt);
         };
 
@@ -157,7 +185,9 @@ label{
             'categorie': cat,
             csrfmiddlewaretoken: '{{ csrf_token }}'
             },
-
+            success: function(data){
+            $('#alert_div').html('<div class="alert alert-success"><strong>Favoriten erfolgreich gespeichert</strong></div>');
+            }
         });
     }
 

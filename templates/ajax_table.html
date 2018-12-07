@@ -1,0 +1,91 @@
+<div id="alert_table">
+</div>
+<button class="btn btn-primary" onclick="save()">Speichern</button>
+<button class="btn btn-primary" onclick="return popitup('/options/admin_options/addcalc/')">Verrechnungsart Hinzufügen</button>
+
+<table class="table table-hover table-dark" id="table">
+    <thead>
+    <tr>
+        <th scope="col">Kategorie</th>
+        <th scope="col">Wirtschaftszweig</th>
+        <th scope="col">Objekt</th>
+
+        {% for t in typ %}
+        <th style=" word-wrap: break-word; overflow-wrap: break-word; " scope="col">{{t}}</th>
+        {% endfor %}
+
+        <th scope="col"><span onclick="" style="font-size: 500%; color: green;" class="glyphicon glyphicon-plus"></span></th>
+    </tr>
+    </thead>
+
+    {% regroup kat_element by katgroup as katgroup_list %}
+    {% for kat in katgroup_list %}
+
+    <tbody class="parent">
+    <tr>
+        <th id="hide" onclick="Collapse(this)" colspan="10">{{kat.grouper}} <span id="hide_arrow" style="color:#337ab7" class="glyphicon glyphicon-menu-down pull-right"></span></th>
+    </tr>
+    </tbody>
+
+    <tbody class="child" id="{{kat.grouper}}" style="display: none;">
+    <tr>
+        {% for ele in kat.list %}
+
+        <td>{{ele.ele}}</td>
+        <td style="vertical-align: bottom;"><div ><label><input value="" id="WIE" class="form-control" type="text"></label></div></td>
+        <td style="vertical-align: bottom;"><div><label><input value="" id="OBJ" class="form-control" type="text"></label></div></td>
+        {% for t in typ %}
+        <td>
+            <div class="checkbox"><label><input id="mycheckbox" class="mycheckbox" type="checkbox">Kombinieren</label></div>
+            <select class="form-control" style="max-width: 100%;" id="id_kategorie">
+                {% for calc in calc_choices %}
+                <option>{{ calc }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        {% endfor %}
+    </tr>
+  {% endfor %}
+  </tbody>
+    {% endfor %}
+
+</table>
+<script>
+
+    for (var r = 1, n = table.rows.length; r < n; r++) {
+        for (var c = 3, m = table.rows[r].cells.length; c < m; c++) {
+
+            var element =  table.rows[r].cells[0].innerHTML;
+            var categorie = table.rows[r].cells[0].closest('tbody').id;
+            var type = table.rows[0].cells[c].innerHTML;
+            table.rows[r].cells[c].children[0].children[0].children[0].checked = false;
+
+            {% for load in load_table %}
+            var load_wie = '{{load.wie}}';
+            var load_obj = '{{load.obj}}';
+            var load_element = '{{load.element}}';
+            var load_kategorie = '{{load.kategorie}}';
+            var load_type = '{{load.categories}}';
+            var load_calc = '{{load.calc}}';
+
+
+            if (element == load_element && categorie == load_kategorie && type == load_type) {
+
+                table.rows[r].cells[1].children[0].children[0].children[0].value = load_wie;
+                table.rows[r].cells[2].children[0].children[0].children[0].value = load_obj;
+                table.rows[r].cells[c].children[0].children[0].children[0].checked = true;
+
+                var CalcElement = table.rows[r].cells[c].children[1];
+                var options = table.rows[r].cells[c].children[1].options;
+                for (var op = 0, optionsLength = options.length; op < optionsLength; op++) {
+                    if (options[op].value == load_calc) {
+                        CalcElement.selectedIndex = op;
+                    }
+                }
+            }
+            {% endfor %}
+       }
+    }
+
+</script>
+

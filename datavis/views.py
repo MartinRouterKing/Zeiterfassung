@@ -52,19 +52,21 @@ def Analyticsview(request):
 
 
     if hours_user_month['hours__sum'] is not None:
-        working_time_perc = int(hours_user_month['hours__sum']/working_time *100)
+        working_time_perc = int(hours_user_month['hours__sum']/working_time * 100)
+        print(working_time_perc)
     else:
         working_time_perc = 0
+
 
 
     '''
     Calculation overtime for the current month.
     '''
 
-    if working_time < list_hours[currentmonth-2]:
-      overtime = (list_hours[currentmonth]-working_time)/100
-    else:
-        overtime = 0
+    #if working_time < list_hours[currentmonth-2]:
+    #  overtime = (list_hours[currentmonth]-working_time)/100
+    #else:
+    #    overtime = 0
 
 
     '''
@@ -82,34 +84,28 @@ def Analyticsview(request):
 
         h = 0
         for hour, cat in zip(obj_hours, obj_categories):
-            print(cat[0])
-            print(c)
             if cat[0] == c:
                 h = h + (hour[0] / sum(list_hours))*100
                 h = round(h, 2)
-                print(h)
         list_cat.append(h)
-
-    choice = 'line'
-    print(choice)
 
     user = request.user
 
-    if request.method =='GET':
-        choice = request.GET.get('options')
-        print(choice)
     return render(request, 'home.html',{
         'user': user,
         'list_hours': list_hours,
         'list_cat_label': list_cat_label,
         'list_cat': list_cat,
-        'choice': choice,
         'working_time_prec': working_time_perc,
-        'overtime': overtime,
     })
 
-"""
 
-TODO: 
-        - labels ausbessern, akktuell sind labels in html harcodes
-"""
+def load_canvas(request):
+
+    if request.method == 'GET':
+        type = request.GET['selectedOption']
+    type = type + '-chart'
+    print(type)
+    return render(request, 'load_canvas.html',
+                  {'type': type}
+                  )

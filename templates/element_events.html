@@ -1,4 +1,12 @@
-
+{% if checked == 'false' %}
 {% for ele in element %}
         <div class='fc-event'>{{ele.element}}</div>
 {% endfor %}
+
+{% else %}
+
+{% for ele in element %}
+        <div class='fc-event'>{{ele.fav_element}}</div>
+{% endfor %}
+
+{% endif %}

@@ -20,7 +20,6 @@
 
  <style>
 
-
 .fc-title {
     position: relative;
     display: block;
@@ -36,8 +35,12 @@
     opacity: 0.5;
 }
 
+.nav-link{
+    margin: 5px;
+}
+
 nav {
-    margin-bottom: 3px
+    margin-bottom: 10px
 }
 
 #external-events {
@@ -128,6 +131,9 @@ nav {
                 {% if user.is_superuser %}
                 <li class="nav-item">
                     <a class="nav-link" href="/admin"><span class="glyphicon glyphicon-wrench"></span>Admin</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'admin_options' %}"><span class="glyphicon glyphicon-wrench"></span>Erweiterte Optionen</a>
                 </li>
                 {% endif %}
             </ul>

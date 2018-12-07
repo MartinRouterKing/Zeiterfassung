@@ -1,6 +1,7 @@
 import django_tables2 as tables
 from calender.models import CalendarEvent
 
+
 class TrackingTable(tables.Table):
 
     user_id = tables.Column(verbose_name='Name')

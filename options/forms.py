@@ -1,21 +1,45 @@
 from bootstrap_datepicker_plus import TimePickerInput
 from django import forms
-from tracking.models import Element, Categorie, Workingtime
+from tracking.models import Element, Categorie, Workingtime, Kategorie, Calc_Choices
+
+class CalcForm(forms.ModelForm):
+    class Meta:
+        model = Calc_Choices
+        fields = ['calc']
+        widgets = {
+            'calc': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+class calcchoiceform(forms.Form):
+    choice = forms.ModelChoiceField(queryset=Calc_Choices.objects.all(), widget=forms.Select(attrs={'class': 'form-control'}))
+
 
 class Worktimefrom(forms.ModelForm):
     class Meta:
         model = Workingtime
-        fields = ['workingtime',]
+        fields = ['workingtime']
         widgets = {
             'workingtime': TimePickerInput()
         }
 
 class Categorieform(forms.ModelForm):
     class Meta:
-        model = Categorie
-        fields = ['cat']
+        model = Kategorie
+        fields = ['kategorie']
         widgets = {
-            'cat': forms.TextInput(attrs={'class': 'form-control'}),
+            'kategorie': forms.TextInput(attrs={'class': 'form-control'})
+        }
+
+class editcatchoiceform(forms.Form):
+    choice = forms.ModelChoiceField(queryset=Kategorie.objects.all(), widget=forms.Select(attrs={'class': 'form-control'}))
+
+
+class editcatform(forms.ModelForm):
+    class Meta:
+        model = Kategorie
+        fields = ['kategorie']
+        widgets = {
+            'kategorie': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
 class Elementform(forms.ModelForm):

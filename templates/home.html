@@ -17,7 +17,6 @@ body {background-color: rgb(250, 250, 250);}
     margin: 10px;
 }
 
-
 </style>
 </head>
 
@@ -69,8 +68,8 @@ body {background-color: rgb(250, 250, 250);}
                                             <input type="radio" name="options" id="option2" value="bar"> Bar Chart
                                         </label>
                                     </div>
+                                <div id="canvas_id" ></div>
 
-                                <canvas id="{{choice}}-chart" width="10" height="3"></canvas>
                                 </form>
                     </div>
                     </span>
@@ -142,59 +141,79 @@ new Chart(document.getElementById("pie-chart12"), {
 <script type='text/javascript'>
 
  $(document).ready(function() {
+       $.ajax({
+        url: 'load_canvas/',
+        data: {
+          'selectedOption': 'line'
+        },
+        success: function (data) {
+          $("#canvas_id").html(data);
+
+          Chart.defaults.global.defaultFontColor = 'white';
+            new Chart(document.getElementById("line-chart"), {
+                type: 'line',
+                data: {
+                labels: ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'],
+
+                datasets: [{
+                    data: {{list_hours}},
+                    label: "{{user}}",
+                    borderColor: "#3e95cd",
+                    fill: true
+                    },
+                    ]},
+                options: {
+                    title: {
+                    display: true,
+                    responsive: true,
+                    text: 'Arbeitszeit pro Monat (in Stunden)',
+                    fontColor: "white"
+                    }
+                    }
+            });
+
+           }
+       });
+
+
    $('input[name=options]').change(function(){
-        $('form').submit();
+   var selectedOption = $("input:radio[name=options]:checked").val();
+   $.ajax({
+        url: 'load_canvas/',
+        data: {
+          'selectedOption': selectedOption
+        },
+        success: function (data) {
+          $("#canvas_id").html(data);
+
+            Chart.defaults.global.defaultFontColor = 'white';
+            new Chart(document.getElementById(selectedOption + "-chart"), {
+                type: selectedOption + '',
+                data: {
+                labels: ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'],
+
+                datasets: [{
+                    data: {{list_hours}},
+                    label: "{{user}}",
+                    borderColor: "#3e95cd",
+                    fill: true
+                    },
+                    ]},
+                options: {
+                    title: {
+                    display: true,
+                    responsive: true,
+                    text: 'Arbeitszeit pro Monat (in Stunden)',
+                    fontColor: "white"
+                    }
+                    }
+            });
+
+        }
+        });
    });
-  });
+ });
 
 </script>
 
-<script type="text/javascript">
-Chart.defaults.global.defaultFontColor = 'white';
-new Chart(document.getElementById("line-chart"), {
-  type: 'line',
-  data: {
-    labels: ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'],
-
-    datasets: [{
-        data: {{list_hours}},
-        label: "{{user}}",
-        borderColor: "#3e95cd",
-        fill: true
-      },
-    ]
-  },
-  options: {
-    title: {
-      display: true,
-      responsive: true,
-      text: 'Arbeitszeit pro Monat (in Stunden)',
-      fontColor: "white"
-    }
-  }
-});
-</script>
-
-<script type="text/javascript">
-new Chart(document.getElementById("bar-chart"), {
-  type: 'bar',
-  data: {
-    labels: ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'],
-    datasets: [{
-        data: {{list_hours}},
-        borderColor: "#3e95cd",
-        label: "{{user}}",
-        borderColor: "#3e95cd",
-        backgroundColor: ["#3e95cd", "#3e95cd","#3e95cd","#3e95cd","#3e95cd","#3e95cd","#3e95cd","#3e95cd","#3e95cd","#3e95cd","#3e95cd","#3e95cd"]
-      },
-    ]
-  },
-  options: {
-    title: {
-      display: true,
-      text: 'Arbeitszeit pro Monat (in Stunden)'
-    }
-  }
-});
-</script>
 {% endblock %}
