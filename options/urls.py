@@ -8,6 +8,12 @@ urlpatterns = [
     path('admin_options/addcategories/', views.addcategories, name='add_cat'),
     path('admin_options/editcategories/', views.editcategories, name='edit_cat'),
     path('admin_options/deletecategories/', views.deletecategories, name='del_cat'),
+    path('admin_options/adduser/', views.addelements, name='add_ele'),
+
+    path('admin_options/addelements/', views.addelements, name='add_ele'),
+    path('admin_options/editelements/', views.editelements, name='edit_ele'),
+    path('admin_options/deleteelements/', views.deleteelements, name='del_ele'),
+
     path('load_favorites/', views.load_favorites, name='load_favorites'),
     path('admin_options/', views.admin_options, name='admin_options'),
     path('admin_options/load_elements/', views.load_favelements, name='load_elements'),

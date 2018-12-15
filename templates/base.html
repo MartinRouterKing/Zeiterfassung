@@ -1,7 +1,7 @@
+<!doctype html>
 <!-- templates/base.html -->
 {% load widget_tweaks %}
 {% load static %}
-<!DOCTYPE html>
 <html>
 {% load fullcalendar_tags %}
 
@@ -31,7 +31,7 @@
 }
 
 #calendar .fc-today {
-    background: #246bff !important;
+    background: #d31d1d !important;
     opacity: 0.5;
 }
 
@@ -40,49 +40,70 @@
 }
 
 nav {
-    margin-bottom: 10px
+    -webkit-box-shadow: 0px 6px 6px 0px rgba(0,0,0,0.61);
+    -moz-box-shadow: 0px 6px 6px 0px rgba(0,0,0,0.61);
+     box-shadow: 0px 6px 6px 0px rgba(0,0,0,0.61);
 }
 
 #external-events {
-  max-height: 510px;
-  overflow: auto;
+  overflow: hidden;
+  max-height: 150px;
+  border-bottom: 5px solid black;
+  width: 100%;
+  margin-button: 10px;
+
 }
 
 #id_element .fc-event {
   height: 50px;
-  margin: 1em 0;
-  overflow: hidden;
+  word-wrap: break-word;
   cursor: move;
-  margin: 10px
+  margin: 5px;
+
 }
+
 
 	.closeon {
 	  color: white;
 		position: absolute;
 		top: -5px;
 		right: 0;
-    text-align:center;
-    border-radius:10%;
-    font-size: 18px;
+        text-align:center;
+        border-radius:10%;
+        font-size: 18px;
 		cursor: pointer;
         background-color: #676b70
 	}
 
 
-		.favorite {
-	  color: white;
+	.favorite {
+	    color: white;
 		position: absolute;
 		top: 0px;
 		right: 0;
-    text-align:center;
-    border-radius:10%;
-    font-size: 18px;
+        text-align:center;
+        border-radius:10%;
+        font-size: 18px;
 		cursor: pointer;
         background-color: #676b70
 	}
 
 .glyphicon glyphicon-log-out{
     margin: 20px;
+}
+
+  body {
+  background-color #343a40;
+  padding-top: 100px;
+  //background-image: url( '/static/lubeck-skyline.jpg' );
+  //background-attachment: fixed;
+
+  }
+#sky{
+    background-image: url( '/static/luebeck-sky-header.jpg' );
+
+        box-shadow: inset 0 0 10px #000000;
+    height: 250px;
 }
 
 </style>
@@ -96,15 +117,6 @@ nav {
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
-  <style>
-  body {
-  background-image: url( '/static/lubeck-skyline.jpg' );
-  background-attachment: fixed;
-  padding-top: 70px;
-  background-color: rgb(250, 250, 250);
-  }
-
-  </style>
 
 </head>
 <header>
@@ -130,10 +142,13 @@ nav {
                 </li>
                 {% if user.is_superuser %}
                 <li class="nav-item">
-                    <a class="nav-link" href="/admin"><span class="glyphicon glyphicon-wrench"></span>Admin</a>
+                    <a class="nav-link" href="/admin"><span class="glyphicon glyphicon-wrench"></span> Admin</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'admin_options' %}"><span class="glyphicon glyphicon-wrench"></span>Erweiterte Optionen</a>
+                    <a class="nav-link" href="{% url 'admin_options' %}"><span class="glyphicon glyphicon-wrench"></span> Erweiterte Optionen</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounting' %}"><span class="glyphicon glyphicon-book"></span> Buchhaltung</a>
                 </li>
                 {% endif %}
             </ul>
@@ -143,11 +158,16 @@ nav {
             {% endif %}
         </div>
     </nav>
+<center>
+            <div class="form-control" id="sky">
+            </div>
+</center>
 </header>
 
-<body>
-     {% block content %}
-     {% endblock %}
+<body style="background-color: #343a40; padding-top: 100px;">
+
+{% block content %}
+{% endblock %}
 
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 

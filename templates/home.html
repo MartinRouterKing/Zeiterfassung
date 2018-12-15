@@ -13,9 +13,13 @@
 body {background-color: rgb(250, 250, 250);}
 
 .test{
-    background-color: rgba(2,8,24,0.8);
+    padding: 15px;
+    background-color: #24282c;
+    box-shadow: inset 0 0 10px #000000;
     margin: 10px;
 }
+
+
 
 </style>
 </head>
@@ -29,8 +33,9 @@ body {background-color: rgb(250, 250, 250);}
                     <center><p><font color="white" > Stunden aktueller Monat in %</font></p></center>
                 </div>
                     <span class= "align-baseline">
-                    <div>
+                    <div id ="canvas_container">
                         <canvas id="pie-chart11" width="2" height="1"></canvas>
+
                     </div>
                     </span>
             </div>
@@ -41,8 +46,9 @@ body {background-color: rgb(250, 250, 250);}
                     <center><p><font color="white" >Arbeitszeit pro Kategorie in %</font></p></center>
                 </div>
                 <span class= "align-baseline">
-                    <div>
-                        <canvas id="pie-chart12" width="2" height="1"></canvas>
+                    <div id ="canvas-container">
+                        <canvas style="z-index: 99999;" id="pie-chart12" width="2" height="1"></canvas>
+
                     </div>
                 </span>
             </div>
@@ -60,7 +66,7 @@ body {background-color: rgb(250, 250, 250);}
                     <div>
                         <form method="get" >
                                     {% csrf_token %}
-                                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <div style="margin: 5px;" class="btn-group btn-group-toggle" data-toggle="buttons">
                                         <label class="btn btn-primary">
                                             <input type="radio" name="options" value="line" id="option1"> Line Chart
                                         </label>
@@ -80,59 +86,165 @@ body {background-color: rgb(250, 250, 250);}
 
 
 <script type="text/javascript">
+  var draw = Chart.controllers.doughnut.prototype.draw;
+    Chart.controllers.doughnut = Chart.controllers.doughnut.extend({
+    draw: function() {
+        draw.apply(this, arguments);
+
+        let canvas = this.chart.chart;
+        ctx = canvas.ctx;
+        let _fill = ctx.fill;
+
+        var cw=canvas.width;
+        var ch=canvas.height;
+
+        var radius = this.outerRadius;
+        ctx.globalCompositeOperation='source-atop';
+
+
+        ctx.shadowOffsetX = 500;
+        ctx.shadowOffsetY = 0;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = 'rgba(0,0,0,1)';
+
+        ctx.beginPath();
+        ctx.arc(cw/2-500,ch/2,radius,0,Math.PI*2);
+        ctx.stroke();
+        ctx.stroke();
+        ctx.stroke();
+
+
+        ctx.globalCompositeOperation='source-over';
+
+
+        ctx.fill = function() {
+            ctx.save();
+
+            _fill.apply(this, arguments)
+
+        }
+    }
+    });
+ Chart.pluginService.register({
+  beforeDraw: function (chart) {
+    if (chart.config.options.elements.center) {
+      //Get ctx from string
+      var ctx = chart.chart.ctx;
+
+      //Get options from the center object in options
+      var centerConfig = chart.config.options.elements.center;
+      var fontStyle = centerConfig.fontStyle || 'Arial';
+      var txt = centerConfig.text;
+      var color = centerConfig.color || '#000';
+      var sidePadding = centerConfig.sidePadding || 20;
+      var sidePaddingCalculated = (sidePadding/100) * (chart.innerRadius * 2)
+      //Start with a base font of 30px
+      ctx.font = "30px " + fontStyle;
+
+      //Get the width of the string and also the width of the element minus 10 to give it 5px side padding
+      var stringWidth = ctx.measureText(txt).width;
+      var elementWidth = (chart.innerRadius * 2) - sidePaddingCalculated;
+
+      // Find out how much the font can grow in width.
+      var widthRatio = elementWidth / stringWidth;
+      var newFontSize = Math.floor(30 * widthRatio);
+      var elementHeight = (chart.innerRadius * 2);
+
+      // Pick a new font size so it will not be larger than the height of label.
+      var fontSizeToUse = Math.min(newFontSize, elementHeight);
+
+      //Set font settings to draw it correctly.
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      var centerX = ((chart.chartArea.left + chart.chartArea.right) / 2);
+      var centerY = ((chart.chartArea.top + chart.chartArea.bottom) / 2);
+      ctx.font = fontSizeToUse+"px " + fontStyle;
+      ctx.fillStyle = color;
+
+      //Draw text in center
+      ctx.fillText(txt, centerX, centerY);
+    }
+  }
+});
+
 new Chart(document.getElementById("pie-chart11"), {
     type: 'doughnut',
     data: {
-      labels: [" Ist in %", "Soll in %"],
+      labels: [" Ist Arbeitszeit in %", "Soll Arbeitszeit in %"],
       datasets: [{
         label: "Population (millions)",
-        borderColor: "#353946",
-        hoverBorderWidth: 10,
-        backgroundColor: ["#8d9db6", "#525766"],
+        backgroundColor: ["#d31d1d", "#1a1e21"],
         data: [ {{ working_time_prec }}, 100-{{working_time_prec}} ],
+        hoverBorderWidth: 0,
+        borderColor: "#24282c",
       }]
     },
-       options: {
 
-       segmentShowStroke : false,
+    options: {
+    segmentShowStroke : false,
         legend: {
             display: false
             },
-      title: {
-        display: false,
-        text: 'Arbeitzeit in %'
-      }
+  elements: {
+      center: {
+      text: '{{ working_time_prec }}' + '%',
+      color: '#1a1e21', //Default black
+      fontStyle: 'Helvetica', //Default Arial
     }
+  }
+}
 });
 
 </script>
 <script type="text/javascript">
 new Chart(document.getElementById("pie-chart12"), {
     type: 'doughnut',
+    tooltipCaretSize: 0,
     data: {
       labels: [{% for item in list_cat_label %}
                   "{{item}}",
               {% endfor %}],
       datasets: [{
-        label: "Population (millions)",
-        hoverBorderWidth: 10,
-        borderColor: "#353946",
         backgroundColor: ['#1abc9c', '#2ecc71', '#3498db', '#9b59b6', '#34495e', '#f1c40f', '#e67e22', '#e74c3c', '#95a5a6'], //["#bccad6", "#8d9db6", "#667292", "#f1e3dd", "#cfe0e8","#b7d7e8","#87bdd8","#daebe8"],
         data: [{% for item in list_cat %}
                   {{item}},
               {% endfor %}],
+
+        hoverBorderWidth: 5,
+        borderColor: "#343a40",
       }]
     },
     options: {
+          tooltips: {
+            callbacks: {
+                label: function(tooltipItem, data) {
+                    console.log(data);
+                    var datasetLabel = data.datasets[tooltipItem.datasetIndex].label ||'';
+                    var label = data.labels[tooltipItem.index];
+                    var perc = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]
+                    console.log(perc);
+                    var label1 = '';
+                    var label2 = '';
+                    if (label.length > 50){
+                        label1 = label.substring(0,50) + " -"
+                        label2 = label.substring(50, label.length)
 
+                        return [perc + "% : " + label1, "            " + label2];
+                        } else {
+                        return [perc + "% : " + label];
+
+                        }
+                    }
+                }
+            },
         segmentShowStroke : false,
         legend: {
             display: false
             },
       title: {
         display: false,
-        text: 'Predicted world population (millions) in 2050'
       }
+
     }
 });
 
@@ -158,14 +270,15 @@ new Chart(document.getElementById("pie-chart12"), {
                 datasets: [{
                     data: {{list_hours}},
                     label: "{{user}}",
-                    borderColor: "#3e95cd",
-                    fill: true
+                    borderColor: "#d43f3a",
+                    fill: false,
+                    backgroundColor: ["#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a"],
+
                     },
                     ]},
                 options: {
                     title: {
                     display: true,
-                    responsive: true,
                     text: 'Arbeitszeit pro Monat (in Stunden)',
                     fontColor: "white"
                     }
@@ -193,10 +306,12 @@ new Chart(document.getElementById("pie-chart12"), {
                 labels: ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'],
 
                 datasets: [{
+                    backgroundColor: ["#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a"],
                     data: {{list_hours}},
-                    label: "{{user}}",
-                    borderColor: "#3e95cd",
+                    borderColor: "#d43f3a",
                     fill: true
+
+
                     },
                     ]},
                 options: {

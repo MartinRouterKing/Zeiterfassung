@@ -1,13 +1,16 @@
 {% extends 'base.html' %}
 
+
 {% block content %}
-{% load bootstrap3 %}       {# import bootstrap3 #}
+{% load bootstrap3 %}       {# import bootstra #}
 {% bootstrap_css %}         {# Embed Bootstrap CSS #}
 {% bootstrap_javascript jquery='full' %}  {# Embed Bootstrap JS+jQuery #}
 {{ form.media }}            {# Adds date-picker required JS and CSS #}
-
+{% load widget_tweaks %}
+<meta charset="UTF-8">
 
 <head>
+
     <style>
 
     a{
@@ -20,7 +23,7 @@
 
     .glyphicon-arrow-right{
         color: #337ab7;
-        margin-top: 10px;
+        margin-top: 45px;
     }
 
     .glyphicon-arrow-left{
@@ -29,14 +32,17 @@
     }
 
     .glyphicon-plus{
+        cursor: pointer;
         color: #79c338;
     }
 
     .glyphicon-pencil{
+        cursor: pointer;
         color: #efb80b;
     }
 
     .glyphicon-remove{
+        cursor: pointer;
         color: red;
     }
 
@@ -49,9 +55,20 @@
     }
 
     .test{
-        background-color: rgba(2,8,24,0.8);
+        background-color: #24282c;
+        box-shadow: inset 0 0 10px #000000;
         margin: 10px;
+        margin-top: 0px;
         padding: 20px;
+    }
+
+    .header-container{
+        border-bottom: white;
+        borderColor: #473939
+        margin: 10px;
+        margin-bottom: 0px;
+        font-size: 30px;
+        padding-left: 10px;
     }
 
     table{
@@ -62,13 +79,89 @@
     </style>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 </head>
 
-    <div class="test">
+    <div class="header-container">
+    <strong style="color:white;">Benutzerkonto Hinzufügen:</strong>
+    </div>
+    <div class="test" id="user_form">
+        <form method="post">
+            {% csrf_token %}
+            <p>
+            <label style="margin: 5px; color: white;">*Benutzername:</label>
+            {{ userform.username }}
+            <label style="margin: 5px; color: white;">Es können maximal 150 Charakter (Buchstaben, Zahlen und @.+-_) verwendet werden.</label>
+            </p>
 
-    <strong style="color:white;">Gruppierung der Elemente in Kategorien</strong>
-    <div class="row">
+            <p>
+            <label style="margin: 5px; color: white;">Vorname:</label>
+            {{ userform.first_name }}
+
+            </p>
+
+            <p>
+            <label style="margin: 5px; color: white;">Nachname:</label>
+            {{ userform.first_name }}
+            </p>
+
+            <p>
+            <label style="margin: 5px; color: white;">*E-Mail:</label>
+            {{ userform.email |add_class:'form-control'}}
+            {{ userform.email.help_text }}
+            </p>
+
+
+                <label style="margin: 5px; color: white;">*Passwort:</label>
+                    {{ userform.password1 |add_class:'form-control'}}
+            <ul>
+                    <li style="color: white;"> Das Password darf keine der bereits angegebenen Informationen enthalten </li>
+                    <li style="color: white;"> Das Password muss mindeesten 8 Zeichen enthalten </li>
+                    <li style="color: white;"> Das Password muss sich von den genutzten Passwörtern unterscheiden </li>
+                    <li style="color: white;"> Das Password darf nicht nur aus Buchstaben bestehen </li>
+            </ul>
+
+
+            <p>
+             <label style="margin: 5px; color: white;">*Passwort bestätigen:</label>
+            {{ userform.password2 |add_class:'form-control'}}
+            </p>
+
+
+            <div class="row">
+                <div class="col">
+                    <label style="margin: 5px; color: white;">Dem Benutzer Adminrechte erteilen: {{ userform.is_superuser |add_class:'form-control'}} </label>
+
+                </div>
+
+            </div>
+
+            <button type="submit" onclick="adduser()" class="btn btn-primary" >Speichern</button>
+            <p style="margin: 5px; color: white;">Felder mit einem * müssen ausgefüllt werden. Die weiteren Felder sind optional.</p>
+        </form>
+    </div>
+
+<script>
+
+     function adduser(){
+        var user_form = document.getElementById("user_form");
+
+        $.ajax({
+            type: "POST",
+            url: 'adduser/',
+            }
+        });
+
+</script>
+
+
+    <div class="header-container">
+    <strong style="color:white;"> Einstellung der Kategoriengruppierungen:</strong>
+    </div>
+    <div class="test">
+        <div class="row">
         <div class="col">
+            <label style="color: white;">Kategoriengruppe</label>
             <select class="form-control" id="id_categorie">
                 <option selected> ---- </option>
                 {% for k in kat %}
@@ -76,22 +169,29 @@
                 {% endfor %}
             </select>
         </div>
-
         <div class="col-" >
-            <a class="glyp_container"><span onclick="return popitup('/options/admin_options/addcategories/')" style="font-size: 110%; margin: 5px" class="glyphicon glyphicon-plus"></span></a>
+            <a class="glyp_container"><span onclick="return popitup('/options/admin_options/addcategories/')" style="font-size: 110%; margin: 5px; margin-top: 25px;" class="glyphicon glyphicon-plus"></span></a>
         </div>
         <div class="col-">
-            <a class="glyp_container"><span onclick="return popitup('/options/admin_options/editcategories/')" style="font-size: 110%; margin: 5px" class="glyphicon glyphicon-pencil"></span></a>
+            <a class="glyp_container"><span onclick="return popitup('/options/admin_options/editcategories/')" style="font-size: 110%; margin: 5px; margin-top: 25px; " class="glyphicon glyphicon-pencil"></span></a>
         </div>
         <div class="col-">
-            <a class="glyp_container"><span onclick="return popitup('/options/admin_options/deletecategories/')" style="font-size: 110%; margin: 5px;" class="glyphicon glyphicon-remove"></span></a>
+            <a class="glyp_container"><span onclick="return popitup('/options/admin_options/deletecategories/')" style="font-size: 110%; margin: 5px; margin-top: 25px;" class="glyphicon glyphicon-remove"></span></a>
         </div>
     </div>
     <div class="row">
+        <div class="col-">
+            <a class="glyp_container"><span onclick="return popitup('/options/admin_options/addelements/')" style="font-size: 110%; margin-top: 20px; margin-left: 5px;" class="glyphicon glyphicon-plus"></span></a>
+            <a class="glyp_container"><span onclick="return popitup('/options/admin_options/editelements/')" style="font-size: 110%; margin-left: 5px;" class="glyphicon glyphicon-pencil"></span></a>
+            <a class="glyp_container"><span onclick="return popitup('/options/admin_options/deleteelements/')" style="font-size: 110%; margin-left: 5px;" class="glyphicon glyphicon-remove"></span></a>
+
+        </div>
         <div class="col">
+            <label style="color:white;">Auswahl der Kategorien</label>
             <select multiple class="form-control" id="id_element">
 
             </select>
+
             <div id="alert_div">
                     </div>
 
@@ -103,6 +203,8 @@
             </div>
         </center>
                 <div class="col">
+
+                    <label style="color:white;">Gruppierung</label>
                     <select multiple class="form-control" id="favorite">
 
                     </select>
@@ -112,9 +214,11 @@
     </div>
     </div>
 
+
+
 <script>
        function popitup(url) {
-    newwindow=window.open(url,'{{title}}','height=500,width=500');
+    newwindow=window.open(url,'{{title}}','height=300,width=500');
     if (window.focus) {newwindow.focus()}
     return false};
 
@@ -194,13 +298,11 @@
     });
 
     function add(){
-
     var cat = document.getElementById("id_element");
     var text = cat.options[cat.selectedIndex].text;
     var selectedID = cat.selectedIndex
     console.log(selectedID)
     cat.remove(cat.selectedIndex);
-
 
     var x = document.getElementById("favorite");
     var option = document.createElement("option");
@@ -243,36 +345,12 @@ $(document).ready(function () {
 });
 </script>
 
-
+    <div class="header-container">
+    <strong style="color:white;"> Einstellung der Kategorien und Typen Kombinationen:</strong>
+    </div>
 <div class="test" id="table_div">
-<i class="fa fa-spinner fa-spin" style="font-size:24px; color:#65add6"></i>
+    <div style="font-size:20px; color: #337ab7;"><i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:24px; color:#337ab7"></i>  Einstellungen werden geladen...</div>
 </div>
-
-<script>
-
-    $('document').ready(function(){
-
-    var table = document.getElementById('table');
-
-    for (var r = 1, n = table.rows.length; r < n; r++) {
-
-        for (var c = 3, m = table.rows[r].cells.length; c < m; c++) {
-
-            var element =  table.rows[r].cells[0].innerHTML;
-            var wie = table.rows[r].cells[1].children[0].children[0].children[0].value;
-            var obj = table.rows[r].cells[2].children[0].children[0].children[0].value;
-            var categorie = table.rows[r].cells[0].closest('tbody').id;
-            var type = table.rows[0].cells[c].innerHTML;
-            var chkbox = table.rows[r].cells[c].children[0].children[0].children[0];
-            var calc = table.rows[r].cells[c].children[1];
-            var calc_data = calc.options[calc.selectedIndex].value;
-
-        }
-    }
-    });
-
-</script>
-
 
 <script>
     function Collapse(object) {
@@ -294,6 +372,8 @@ $(document).ready(function () {
 <script>
 
 function save() {
+
+    console.time("Time this");
     var table = document.getElementById('table');
 
     var table_data = [];
@@ -336,6 +416,9 @@ function save() {
 
     }
 
+    console.timeEnd("Time this");
+
+
       $.ajax({
         type: 'POST',
         url: 'load_combination/',
@@ -351,17 +434,5 @@ function save() {
 }
 
 </script>
-<div style="background-color: gray">
-<table>
-
-  {% for r in a %}
-    {% cycle '<tr>' '</tr>'%}
-    {% for i in r %}
-        <td>{{i}}</td>
-    {% endfor %}
-  {% endfor %}
-</table>
-    </div>
-
 
 {% endblock %}

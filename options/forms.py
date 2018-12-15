@@ -1,6 +1,37 @@
 from bootstrap_datepicker_plus import TimePickerInput
 from django import forms
-from tracking.models import Element, Categorie, Workingtime, Kategorie, Calc_Choices
+from tracking.models import Element, Categorie, Workingtime, Kategorie, Calc_Choices,KategorieElement
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+
+class MyRegistrationForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+    name = forms.CharField(required=True)
+
+    class Meta:
+        model = User
+        fields = {'name', 'username', 'password1', 'password2', 'email', 'is_superuser', 'first_name', 'last_name'}
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'password1': forms.TextInput(attrs={'class': 'form-control'}),
+            'password2': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.TextInput(attrs={'class': 'form-control'}),
+            'is_superuser': forms.CheckboxInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+    def save(self, commit=True):
+        user = super(MyRegistrationForm, self).save(commit=False)
+        user.email = self.cleaned_data['email']
+        user.name = self.cleaned_data['username']
+        user.name = self.cleaned_data['first_name']
+        user.name = self.cleaned_data['last_name']
+        user.name = self.cleaned_data['is_superuser']
+
+        if commit:
+            user.save()
+
 
 class CalcForm(forms.ModelForm):
     class Meta:
@@ -44,12 +75,16 @@ class editcatform(forms.ModelForm):
 
 class Elementform(forms.ModelForm):
     class Meta:
-        model = Element
-        fields = ['categories', 'element']
+        model = KategorieElement
+        fields = ['kat_element']
         widgets = {
-            'element': forms.TextInput()
+            'kat_element': forms.TextInput()
         }
 
+
+
+class editelechoiceform(forms.Form):
+      choice = forms.ModelChoiceField(queryset=KategorieElement.objects.all(), widget=forms.Select(attrs={'class': 'form-control'}))
 
 class Choicefrom(forms.ModelForm):
     class Meta:

@@ -8,6 +8,7 @@ def all_events(request):
     today = datetime.now() - timedelta(days=14)
     categorie = Categorie.objects.all()
     events = CalendarEvent.objects.filter(user_id = request.user)
+    print(events)
     events.filter(start__gte=today)
     get_event_types = CalendarEvent.objects.only('title')
     user = request.user
@@ -15,6 +16,8 @@ def all_events(request):
         event_id = CalendarEvent.objects.latest('id').id + 1
     except:
         event_id = 1
+
+    print(events)
 
     context = {
         'user': user,
@@ -40,31 +43,35 @@ def postview(request):
             start = datetime.strptime(start, '%a %b %d %Y %H:%M:%S %Z%z')
             end = datetime.strptime(end, '%a %b %d %Y %H:%M:%S %Z%z')
 
-            hours = (end - start).seconds/3600
+            print(id)
+            print(title)
+            print(type)
 
+
+            hours = (end - start).seconds/3600
+            print(hours)
             user_id = User.objects.get(id=request.user.id)
             cat = Categorie.objects.get(id=type)
 
+            type = Categorie.objects.filter(id=type).values_list('cat', flat=True)
             print(type)
             print(title)
-            ele = Element.objects.get(categories=type, element__kat_element=title)
-            print(ele)
 
             q = CalendarEvent(
                 user_id=user_id,
-                title=ele,
-                type=cat,
+                title=str(title),
+                type=type[0],
                 start=start,
                 end=end,
                 hours=hours,
                 note=note,
-                all_day=False
-            )
+                all_day=False)
 
             q.id = id
             q.save()
 
         if action == 'delete':
+
             id = request.POST['id']
             print(id)
 
@@ -79,10 +86,11 @@ def load_elements(request):
         categories_id = request.GET['categories']
         checked = request.GET['checked']
         print(checked)
-    if checked == 'false':
-        element = Element.objects.filter(categories_id=categories_id).order_by('categories')
-    else:
-        element = FavoriteElement.objects.filter(fav_element__categories_id=categories_id)
+
+        if checked == 'false':
+            element = Element.objects.filter(categories_id=categories_id).order_by('categories')
+        else:
+            element = FavoriteElement.objects.filter(fav_element__categories_id=categories_id)
 
     return render(request, 'element_events.html',
                   {

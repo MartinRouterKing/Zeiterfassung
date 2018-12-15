@@ -1,12 +1,12 @@
 from django.contrib.auth.models import User
-from tracking.models import Categorie
+from tracking.models import Categorie, Element
 from django import forms
 
 class UserForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['username',]
+        fields = ['username']
 
 
 class CategorieForm(forms.ModelForm):
@@ -15,6 +15,10 @@ class CategorieForm(forms.ModelForm):
         model = Categorie
         fields = ['cat']
 
+class WieForm(forms.Form):
+    class Meta:
+        model = Element
+        field = ['wie']
 
 
 

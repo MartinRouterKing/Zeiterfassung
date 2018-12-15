@@ -1,4 +1,4 @@
-from tracking.models import Categorie, Workingtime
+from tracking.models import Categorie, Workingtime, Categorie
 from calender.models import CalendarEvent
 from django.shortcuts import render
 from datetime import datetime
@@ -77,18 +77,24 @@ def Analyticsview(request):
     list_cat = []
     list_cat_label= []
 
-    list_cat_label = Categorie.objects.all()
 
-
-    for c in range(1, len(list_cat_label) + 1):
+    for c in list(set(Categorie.objects.all().values_list('cat',flat=True))):
 
         h = 0
         for hour, cat in zip(obj_hours, obj_categories):
+            print(cat[0])
+            print(c)
+            print("__")
             if cat[0] == c:
+                print('equal')
+                print(hour[0])
                 h = h + (hour[0] / sum(list_hours))*100
                 h = round(h, 2)
+        list_cat_label.append(c)
         list_cat.append(h)
 
+    print(list_cat)
+    print(list_cat_label)
     user = request.user
 
     return render(request, 'home.html',{

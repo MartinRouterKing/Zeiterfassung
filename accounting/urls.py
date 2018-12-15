@@ -6,5 +6,6 @@ admin.autodiscover()
 
 urlpatterns = [
     path('', views.accounting, name='accounting'),
-    path('table/', views.ajaxtable, name='table')
+    path('table/', views.ajaxtable, name='table'),
+    path('accounting_pie/', views.ajaxpie, name='pie')
     ]

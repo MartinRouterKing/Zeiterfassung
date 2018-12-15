@@ -9,16 +9,8 @@
 
     <style>
 
-
-.fc-title:hover{
-    z-index: 20 !important;
-    overflow: visible !important;
-    opacity: .99;
-    background-color: #007bff;
-}
-
 .test{
-    background-color: rgba(2,8,24,0.8);
+    background-color: #343a40;
     padding: 10px;
 }
 
@@ -32,10 +24,14 @@ th, td, h2{
 }
 
 .fc-event{
-    z-index: 0;
     position: relative;
-    background-color: #343a40;
 }
+
+.fc-event:hover {
+          box-shadow: 0 1px 5px rgba(0,0,0,0.95);
+          transition: box-shadow 0.1s ease-in-out;
+          transform: scale(1.05, 1.05);
+    }
 
 
 /* Required Styling */
@@ -71,27 +67,53 @@ label input[type="checkbox"] {
   opacity: 0.5;
 }
 
-
 .custom-checkbox input[type="checkbox"]:checked ~ .glyphicon-star {
   opacity: 1;
 }
+
+
+.fc-head{
+ background-color: #343a40;
+ box-shadow: inset 0 0 10px #000000;
+}
+
+.table-bordered{
+    border: none;
+}
+
+.fc-view-container{
+    box-shadow: inset 0 0 10px #000000;
+    background-color: #24282C;
+}
+
+#id_element .fc-event{
+    background-color: #676b70;
+    border: none;
+    display: inline-block;
+}
+
+#fc-event ui-draggable ui-draggable-handle{
+
+}
+
 
 </style>
 
 </head>
 
-<div class="container">
-  <!-- Content here -->
-    <div class="row">
-        <div class="col">
-            <div class="test" id='external-events'>
 
-                <label for="id-of-input" id="id_favorite" class="custom-checkbox">
-                    <input type="checkbox" id="id-of-input" onclick="myFunction()"/>
-                    <i class="glyphicon glyphicon-star-empty"></i>
-                    <i class="glyphicon glyphicon-star"></i>
-                    <span style="color:white">Favoriten</span>
-                </label>
+  <!-- Content here -->
+            <div class="test" id='external-events'>
+                <div class="row">
+                    <div class="col" style="border-bottom: 1px solid black;">
+                        <label  for="id-of-input" id="id_favorite" class="custom-checkbox" style="float: right;">
+                        <input type="checkbox" id="id-of-input" onclick="myFunction()"/>
+                        <i class="glyphicon glyphicon-star-empty"></i>
+                        <i class="glyphicon glyphicon-star"></i>
+                        <span style="color:white;">Favoriten</span>
+                        </label>
+                    </div>
+                    <div class="col">
                     <span class= "align-baseline">
                         <div>
                             <form method="post">
@@ -101,15 +123,16 @@ label input[type="checkbox"] {
                                     {% endfor %}
                                 </select>
                             </form>
-                            <div id = "id_element" class=form-control">
-                            </div>  </div>
+                        </div>
                     </span>
-                            <input class="form-control" type='checkbox' id='drop-remove' />
-                            <label class="form-control" for='drop-remove'>remove after drop</label>
-
+                    </div>
+                </div>
+                <div id = "id_element" class=form-control">
+                </div>
             </div>
-        </div>
-        <div class="col-9">
+            </div>
+
+
                 <div class="test">
                     <div>
                 <span class= "align-baseline">
@@ -119,9 +142,7 @@ label input[type="checkbox"] {
                 </span>
                     </div>
                 </div>
-            </div>
-        </div>
-</div>
+            </center>
 
 <script>
 
@@ -138,7 +159,12 @@ label input[type="checkbox"] {
           $("#id_element").html(data)
 
          $('#id_element .fc-event').each(function() {
-                                                                // store data so the calendar knows to render an event upon drop
+            var colors = ['#1abc9c', '#2ecc71', '#3498db', '#9b59b6', '#34495e', '#f1c40f', '#e67e22', '#e74c3c', '#95a5a6',, '#34495e', '#f1c40f', '#e67e22', '#e74c3c', '#95a5a6',];
+            console.log(categoriesId)
+            var color = colors[categoriesId];
+            $(this).css({"border-left": "5px solid #d31d1d"});
+
+                                                    // store data so the calendar knows to render an event upon drop
            $(this).data('event', {
             title: $.trim($(this).text()),                      // use the element's text as the event title
             type: categoriesId,
@@ -169,6 +195,8 @@ label input[type="checkbox"] {
   // -----------------------------------------------------------------
 
   $('#id_element .fc-event').each(function() {
+
+
 
     // store data so the calendar knows to render an event upon drop
 
@@ -263,8 +291,8 @@ label input[type="checkbox"] {
             {% for i in events %}
                 {
                     id: "{{i.id}}",
-                    title: "{{ i.title.element}}",
-                    type: "{{ i.type.id }}",
+                    title: "{{ i.title}}",
+                    type: "{{ i.type }}",
                     start: "{{ i.start|date:"c" }}",
                     end: "{{ i.end|date:"c" }}",
                     note: "{{ i.note }}",
@@ -273,9 +301,10 @@ label input[type="checkbox"] {
                 {% endfor %}
             ],
             eventRender: function(event, element, view) {
-                var colors = ['#1abc9c', '#2ecc71', '#3498db', '#9b59b6', '#34495e', '#f1c40f', '#e67e22', '#e74c3c', '#95a5a6'];
+                var colors = ['#1abc9c', '#2ecc71', '#3498db', '#9b59b6', '#34495e', '#f1c40f', '#e67e22', '#e74c3c', '#95a5a6',, '#34495e', '#f1c40f', '#e67e22', '#e74c3c', '#95a5a6',];
+                console.log(event.type)
                 var color = colors[event.type];
-                element.css({"border-left": "5px solid "  + color});
+                element.css({"border-left": "5px solid #d31d1d"});
 
 
             if (view.name == 'listDay') {

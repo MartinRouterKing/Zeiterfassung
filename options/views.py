@@ -2,10 +2,11 @@ from tracking.models import Element, Categorie, Workingtime, FavoriteElement, El
 from tracking.models import KategorieElement, Kategorie, Wie, Obj, Calc_Choices
 from django.contrib.auth.models import User
 from django.shortcuts import render
-from .forms import Choicefrom, Categorieform, editcatform, Worktimefrom, editcatchoiceform, CalcForm, calcchoiceform
+from .forms import Choicefrom, Categorieform, editcatform, Worktimefrom, \
+    editcatchoiceform, CalcForm, calcchoiceform,Elementform, editelechoiceform, MyRegistrationForm
 from django.contrib import messages
 from django.db import IntegrityError
-
+from django.contrib.auth.forms import UserCreationForm
 
 
 def load_elements(request):
@@ -58,6 +59,16 @@ def options(request):
                       'choice_form': choice_form,
                       'work_time_form': work_time_form
                    })
+
+def create_user(request):
+    if request.method == 'POST':
+        user = MyRegistrationForm(request.POST)
+        if user.is_valid():
+            user.save()
+            messages.success(request, 'Account created successfully')
+
+    return render(request, 'admin_options.html', {'form': user})
+
 
 def addcategories(request):
 
@@ -123,7 +134,7 @@ def editcategories(request):
 def deletecategories(request):
 
     '''
-    Delete categories in the Datamodel
+    Delete elements in the Datamodel
     ClickEvent popup a new window with the input mask
 
     :param request: choice
@@ -144,25 +155,76 @@ def deletecategories(request):
                   )
 
 
-#def addelements(request):
-#    if request.method == 'POST':
-#        elementsform = Elementform(request.POST)
-#        if elementsform.is_valid():
-#            categories = elementsform.cleaned_data['categories']
-#            elements = elementsform.cleaned_data['element']
-#            ca = Element(
-#                categories = categories,
-#                element = elements
-#            )
-#
-#            ca.save()
-#
-#            messages.success(request, ' Erfolgreich gespeichert')
-#
-#    return render(request, 'element_input.html',
-#                  {'elementsform': Elementform}
-#                  )
+def addelements(request):
+    if request.method == 'POST':
+        elementsform = Elementform(request.POST)
+        if elementsform.is_valid():
+            elements = elementsform.cleaned_data['kat_element']
+            ca = KategorieElement(
+                kat_element = elements
+            )
 
+            ca.save()
+
+            messages.success(request, ' Erfolgreich gespeichert')
+
+    return render(request, 'addelements.html',
+                  {'elementsform': Elementform}
+                  )
+
+def editelements(request):
+    '''
+    Edit the elements in the Datamodel
+    ClickEvent popup a new window with the input mask
+
+    :param request: choice and editform
+    :return: Uppdate the selected choice in the model
+    '''
+
+    choice = editelechoiceform()
+    editform = Elementform()
+
+    if request.method == 'POST':
+        form = Elementform(request.POST)
+        choice = editelechoiceform(request.POST)
+        if form.is_valid() and choice.is_valid():
+            txt = form.cleaned_data['kat_element']
+            edit = choice.cleaned_data['choice']
+            q = KategorieElement.objects.get(kat_element=edit)
+            print(q)
+            q.kat_element = txt
+            q.save()
+            messages.success(request, ' Erfolgreich gespeichert')
+        else:
+            messages.warning(request, ' Bitte Überprüfen Sie die Eingabe')
+
+    return render(request, 'editelements.html',
+                  {'choice': choice,
+                   'editform': editform}
+                  )
+def deleteelements(request):
+
+    '''
+    Delete elements in the Datamodel
+    ClickEvent popup a new window with the input mask
+
+    :param request: choice
+    :return: Delete the selected elements
+    '''
+
+    choice = editelechoiceform()
+
+
+    if request.method == 'POST':
+        choice = editelechoiceform(request.POST)
+        if choice.is_valid():
+            edit = choice.cleaned_data['choice']
+            KategorieElement.objects.filter(kat_element=edit).delete()
+            messages.success(request, ' Erfolgreich Gelöscht')
+
+    return render(request, 'deleteelements.html',
+                  {'choice': choice}
+                  )
 def addfavortites(request):
 
     if request.method == 'POST':
@@ -245,13 +307,17 @@ def admin_options(request):
     kat = Kategorie.objects.all().order_by('kategorie')
     kat_element = ElementTOKat.objects.all().order_by('katgroup__kategorie')
     load_table = Element.objects.all()
-
+    elements = ElementTOKat.objects.all().values_list('ele__kat_element', flat=True)
+    userform =  MyRegistrationForm()
+    user = request.user
     return render(request, 'admin_options.html',
                   {
                       'kat': kat,
                       'load_table': load_table,
                       'typ': typ,
                       'kat_element': kat_element,
+                      'userform': userform,
+                      'user': user
                   })
 
 def load_favelements(request):
@@ -273,7 +339,7 @@ def load_fav(request):
     if request.method == 'POST':
         cat = request.POST['categorie']
 
-        fav_kat_element = ElementTOKat.objects.filter(katgroup__kategorie=cat).values_list('ele__kat_element', flat=True)
+        fav_kat_element = Element.objects.filter(categorie=cat).order_by('element').values_list('element', flat=True)
 
 
     return render(request, 'load_favelements.html',
@@ -289,10 +355,15 @@ def load_combination(request):
 
         Element.objects.all().delete()
 
-        for i in data:
-            if i == 'csrfmiddlewaretoken':
+        import time
+
+        start_time =time.time()
+
+        for key in data.keys():
+            if key == 'csrfmiddlewaretoken':
                 continue
-            row =request.POST.getlist(str(i))
+            row = data.getlist(key,'')
+            print(row)
 
             if row[5]=='true':
                 q = Element(
@@ -305,11 +376,7 @@ def load_combination(request):
                 )
 
                 q.save()
-        # for i in data:
-            # for k in Categries:
-                # if k == i['categorie']:
-                    # save ele + verrechnung + WIE + OBJ NUMMER in ELEMENT
-
+        print('save time: ' + str(time.time() - start_time))
     return render(request, 'admin_options.html',
                   {}
                   )
@@ -348,12 +415,4 @@ def load_categorie(request):
     return render(request, 'admin_options.html',
                   {}
                   )
-
-
-
-
-
-
-
-
 

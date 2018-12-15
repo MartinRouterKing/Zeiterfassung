@@ -60,7 +60,6 @@ class ElementTOKat(models.Model):
     katgroup = models.ForeignKey(Kategorie, on_delete=models.CASCADE)
     ele = models.ForeignKey(KategorieElement, on_delete=models.CASCADE)
 
-
 class FavoriteElement(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     fav_element = models.ForeignKey(Element, on_delete=models.CASCADE)
