@@ -29,8 +29,6 @@ def ajaxpie(request):
 
     if request.method == 'POST':
 
-
-
         pie_data = 0
 
     return render(request, 'accounting_pie.html',

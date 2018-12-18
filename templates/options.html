@@ -46,6 +46,7 @@ button{
 </style>
 
 </head>
+<div class="container">
         {% if messages %}
         {% for message in messages %}
         <div class="alert alert-{{message.tags}} fade in" role="alert">
@@ -98,7 +99,7 @@ button{
         <button style="margin-top: 10px; margin-bottom: 10px;" type="button" onclick="savefav()" class="btn btn-primary" >Speichern</button>
     </div>
 </div>
-
+</div>
         <script>
 
     $("#id_categories").attr('class', 'form-control');

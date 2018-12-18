@@ -63,18 +63,17 @@ nav {
 }
 
 
-	.closeon {
-	  color: white;
-		position: absolute;
-		top: -5px;
-		right: 0;
-        text-align:center;
-        border-radius:10%;
-        font-size: 18px;
-		cursor: pointer;
-        background-color: #676b70
-	}
-
+.closeon {
+  color: white;
+	position: absolute;
+	top: -5px;
+	right: 0;
+       text-align:center;
+       border-radius:10%;
+       font-size: 18px;
+	cursor: pointer;
+       background-color: #676b70
+}
 
 	.favorite {
 	    color: white;
@@ -99,6 +98,7 @@ nav {
   //background-attachment: fixed;
 
   }
+
 #sky{
     background-image: url( '/static/luebeck-sky-header.jpg' );
 
@@ -142,7 +142,7 @@ nav {
                 </li>
                 {% if user.is_superuser %}
                 <li class="nav-item">
-                    <a class="nav-link" href="/admin"><span class="glyphicon glyphicon-wrench"></span> Admin</a>
+                    <a class="nav-link" href="{% url 'controlling' %}"><span class="glyphicon glyphicon-dashboard"></span> Controlling</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'admin_options' %}"><span class="glyphicon glyphicon-wrench"></span> Erweiterte Optionen</a>

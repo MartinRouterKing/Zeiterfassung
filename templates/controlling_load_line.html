@@ -1,0 +1,37 @@
+
+
+<canvas id="line-chart"></canvas>
+
+<script>
+          Chart.defaults.global.defaultFontColor = 'white';
+            new Chart(document.getElementById("line-chart"), {
+                type: 'line',
+                data: {
+                labels: [
+                    {% for label in month_list %}
+                        "{{label}}",
+                    {% endfor %}
+                    ],
+
+                datasets: [
+                           {% for key, value in data.items %}
+                           {
+                            data: {{value.hours}},
+                            label: "{{key}}",
+                            borderColor: "{{value.color}}",
+                            fill: false
+                           },
+                           {% endfor %}
+                          ]
+                        },
+                options: {
+                    title: {
+                    display: true,
+                    text: 'Arbeitszeit pro Monat (in Stunden)',
+                    fontColor: "white"
+                    }
+                    }
+            });
+
+
+</script>

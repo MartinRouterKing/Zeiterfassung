@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'controlling.apps.ControllingConfig',
     'accounting.apps.AccountingConfig',
     'calender.apps.CalenderConfig',
     'fullcalendar',
