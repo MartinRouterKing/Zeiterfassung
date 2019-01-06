@@ -43,27 +43,50 @@ def search(request):
             return datetime.date(year, month, day)
 
         end_date_iso = add_months(end_date_iso,1)
-
+        data = {}
         hours_list = []
         label_list = []
+        colors = ['#1abc9c', '#34495e', '#2ecc71', '#3498db', '#9b59b6', '#f1c40f', '#e67e22', '#e74c3c', '#95a5a6',
+                  "#bccad6", "#8d9db6", "#667292", "#f1e3dd", "#cfe0e8", "#b7d7e8", "#87bdd8", "#daebe8"]
+        counter=0
         for i in cat_search:
+            hours_list = []
             search_obj = CalendarEvent.objects.filter(user_id__username__in=user_search,
                                                       type=i,
                                                       start__range = [start_date_iso, end_date_iso]).aggregate(Sum('hours'))
             if search_obj['hours__sum'] is not None:
                 hours_list.append(float(search_obj['hours__sum']))
-                label_list.append(i)
+            else:
+                hours_list.append(0)
+
+            if len(i) > 30:
+                data[i[:30] + "..."] = []
+                data[i[:30] + "..."].append(hours_list)
+                data[i[:30] + "..."].append(colors[counter])
+
+            else:
+                data[i] = []
+                data[i].append(hours_list)
+                data[i].append(colors[counter])
+
+            counter += 1
 
         if percent == 'true':
-            hours_list_new = hours_list
-            hours_list=[]
-            hour_sum = sum(hours_list_new)
-            for p in hours_list_new:
-                hours_list.append( round((p/hour_sum)*100, 2))
+            hour_sum = 0
+            data_new = data
+            print(data_new)
 
+            for key, values in data_new.items():
+                hour_sum = hour_sum + values[0][0]
+            print(hour_sum)
+            for key, values in data_new.items():
+                print(values)
+                data[key][0]= [round((values[0][0]/hour_sum)*100, 2)]
+        print(data)
 
     return render(request, 'controlling_load_pie.html',
                   {'label_list': label_list,
+                   'data': data,
                    'hours_list': hours_list}
                   )
 
@@ -108,6 +131,7 @@ def search_line(request):
                                                           end__year = year).aggregate(Sum('hours'))
 
                 if search_obj['hours__sum'] is not None:
+                    print(search_obj)
                     data[user]['hours'].append(float(search_obj['hours__sum']))
                 else:
                     data[user]['hours'].append(0)

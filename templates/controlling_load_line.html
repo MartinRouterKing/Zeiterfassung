@@ -1,6 +1,6 @@
 
 
-<canvas id="line-chart"></canvas>
+<canvas id="line-chart" width="3" height="1"></canvas>
 
 <script>
           Chart.defaults.global.defaultFontColor = 'white';
@@ -25,6 +25,15 @@
                           ]
                         },
                 options: {
+                    scales: {
+                        yAxes: [{
+                            display: true,
+                                ticks: {
+                                    min: 0,
+                                    stepSize: 10
+                                }
+                            }]
+                        },
                     title: {
                     display: true,
                     text: 'Arbeitszeit pro Monat (in Stunden)',

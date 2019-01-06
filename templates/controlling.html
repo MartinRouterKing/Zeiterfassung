@@ -24,7 +24,7 @@
     height: 300px;
 }
 
-#line_container{
+#pie_container{
     padding: 15px;
     background-color: #24282c;
     box-shadow: inset 0 0 10px #000000;
@@ -176,7 +176,7 @@
 </head>
 <div class="container">
     <div class="row equal">
-        <div class="col">
+        <div class="col-sm-4">
             <div class="test">
                 <form method="post" id="user_selectform">
                     <label>Auswahl der Mitarbeiter/-in:</label>
@@ -213,19 +213,96 @@
             <button type="submit" style="margin: 10px;" onclick="search()" class="btn btn-primary" >Berechnen</button>
             </div>
         </div>
-        <div class="col">
-            <div class="test" id="pie_container">
+        <div class="col-sm-8">
+            <div class="test" id="line_container">
+            <canvas id="line-chart" width="3" height="1"></canvas>
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col">
-            <div id="line_container">
-
+            <div id="pie_container">
+                <canvas id="bar-chart" width="300" height="100"></canvas>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+            Chart.defaults.global.defaultFontColor = 'white';
+            new Chart(document.getElementById("line-chart"), {
+                type: 'line',
+                scaleStartValue : 0,
+                data: {
+                labels: ['Jan-19', 'Feb-19', 'Mar-19', 'Apr-19', 'May-19', 'Jun-19', 'Jul-19', 'Aug-19', 'Sep-19', 'Oct-19', 'Nov-19', 'Dec-19'],
+
+                datasets: [
+                           {
+                            data: [0,0,0,0,0,0,0,0,0,0,0,0],
+                            label: "Kein Mitarbeiter Ausgewähl",
+                            borderColor: "#1abc9c",
+                            fill: false
+                           },
+                          ]
+                        },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            display: true,
+                                ticks: {
+                                    min: 0,
+                                    max: 50,
+                                    stepSize: 10
+                                }
+                            }]
+                        },
+                    title: {
+                    display: true,
+                    text: 'Arbeitszeit pro Monat (in Stunden)',
+                    fontColor: "white"
+                    }
+                    }
+            });
+
+</script>
+
+<script>
+        Chart.defaults.global.defaultFontColor = 'white';
+    var ctx = document.getElementById("bar-chart")
+    new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ["Typ"],
+                datasets: [
+                    {
+                    label: "Kein Typ Ausgewählt",
+                    backgroundColor: '#1abc9c',
+                    data: [0,01],
+                    },
+                    ],
+                },
+
+                options: {
+                                    scales: {
+                        yAxes: [{
+                            display: true,
+                                ticks: {
+                                    min: 0,
+                                    max: 10,
+                                    stepSize: 1
+                                }
+                            }]
+                        },
+
+                    legend: { position: 'bottom' },
+                    tooltips: {
+                        enabled: true
+                        },
+                },
+            });
+
+</script>
+
 <script>
 
 function selectedValue(id){

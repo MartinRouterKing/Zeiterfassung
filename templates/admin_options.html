@@ -81,85 +81,61 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 </head>
-
-    <div class="header-container">
+<div class="container" style="padding: 10px;">
+<div class="header-container">
     <strong style="color:white;">Benutzerkonto Hinzufügen:</strong>
-    </div>
-    <div class="test" id="user_form">
-        <form method="post">
-            {% csrf_token %}
-            <p>
+</div>
+<div class="test">
+
+    <form method="post">
+        {% csrf_token %}
+        <p>
             <label style="margin: 5px; color: white;">*Benutzername:</label>
             {{ userform.username }}
             <label style="margin: 5px; color: white;">Es können maximal 150 Charakter (Buchstaben, Zahlen und @.+-_) verwendet werden.</label>
-            </p>
-
-            <p>
+        </p>
+        <p>
             <label style="margin: 5px; color: white;">Vorname:</label>
             {{ userform.first_name }}
-
-            </p>
-
-            <p>
+        </p>
+        <p>
             <label style="margin: 5px; color: white;">Nachname:</label>
             {{ userform.first_name }}
-            </p>
-
-            <p>
+        </p>
+        <p>
             <label style="margin: 5px; color: white;">*E-Mail:</label>
             {{ userform.email |add_class:'form-control'}}
             {{ userform.email.help_text }}
-            </p>
+        </p>
 
-
-                <label style="margin: 5px; color: white;">*Passwort:</label>
-                    {{ userform.password1 |add_class:'form-control'}}
-            <ul>
-                    <li style="color: white;"> Das Password darf keine der bereits angegebenen Informationen enthalten </li>
-                    <li style="color: white;"> Das Password muss mindeesten 8 Zeichen enthalten </li>
-                    <li style="color: white;"> Das Password muss sich von den genutzten Passwörtern unterscheiden </li>
-                    <li style="color: white;"> Das Password darf nicht nur aus Buchstaben bestehen </li>
-            </ul>
-
-
-            <p>
-             <label style="margin: 5px; color: white;">*Passwort bestätigen:</label>
+        <label style="margin: 5px; color: white;">*Passwort:</label>
+        {{ userform.password1 |add_class:'form-control'}}
+        <ul>
+            <li style="color: white;"> Das Password darf keine der bereits angegebenen Informationen enthalten </li>
+            <li style="color: white;"> Das Password muss mindestes 8 Zeichen enthalten </li>
+            <li style="color: white;"> Das Password muss sich von den genutzten Passwörtern unterscheiden </li>
+            <li style="color: white;"> Das Password darf nicht nur aus Buchstaben bestehen </li>
+        </ul>
+        <p>
+            <label style="margin: 5px; color: white;">*Passwort bestätigen:</label>
             {{ userform.password2 |add_class:'form-control'}}
-            </p>
-
-
-            <div class="row">
-                <div class="col">
-                    <label style="margin: 5px; color: white;">Dem Benutzer Adminrechte erteilen: {{ userform.is_superuser |add_class:'form-control'}} </label>
-
-                </div>
-
-            </div>
-
-            <button type="submit" onclick="adduser()" class="btn btn-primary" >Berechnen</button>
-            <p style="margin: 5px; color: white;">Felder mit einem * müssen ausgefüllt werden. Die weiteren Felder sind optional.</p>
-        </form>
-    </div>
-
-<script>
-
-     function adduser(){
-        var user_form = document.getElementById("user_form");
-
-        $.ajax({
-            type: "POST",
-            url: 'adduser/',
-            }
-        });
-
-</script>
-
-
-    <div class="header-container">
-    <strong style="color:white;"> Einstellung der Kategoriengruppierungen:</strong>
-    </div>
-    <div class="test">
+        </p>
         <div class="row">
+            <div class="col">
+                <label style="margin: 5px; color: white;">Dem Benutzer Adminrechte erteilen: {{ userform.is_superuser |add_class:'form-control'}} </label>
+            </div>
+        </div>
+        <input type="submit" class="btn btn-primary" style="margin: 10px;" value="Benutzer erstellen">
+        <p style="margin: 5px; color: white;">Felder mit einem * müssen ausgefüllt werden. Die weiteren Felder sind optional.</p>
+    </form>
+</div>
+
+<div class="header-container">
+    <strong style="color:white;"> Einstellung der Kategoriengruppierungen:</strong>
+</div>
+
+<div class="test">
+    <div class="row">
         <div class="col">
             <label style="color: white;">Kategoriengruppe</label>
             <select class="form-control" id="id_categorie">
@@ -184,17 +160,14 @@
             <a class="glyp_container"><span onclick="return popitup('/options/admin_options/addelements/')" style="font-size: 110%; margin-top: 20px; margin-left: 5px;" class="glyphicon glyphicon-plus"></span></a>
             <a class="glyp_container"><span onclick="return popitup('/options/admin_options/editelements/')" style="font-size: 110%; margin-left: 5px;" class="glyphicon glyphicon-pencil"></span></a>
             <a class="glyp_container"><span onclick="return popitup('/options/admin_options/deleteelements/')" style="font-size: 110%; margin-left: 5px;" class="glyphicon glyphicon-remove"></span></a>
-
         </div>
         <div class="col">
             <label style="color:white;">Auswahl der Kategorien</label>
             <select multiple class="form-control" id="id_element">
-
             </select>
-
             <div id="alert_div">
-                    </div>
 
+            </div>
         </div>
         <center>
             <div class="col-">
@@ -202,19 +175,28 @@
                 <a><span onclick="remove()" style="font-size: 150%;" class="glyphicon glyphicon-arrow-left"></span></a>
             </div>
         </center>
-                <div class="col">
+        <div class="col">
+            <label style="color:white;">Gruppierung</label>
+            <select multiple class="form-control" id="favorite">
 
-                    <label style="color:white;">Gruppierung</label>
-                    <select multiple class="form-control" id="favorite">
-
-                    </select>
-                    <button class="btn btn-primary" style="margin: 10px;" onclick="savefavelem()">Speichern</button>
-
-                </div>
+            </select>
+            <button class="btn btn-primary" style="margin: 10px;" onclick="savefavelem()">Speichern</button>
+        </div>
     </div>
-    </div>
+</div>
+
+<div class="header-container">
+    <strong style="color:white;"> Einstellung der Kategorien und Typen Kombinationen:</strong>
+</div>
+
+<div class="test" id="table_div">
+    <div style="font-size:20px; color: #337ab7;"><i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:24px; color:#337ab7"></i>  Einstellungen werden geladen...</div>
+</div>
+</div>
+<script>
 
 
+</script>
 
 <script>
        function popitup(url) {
@@ -344,13 +326,6 @@ $(document).ready(function () {
       });
 });
 </script>
-
-    <div class="header-container">
-    <strong style="color:white;"> Einstellung der Kategorien und Typen Kombinationen:</strong>
-    </div>
-<div class="test" id="table_div">
-    <div style="font-size:20px; color: #337ab7;"><i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:24px; color:#337ab7"></i>  Einstellungen werden geladen...</div>
-</div>
 
 <script>
     function Collapse(object) {

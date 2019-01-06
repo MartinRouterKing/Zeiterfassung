@@ -21,16 +21,6 @@ class MyRegistrationForm(UserCreationForm):
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
-    def save(self, commit=True):
-        user = super(MyRegistrationForm, self).save(commit=False)
-        user.email = self.cleaned_data['email']
-        user.name = self.cleaned_data['username']
-        user.name = self.cleaned_data['first_name']
-        user.name = self.cleaned_data['last_name']
-        user.name = self.cleaned_data['is_superuser']
-
-        if commit:
-            user.save()
 
 
 class CalcForm(forms.ModelForm):

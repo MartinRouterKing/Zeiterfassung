@@ -17,6 +17,7 @@
     margin: 10px;
     margin-top: 10px;
     margin-bottom: 10px;
+    padding: 20px;
 }
 
 
@@ -25,6 +26,9 @@
     margin-bottom: -5px;
 }
 
+.errorlist{
+    color: red;
+}
 
 #Worktimeform{
     margin-top: 10px;
@@ -43,36 +47,25 @@ button{
     color:
 }
 
+#glob_cont{
+    padding: 10px;
+}
+
 </style>
 
 </head>
-<div class="container">
-        {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-{{message.tags}} fade in" role="alert">
-            <Strong {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</Strong>
-            {% endfor %}
-            {% endif %}
-        </div>
-<div class="test">
-    <div class="container">
-            <form method="post" id="Worktimeform">
-                {% csrf_token %}
-                {{ work_time_form.as_p }}
-                <button type="submit" class="btn btn-primary" >Eingabe</button>
-            </form>
+
+
+<div class="container" id="glob_cont" style="padding: 10px;">
+    <div style="padding: 10px;">
+
+    <div id="alert_div">
+
     </div>
-</div>
-
-<div id="alert_div">
-
-</div>
-
-<div class="test">
-    <div class="container">
+    <div class="test">
         {% if saved %}
         <div class="alert alert-success">
-        <strong>Success!</strong> Indicates a successful or positive action.
+            <strong>Success!</strong> Indicates a successful or positive action.
         </div>
         {% endif %}
         <span style="color:white"><STRONG>Auswahl der Typen</STRONG></span>
@@ -83,25 +76,25 @@ button{
             <select class="form-control" id="id_element" name="groups_old"  multiple="multiple" >
 
             </select>
-
             <center>
                 <div class = "fav-changer">
-                <a><span onclick="favadd()" style="font-size: 150%" class="glyphicon glyphicon-arrow-down"></span></a>
-                <a><span onclick="favremove()" style="font-size: 150%" class="glyphicon glyphicon-arrow-up"></span></a>
+                    <a><span onclick="favadd()" style="font-size: 150%; color: #337ab7;" class="glyphicon glyphicon-arrow-down"></span></a>
+                    <a><span onclick="favremove()" style="font-size: 150%; color: #337ab7;" class="glyphicon glyphicon-arrow-up"></span></a>
                 </div>
             </center>
-
             <span style="color:gold" class="glyphicon glyphicon-star"><span style="color:white"><STRONG>Favoriten</STRONG></span></span>
             <select class="form-control" id="favorite" name="groups_old" multiple="multiple" >
-            </select>
 
+            </select>
         </form>
         <button style="margin-top: 10px; margin-bottom: 10px;" type="button" onclick="savefav()" class="btn btn-primary" >Speichern</button>
     </div>
+    </div>
 </div>
-</div>
-        <script>
 
+<script>
+
+    $("#id_workingtime").attr('value', "{{workingtime}}");
     $("#id_categories").attr('class', 'form-control');
     $('#id_categories').prop("selectedIndex",0);
 

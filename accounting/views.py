@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from tracking.models import Categorie, Element
+from tracking.models import Categorie, Element, Calc_Choices
 from django_tables2.config import RequestConfig
 from .tables import TrackingTable
 from calender.models import CalendarEvent
@@ -19,6 +19,7 @@ def accounting(request):
     user = User.objects.all()
     cat = Categorie.objects.all()
     wie = list(set(Element.objects.all().values_list('wie', flat=True)))
+    print(wie)
     return render(request, 'accounting.html',
                   {'form': user,
                    'categories': cat,
@@ -44,7 +45,6 @@ def ajaxtable(request):
         if nothing selected the empty list set to all users       
         '''
         user_name = request.POST.getlist("user")
-        print(user_name)
 
         if user_name==[] or user_name[0]=='--Alle--' :
             user_name = '--Alle--'
@@ -55,7 +55,6 @@ def ajaxtable(request):
         Get the value from the categorie choice
         '''
         cat_choice = request.POST.getlist("ca[]")
-        print(cat_choice)
 
         '''
         Get the value from the Wie choice
@@ -68,7 +67,7 @@ def ajaxtable(request):
         delete double elements     
         '''
         elements = list(set(Element.objects.filter(categories__cat__in= cat_choice, wie__in=wie_choice).values_list('element__kat_element', flat= True)))
-        print(elements)
+
         '''
         Get the Tracking data correspoonding on the user choice
         '''
@@ -83,17 +82,21 @@ def ajaxtable(request):
         Generate the data for the table
         '''
         from django.db.models import Sum
-
+        calc = Calc_Choices.objects.all().values_list('calc',flat=True)
+        print(calc)
 
         id = 1
         data = []
         for ele in elements:
-            print(ele)
             t = obj.filter(title=ele, type__in=cat_choice).aggregate(Sum('hours'))
             ele_obj = Element.objects.filter(element__kat_element=ele).first()
-            print(ele_obj.wie)
-            print(t['hours__sum'])
+
             data.append({'Wie': ele_obj.wie, 'Objekt': ele_obj.obj, 'id': id, 'Kategorie': ele, 'Gesamt': t['hours__sum']})
+
+            for key in calc:
+                data[len(data)-1][key] = ""
+
+
             id = id + 1
 
         ges_sum = 0
@@ -103,7 +106,10 @@ def ajaxtable(request):
 
         data.append({'Wie': '', 'Objekt': '', 'id': '', 'Kategorie': 'Gesamtsumme:', 'Gesamt': ges_sum})
 
-        table = TrackingTable(data, template_name='django_tables2/bootstrap.html')
+
+        import django_tables2 as tables
+        table = TrackingTable(data=data,template_name='django_tables2/bootstrap.html', extra_columns=[(str(key), tables.Column()) for key in calc])
+
         RequestConfig(request, paginate={'per_page': 150}).configure(table)
 
         return render(request, 'table.html',

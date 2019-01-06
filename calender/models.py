@@ -24,16 +24,17 @@ class CalendarEvent(models.Model):
     :type end: datetime.
 
     :param all_day: Define event for all day
-    :type all_day: bool.
+    :type all_day: bool.(
     """
 
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     event_id = models.TextField(('Id'), blank=True, max_length=200)
-    title = models.TextField(('Element'), max_length=200 )
+    title = models.TextField(('Element'), max_length=200)
     type = models.TextField(('type'), max_length=200)
     start = models.DateTimeField(_('Start'))
     hours = models.DecimalField(('Workingtime'), blank=True, max_digits=5, decimal_places=1)
     end = models.DateTimeField(_('End'))
+    calc = models.TextField(('Calc'), max_length=200, blank=True)
     note = models.TextField(('Notiz'), blank=True, max_length=200)
     all_day = models.BooleanField(_('All day'), default=False)
 

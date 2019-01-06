@@ -22,7 +22,7 @@ def load_elements(request):
 def load_favorites(request):
     categories_id = request.GET.get('categories')
     user_id = User.objects.get(id=request.user.id)
-    favorites = FavoriteElement.objects.filter(user_id=user_id, fav_element__categories_id=categories_id).values_list('fav_element__element', flat=True)
+    favorites = FavoriteElement.objects.filter(user_id=user_id, fav_element__categories_id=categories_id).values_list('fav_element__element__kat_element', flat=True)
 
     return render(request, 'load_favorites.html',
                   {'favorites': favorites}
@@ -31,43 +31,39 @@ def load_favorites(request):
 def options(request):
     choice_form = Choicefrom(request.POST)
 
-    if request.method == 'POST':
-
-        work_time_form = Worktimefrom(request.POST)
-
-        if work_time_form.is_valid():
-            work_time = work_time_form.cleaned_data['workingtime']
-
-            try:
-                Workingtime.objects.all().delete()
-
-            except(IntegrityError, ValueError, TypeError):
-                pass
-
-            wkt = Workingtime(
-                user_id=request.user,
-                workingtime=work_time
-            )
-            wkt.save()
-            messages.success(request, 'Arbeitszeit erfolgreich gespeichert')
-
-    else:
-        work_time_form = Worktimefrom()
 
     return render(request,'options.html',
                   {
                       'choice_form': choice_form,
-                      'work_time_form': work_time_form
+
                    })
 
 def create_user(request):
+
+
     if request.method == 'POST':
         user = MyRegistrationForm(request.POST)
+        print(user)
+        print('valid_test')
         if user.is_valid():
-            user.save()
-            messages.success(request, 'Account created successfully')
+            print("valid")
+            email = user.cleaned_data['email']
+            username = user.cleaned_data['username']
+            first_name = user.cleaned_data['first_name']
+            last_name = user.cleaned_data['last_name']
+            is_superuser = user.cleaned_data['is_superuser']
 
-    return render(request, 'admin_options.html', {'form': user})
+            print(email)
+            print(username)
+            print(first_name)
+            print(last_name)
+            print(is_superuser)
+
+            messages.success(request, 'Account created successfully')
+        else:
+            print("not valid")
+
+    return render(request, 'admin_options.html', {})
 
 
 def addcategories(request):
@@ -232,13 +228,14 @@ def addfavortites(request):
         favorites = request.POST['favorites']
         categorie = request.POST['categorie']
         favorites = favorites.split(",")[1:]
-
+        print(favorites)
         FavoriteElement.objects.filter(fav_element__categories__cat=categorie).delete()
 
         user_id = User.objects.get(id=request.user.id)
 
         for i in favorites:
-            elem = Element.objects.get(categories__cat = categorie, element=i)
+            print(i)
+            elem = Element.objects.get(categories__cat = categorie, element__kat_element=i)
 
             fav = FavoriteElement(
                 user_id = user_id,
@@ -310,6 +307,38 @@ def admin_options(request):
     elements = ElementTOKat.objects.all().values_list('ele__kat_element', flat=True)
     userform =  MyRegistrationForm()
     user = request.user
+
+    if request.method == 'POST':
+        user = MyRegistrationForm(request.POST)
+        print(user)
+        print('valid_test')
+
+        print("valid")
+        email = user.cleaned_data['email']
+        username = user.cleaned_data['username']
+        first_name = user.cleaned_data['first_name']
+        last_name = user.cleaned_data['last_name']
+        is_superuser = user.cleaned_data['is_superuser']
+
+        print(email)
+        print(username)
+        print(first_name)
+        print(last_name)
+        print(is_superuser)
+
+        user = User(
+            first_name=first_name,
+            last_name=last_name,
+            username=username,
+            email=email,
+            is_superuser=is_superuser
+        )
+
+        print(user)
+        user.save()
+
+        messages.success(request, 'Account created successfully')
+
     return render(request, 'admin_options.html',
                   {
                       'kat': kat,

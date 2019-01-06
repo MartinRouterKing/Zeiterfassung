@@ -106,8 +106,9 @@ function gen_pie() {
     for (var i = 1; i< table.rows.length - 1; i++) {
         if (table.rows[i].cells[3].innerHTML != "—") {
         pie_labels.push(table.rows[i].cells[2].innerHTML);
-        var percent = parseInt(table.rows[i].cells[3].innerHTML);
-        pie_values.push(percent *100 / ges )
+        var percent = parseFloat(table.rows[i].cells[3].innerHTML);
+        console.log(percent);
+        pie_values.push(Math.round((percent *100 / ges )*100)/100)
         }
     }
 

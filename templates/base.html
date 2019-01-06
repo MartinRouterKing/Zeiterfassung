@@ -138,18 +138,19 @@ nav {
                     <a class="nav-link" href="{% url 'home' %}"><span class="glyphicon glyphicon-stats"></span> Analyse</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'options' %}"><span class="glyphicon glyphicon-cog"></span>Optionen</a>
+                    <a class="nav-link" href="{% url 'options' %}"><span class="glyphicon glyphicon-cog"></span> Optionen</a>
                 </li>
                 {% if user.is_superuser %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'controlling' %}"><span class="glyphicon glyphicon-dashboard"></span> Controlling</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'admin_options' %}"><span class="glyphicon glyphicon-wrench"></span> Erweiterte Optionen</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="{% url 'accounting' %}"><span class="glyphicon glyphicon-book"></span> Buchhaltung</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'admin_options' %}"><span class="glyphicon glyphicon-wrench"></span> Erweiterte Optionen</a>
+                </li>
+
                 {% endif %}
             </ul>
             <ul class="navbar-nav navbar-right">

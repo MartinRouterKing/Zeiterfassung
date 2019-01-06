@@ -3,11 +3,13 @@
 {% block content %}
 <head>
   <meta charset="utf-8">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css" rel="stylesheet">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js"></script>
 
     <style>
 body {background-color: rgb(250, 250, 250);}
@@ -26,34 +28,25 @@ body {background-color: rgb(250, 250, 250);}
 
 <div class="container">
   <!-- Content here -->
-    <div class="row">
-        <div class="col">
-            <div class="test">
+            <div class="test" style="height: 50%">
                 <div>
-                    <center><p><font color="white" > Stunden aktueller Monat in %</font></p></center>
-                </div>
-                    <span class= "align-baseline">
-                    <div id ="canvas_container">
-                        <canvas id="pie-chart11" width="2" height="1"></canvas>
-
-                    </div>
-                    </span>
-            </div>
-        </div>
-        <div class="col">
-            <div class="test">
-                <div>
-                    <center><p><font color="white" >Arbeitszeit pro Kategorie in %</font></p></center>
+                    <center>
+                        <p>
+                            <font color="white" >Arbeitszeit pro Kategorie für: </font>
+                        </p>
+                    </center>
+                    <center>
+                        <div class="input-group input-daterange" style="width: 25%; margin: 10px;">
+                        <input type="text" class="form-control" id="start_date" value="{{currentdate}}" style="cursor: pointer">
+                        </div>
+                    </center>
                 </div>
                 <span class= "align-baseline">
                     <div id ="canvas-container">
-                        <canvas style="z-index: 99999;" id="pie-chart12" width="2" height="1"></canvas>
-
+                        <canvas id="bar-chart_cat" width="300" height="100"></canvas>
                     </div>
                 </span>
             </div>
-        </div>
-    </div>
 </div>
 
 
@@ -74,6 +67,7 @@ body {background-color: rgb(250, 250, 250);}
                                             <input type="radio" name="options" id="option2" value="bar"> Bar Chart
                                         </label>
                                     </div>
+
                                 <div id="canvas_id" ></div>
 
                                 </form>
@@ -85,170 +79,102 @@ body {background-color: rgb(250, 250, 250);}
 </div>
 
 
-<script type="text/javascript">
-  var draw = Chart.controllers.doughnut.prototype.draw;
-    Chart.controllers.doughnut = Chart.controllers.doughnut.extend({
-    draw: function() {
-        draw.apply(this, arguments);
-
-        let canvas = this.chart.chart;
-        ctx = canvas.ctx;
-        let _fill = ctx.fill;
-
-        var cw=canvas.width;
-        var ch=canvas.height;
-
-        var radius = this.outerRadius;
-        ctx.globalCompositeOperation='source-atop';
+<script>
 
 
-        ctx.shadowOffsetX = 500;
-        ctx.shadowOffsetY = 0;
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = 'rgba(0,0,0,1)';
-
-        ctx.beginPath();
-        ctx.arc(cw/2-500,ch/2,radius,0,Math.PI*2);
-        ctx.stroke();
-        ctx.stroke();
-        ctx.stroke();
-
-
-        ctx.globalCompositeOperation='source-over';
-
-
-        ctx.fill = function() {
-            ctx.save();
-
-            _fill.apply(this, arguments)
-
-        }
-    }
+$('.input-daterange input').each(function() {
+    $(this).datepicker({
+        format: "mm.yyyy",
+        startView: "months",
+        minViewMode: "months",
+        autoclose: true,
+        }).on('changeDate', function(e) {
+            var start_date = document.getElementById("start_date").value;
+            console.log(start_date);
+            $.ajax({
+                url: 'load_bar_cat/',
+                data: {
+                  'selectedDate': start_date
+                },
+                success: function (data) {
+                  $("#canvas-container").html(data);
+                },
+            });
+        });
     });
- Chart.pluginService.register({
-  beforeDraw: function (chart) {
-    if (chart.config.options.elements.center) {
-      //Get ctx from string
-      var ctx = chart.chart.ctx;
-
-      //Get options from the center object in options
-      var centerConfig = chart.config.options.elements.center;
-      var fontStyle = centerConfig.fontStyle || 'Arial';
-      var txt = centerConfig.text;
-      var color = centerConfig.color || '#000';
-      var sidePadding = centerConfig.sidePadding || 20;
-      var sidePaddingCalculated = (sidePadding/100) * (chart.innerRadius * 2)
-      //Start with a base font of 30px
-      ctx.font = "30px " + fontStyle;
-
-      //Get the width of the string and also the width of the element minus 10 to give it 5px side padding
-      var stringWidth = ctx.measureText(txt).width;
-      var elementWidth = (chart.innerRadius * 2) - sidePaddingCalculated;
-
-      // Find out how much the font can grow in width.
-      var widthRatio = elementWidth / stringWidth;
-      var newFontSize = Math.floor(30 * widthRatio);
-      var elementHeight = (chart.innerRadius * 2);
-
-      // Pick a new font size so it will not be larger than the height of label.
-      var fontSizeToUse = Math.min(newFontSize, elementHeight);
-
-      //Set font settings to draw it correctly.
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      var centerX = ((chart.chartArea.left + chart.chartArea.right) / 2);
-      var centerY = ((chart.chartArea.top + chart.chartArea.bottom) / 2);
-      ctx.font = fontSizeToUse+"px " + fontStyle;
-      ctx.fillStyle = color;
-
-      //Draw text in center
-      ctx.fillText(txt, centerX, centerY);
-    }
-  }
-});
-
-new Chart(document.getElementById("pie-chart11"), {
-    type: 'doughnut',
-    data: {
-      labels: [" Ist Arbeitszeit in %", "Soll Arbeitszeit in %"],
-      datasets: [{
-        label: "Population (millions)",
-        backgroundColor: ["#d31d1d", "#1a1e21"],
-        data: [ {{ working_time_prec }}, 100-{{working_time_prec}} ],
-        hoverBorderWidth: 0,
-        borderColor: "#24282c",
-      }]
-    },
-
-    options: {
-    segmentShowStroke : false,
-        legend: {
-            display: false
-            },
-  elements: {
-      center: {
-      text: '{{ working_time_prec }}' + '%',
-      color: '#1a1e21', //Default black
-      fontStyle: 'Helvetica', //Default Arial
-    }
-  }
-}
-});
 
 </script>
-<script type="text/javascript">
-new Chart(document.getElementById("pie-chart12"), {
-    type: 'doughnut',
-    tooltipCaretSize: 0,
-    data: {
-      labels: [{% for item in list_cat_label %}
-                  "{{item}}",
-              {% endfor %}],
-      datasets: [{
-        backgroundColor: ['#1abc9c', '#2ecc71', '#3498db', '#9b59b6', '#34495e', '#f1c40f', '#e67e22', '#e74c3c', '#95a5a6'], //["#bccad6", "#8d9db6", "#667292", "#f1e3dd", "#cfe0e8","#b7d7e8","#87bdd8","#daebe8"],
-        data: [{% for item in list_cat %}
-                  {{item}},
-              {% endfor %}],
 
-        hoverBorderWidth: 5,
-        borderColor: "#343a40",
-      }]
-    },
-    options: {
-          tooltips: {
-            callbacks: {
-                label: function(tooltipItem, data) {
-                    console.log(data);
-                    var datasetLabel = data.datasets[tooltipItem.datasetIndex].label ||'';
-                    var label = data.labels[tooltipItem.index];
-                    var perc = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]
-                    console.log(perc);
-                    var label1 = '';
-                    var label2 = '';
-                    if (label.length > 50){
-                        label1 = label.substring(0,50) + " -"
-                        label2 = label.substring(50, label.length)
 
-                        return [perc + "% : " + label1, "            " + label2];
-                        } else {
-                        return [perc + "% : " + label];
+<script>
 
-                        }
+              Chart.defaults.global.defaultFontColor = 'white';
+            new Chart(document.getElementById("bar-chart_cat"), {
+                type: 'bar',
+                data: {
+                labels: ['Typ'],
+                datasets: [
+                    {% for key, value in data.items %}
+
+                    {
+                    label: "{{key}}",
+                    backgroundColor: "{{value.1}}",
+                    data: {{value.0}},
+                    },
+
+                    {% endfor %}
+                    ],
+                },
+                options: {
+
+                    legend: { position: 'bottom' },
+                },
+            });
+
+</script>
+
+
+<script>
+
+ $(document).ready(function() {
+       $.ajax({
+        url: 'load_canvas/',
+        data: {
+          'selectedOption': 'line'
+        },
+        success: function (data) {
+          $("#canvas_id").html(data);
+
+          Chart.defaults.global.defaultFontColor = 'white';
+            new Chart(document.getElementById("line-chart"), {
+                type: 'line',
+                data: {
+                labels: ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'],
+
+                datasets: [{
+                    data: {{list_hours}},
+                    label: "{{user}}",
+                    borderColor: "#d43f3a",
+                    fill: false,
+                    backgroundColor: "#d43f3a",
+                    },
+                    ]},
+                options: {
+                    title: {
+                    showTooltips: true,
+                    display: true,
+                    text: 'Arbeitszeit pro Monat (in Stunden)',
+                    fontColor: "white"
                     }
-                }
-            },
-        segmentShowStroke : false,
-        legend: {
-            display: false
-            },
-      title: {
-        display: false,
-      }
+                    }
+            });
 
-    }
-});
+           }
+       });
+
 
 </script>
+
 
 <script type='text/javascript'>
 
@@ -272,12 +198,12 @@ new Chart(document.getElementById("pie-chart12"), {
                     label: "{{user}}",
                     borderColor: "#d43f3a",
                     fill: false,
-                    backgroundColor: ["#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a"],
-
+                    backgroundColor: "#d43f3a",
                     },
                     ]},
                 options: {
                     title: {
+                    showTooltips: true,
                     display: true,
                     text: 'Arbeitszeit pro Monat (in Stunden)',
                     fontColor: "white"
@@ -291,6 +217,9 @@ new Chart(document.getElementById("pie-chart12"), {
 
    $('input[name=options]').change(function(){
    var selectedOption = $("input:radio[name=options]:checked").val();
+   var tempScrollTop = $(window).scrollTop();
+   console.log(tempScrollTop);
+   console.log(selectedOption);
    $.ajax({
         url: 'load_canvas/',
         data: {
@@ -299,6 +228,7 @@ new Chart(document.getElementById("pie-chart12"), {
         success: function (data) {
           $("#canvas_id").html(data);
 
+
             Chart.defaults.global.defaultFontColor = 'white';
             new Chart(document.getElementById(selectedOption + "-chart"), {
                 type: selectedOption + '',
@@ -306,24 +236,24 @@ new Chart(document.getElementById("pie-chart12"), {
                 labels: ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'],
 
                 datasets: [{
-                    backgroundColor: ["#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a","#d43f3a"],
+                    backgroundColor: "#d43f3a",
                     data: {{list_hours}},
+                    label: "{{user}}",
                     borderColor: "#d43f3a",
-                    fill: true
-
-
+                    fill: false,
                     },
                     ]},
                 options: {
                     title: {
                     display: true,
+                    showTooltips: true,
                     responsive: true,
                     text: 'Arbeitszeit pro Monat (in Stunden)',
                     fontColor: "white"
                     }
                     }
             });
-
+        $(window).scrollTop(tempScrollTop);
         }
         });
    });

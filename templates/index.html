@@ -4,7 +4,6 @@
 
 <head>
 
-
 <link crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" rel="stylesheet">
 
     <style>
@@ -96,6 +95,41 @@ label input[type="checkbox"] {
 
 }
 
+.fc-today-button{
+    background-color: #337ab7;
+    border-color: #337ab7;
+    color: #ffffff;
+}
+
+.fc-prev-button{
+    background-color: #337ab7;
+    border-color: #337ab7;
+    color: #ffffff;
+}
+.fc-next-button{
+    background-color: #337ab7;
+    border-color: #337ab7;
+    color: #ffffff;
+}
+
+.fc-today-button:hover{
+    background-color: #409ded;
+    border-color: #409ded;
+    color: #ffffff;
+}
+
+.fc-prev-button:hover{
+    background-color: #409ded;
+    border-color: #409ded;
+    color: #ffffff;
+}
+.fc-next-button:hover{
+    background-color: #409ded;
+    border-color: #409ded;
+    color: #ffffff;
+}
+
+
 
 </style>
 
@@ -108,8 +142,8 @@ label input[type="checkbox"] {
                     <div class="col" style="border-bottom: 1px solid black;">
                         <label  for="id-of-input" id="id_favorite" class="custom-checkbox" style="float: right;">
                         <input type="checkbox" id="id-of-input" onclick="myFunction()"/>
-                        <i class="glyphicon glyphicon-star-empty"></i>
-                        <i class="glyphicon glyphicon-star"></i>
+                        <i class="glyphicon glyphicon-star-empty" style="font-size: 12px;" ></i>
+                        <i class="glyphicon glyphicon-star" style="font-size: 12px;"></i>
                         <span style="color:white;">Favoriten</span>
                         </label>
                     </div>
@@ -145,6 +179,8 @@ label input[type="checkbox"] {
             </center>
 
 <script>
+
+
 
      $("#id_categories").change(function () {
       var categoriesId = $(this).val();                         // get the selected country ID from the HTML input
@@ -255,6 +291,10 @@ label input[type="checkbox"] {
    var latest_id = {{ latest_id }};
 
   $('#calendar').fullCalendar({
+      buttonsIcons : {
+       prev: 'left-single-arrow',
+       next: 'right-single-arrow',
+    },
 
     defaultView: (function (){ if($(window).width()<=768){
         return defaultView = 'agendaDay';} else { return defaultView = 'agendaWeek';}})(),
@@ -285,7 +325,7 @@ label input[type="checkbox"] {
     maxTime: '22:00:00',
     nowIndicator: true,
     eventTextColor: 'white',
-    themeSystem: 'bootstrap4',
+    themeSystem: 'bootstrap3',
     height: "auto",
     events: [
             {% for i in events %}
@@ -384,6 +424,8 @@ label input[type="checkbox"] {
 
 
 });
+
+
 
 </script>
 
