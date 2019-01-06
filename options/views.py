@@ -1,5 +1,5 @@
 from tracking.models import Element, Categorie, Workingtime, FavoriteElement, ElementTOKat
-from tracking.models import KategorieElement, Kategorie, Wie, Obj, Calc_Choices
+from tracking.models import KategorieElement, Kategorie, Calc_Choices
 from django.contrib.auth.models import User
 from django.shortcuts import render
 from .forms import Choicefrom, Categorieform, editcatform, Worktimefrom, \

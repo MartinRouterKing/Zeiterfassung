@@ -15,17 +15,6 @@ class Categorie(models.Model):
     def __str__(self):
         return self.cat
 
-class Wie(models.Model):
-    wie = models.CharField(("Wirtscahftszweig"),max_length=200, default=None)
-
-    def __str__(self):
-        return self.wie
-
-class Obj(models.Model):
-    obj = models.CharField(("Objekt"),max_length=200, default=None)
-
-    def __str__(self):
-        return self.obj
 
 class KategorieElement(models.Model):
     kat_element = models.CharField(("Element"), max_length=200, default=None)

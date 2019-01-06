@@ -1,4 +1,4 @@
-from .models import Categorie, Element, Workingtime, Obj, Wie, Kategorie, KategorieElement
+from .models import Categorie, Element, Workingtime, Kategorie, KategorieElement, Calc_Choices
 from import_export.admin import ImportExportModelAdmin
 from django.contrib import admin
 from calender.models import CalendarEvent
@@ -14,15 +14,11 @@ class ElementAdmin(ImportExportModelAdmin):
     class Meta:
         fields = ['categories', 'element']
 
-@admin.register(Obj)
-class ObjAdmin(ImportExportModelAdmin):
-    class Meta:
-        fields = ['obj']
 
-@admin.register(Wie)
-class WieAdmin(ImportExportModelAdmin):
+@admin.register(Calc_Choices)
+class Calc_ChoicesAdmin(ImportExportModelAdmin):
     class Meta:
-        fields = ['wie']
+        fields = ['calc']
 
 @admin.register(Kategorie)
 class WieAdmin(ImportExportModelAdmin):
