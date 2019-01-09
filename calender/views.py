@@ -8,7 +8,6 @@ def all_events(request):
     today = datetime.now() - timedelta(days=14)
     categorie = Categorie.objects.all()
     events = CalendarEvent.objects.filter(user_id = request.user)
-    print(events)
     events.filter(start__gte=today)
     get_event_types = CalendarEvent.objects.only('title')
     user = request.user
@@ -16,8 +15,6 @@ def all_events(request):
         event_id = CalendarEvent.objects.latest('id').id + 1
     except:
         event_id = 1
-
-    print(events)
 
     context = {
         'user': user,
@@ -42,20 +39,30 @@ def postview(request):
             note = request.POST['note']
             start = datetime.strptime(start, '%a %b %d %Y %H:%M:%S %Z%z')
             end = datetime.strptime(end, '%a %b %d %Y %H:%M:%S %Z%z')
-
-            print(id)
-            print(title)
+            print(str(note))
             print(type)
-
 
             hours = (end - start).seconds/3600
-            print(hours)
-            user_id = User.objects.get(id=request.user.id)
-            cat = Categorie.objects.get(id=type)
 
-            type = Categorie.objects.filter(id=type).values_list('cat', flat=True)
+            '''
+            The Event-ypes are first initialized with their id as int.
+            In the Database we need the string value and for the later changing of Events on
+            the calendar we need to use the following exception to check wetther the type is a string
+            or and int. 
+            
+            '''
+            try:
+                type = int(type)
+                type = Categorie.objects.filter(id=type).values_list('cat', flat=True)
+            except (ValueError):
+                type = [type]
+
+            user_id = User.objects.get(id=request.user.id)
             print(type)
             print(title)
+
+            calc = Element.objects.filter(element__kat_element=title, categories__cat=type[0]).values_list('calc__calc', flat=True)
+            print(calc[0])
 
             q = CalendarEvent(
                 user_id=user_id,
@@ -63,8 +70,9 @@ def postview(request):
                 type=type[0],
                 start=start,
                 end=end,
+                calc=calc[0],
                 hours=hours,
-                note=note,
+                note= note,
                 all_day=False)
 
             q.id = id
@@ -73,10 +81,8 @@ def postview(request):
         if action == 'delete':
 
             id = request.POST['id']
-            print(id)
 
             instance = CalendarEvent.objects.get(id=id)
-            print(instance.id)
             instance.delete()
 
     return render(request,'index.html',{})
@@ -85,7 +91,6 @@ def load_elements(request):
     if request.method == 'GET':
         categories_id = request.GET['categories']
         checked = request.GET['checked']
-        print(checked)
 
         if checked == 'false':
             element = Element.objects.filter(categories_id=categories_id).order_by('categories')

@@ -15,7 +15,6 @@
         width: 100%;
     }
 
-
      .col{
 
         margin: 15px;
@@ -86,7 +85,8 @@
     </div>
     <div class="col">
         <div class="test">
-            <canvas id="doughnut-chart" ></canvas>
+
+            <canvas id="bar-chart" ></canvas>
         </div>
     </div>
 </div>
@@ -100,85 +100,67 @@ function gen_pie() {
     pie_values = [];
     var table = document.getElementsByTagName("table")[0];
     console.log(table.rows.length);
-
+    console.log(table.rows[0].cells.length);
     var ges =  parseInt(table.rows[table.rows.length-1].cells[3].innerHTML);
 
-    for (var i = 1; i< table.rows.length - 1; i++) {
-        if (table.rows[i].cells[3].innerHTML != "—") {
-        pie_labels.push(table.rows[i].cells[2].innerHTML);
-        var percent = parseFloat(table.rows[i].cells[3].innerHTML);
-        console.log(percent);
-        pie_values.push(Math.round((percent *100 / ges )*100)/100)
-        }
+    for (var c = 4; c< table.rows[0].cells.length; c++) {
+        console.log("new cell");
+        pie_labels.push(table.rows[0].cells[c].innerText);
+        var percent = 0
+        for (var i = 1; i< table.rows.length - 1; i++) {
+            console.log("new row");
+            if (table.rows[i].cells[c].innerHTML != "—") {
+
+                var percent = percent + Math.round(parseFloat(table.rows[i].cells[c].innerHTML *100 / ges));
+                console.log(percent);
+
+            };
+        };
+        pie_values.push(percent);
     }
 
- var draw = Chart.controllers.doughnut.prototype.draw;
-    Chart.controllers.doughnut = Chart.controllers.doughnut.extend({
-    draw: function() {
-        draw.apply(this, arguments);
 
-        let canvas = this.chart.chart;
-        ctx = canvas.ctx;
-        let _fill = ctx.fill;
+        Chart.defaults.global.defaultFontColor = 'white';
+    var ctx = document.getElementById("bar-chart")
+    new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: pie_labels,
+                datasets: [
+                    {
+                    label: "Verteilung der Kostenträger in Prozent",
+                    backgroundColor: ['#1abc9c', '#3498db', '#9b59b6', '#34495e', '#f1c40f', '#e67e22', '#e74c3c', '#95a5a6','#2ecc71',],
+                    data: pie_values,
+                    },
 
-        var cw=canvas.width;
-        var ch=canvas.height * 1.112;
-
-        var radius = this.outerRadius;
-        ctx.globalCompositeOperation='source-atop';
-
-
-        ctx.shadowOffsetX = 500;
-        ctx.shadowOffsetY = 0;
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = 'rgba(0,0,0,1)';
-
-        ctx.beginPath();
-        ctx.arc(cw/2-500,ch/2,radius,0,Math.PI*2);
-        ctx.stroke();
-        ctx.stroke();
-        ctx.stroke();
-
-
-        ctx.globalCompositeOperation='source-over';
-
-
-        ctx.fill = function() {
-            ctx.save();
-
-            _fill.apply(this, arguments)
-
-        }
-    }
-    });
-
-
-    new Chart(document.getElementById("doughnut-chart"), {
-        type: 'doughnut',
-        data: {
-          labels: pie_labels,
-          datasets: [
-            {
-              label: "Population (millions)",
-              backgroundColor: ['#1abc9c', '#2ecc71', '#3498db', '#9b59b6', '#34495e', '#f1c40f', '#e67e22', '#e74c3c', '#95a5a6'],
-              data: pie_values,
-              hoverBorderWidth: 0,
-              borderColor: "#24282c",
-            }]
-        },
-        options: {
-            segmentShowStroke : false,
-            legend: {
-                display: false
+                    ],
                 },
-        maintainAspectRatio: false,
-          title: {
-            display: true,
-            text: 'Verteilung der Kategorien in %'
-          }
-        }
-});
 
+                options: {
+                                    scales: {
+                        yAxes: [{
+                            display: true,
+                                ticks: {
+                                    min: 0,
+                                    stepSize: 5
+                                }
+                            }],
+                        xAxes: [{
+                            ticks: {
+                                display: false
+                            }
+                        }]
+                        },
+                    legend: {
+                         labels: {
+                         boxWidth: 0,
+                        }
+                    },
+                    tooltips: {
+                        enabled: true
+                        },
+                },
+            });
 
 }
 </script>

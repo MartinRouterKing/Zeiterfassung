@@ -5,6 +5,7 @@
 <head>
 
 <link crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 
     <style>
 
@@ -12,6 +13,19 @@
     background-color: #343a40;
     padding: 10px;
 }
+
+.popover-header{
+    background-color: #676b70;
+    color: white;
+}
+
+.popover{
+    background-color: #676b70;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.95);
+    transition: box-shadow 0.1s ease-in-out;
+
+}
+
 
 th, td, h2{
     color: white
@@ -129,6 +143,9 @@ label input[type="checkbox"] {
     color: #ffffff;
 }
 
+.popover-body{
+    popover-body: #409ded;
+}
 
 
 </style>
@@ -255,6 +272,7 @@ label input[type="checkbox"] {
   // -----------------------------------------------------------------
 
   function saveMyData(event){
+  console.log(event);
     $.ajax({
           type: 'POST',
           url: 'post/',
@@ -341,10 +359,25 @@ label input[type="checkbox"] {
                 {% endfor %}
             ],
             eventRender: function(event, element, view) {
-                var colors = ['#1abc9c', '#2ecc71', '#3498db', '#9b59b6', '#34495e', '#f1c40f', '#e67e22', '#e74c3c', '#95a5a6',, '#34495e', '#f1c40f', '#e67e22', '#e74c3c', '#95a5a6',];
-                console.log(event.type)
+
+
+                var colors = ['#1abc9c', '#2ecc71', '#3498db', '#9b59b6', '#34495e', '#f1c40f', '#e67e22', '#e74c3c', '#95a5a6', '#34495e', '#f1c40f', '#e67e22', '#e74c3c', '#95a5a6',];
                 var color = colors[event.type];
+
                 element.css({"border-left": "5px solid #d31d1d"});
+
+                $('#pop_xyz').val("wut");
+
+                console.log(event._id);
+                element.popover({
+                    html: true,
+                    title: event.title,
+                    container: 'body',
+                    trigger: 'click',
+                    });
+                element.attr('data-content',"<div style='color: white;' id= '" + event._id + "cont' >Notizen: <textarea class='form-control' id='" + event._id + "'>" + event.note + " </textarea><button style='margin-top: 10px; margin-bottom: 10px; float: right;' type='button' id='pop_save' class='btn btn-primary'>Speichern</button></div",);
+
+                console.log(element);
 
 
             if (view.name == 'listDay') {
@@ -359,6 +392,7 @@ label input[type="checkbox"] {
                 deleteMyData(event);
                 $('#calendar').fullCalendar('removeEvents', event._id);
             });
+
         },
     weekNumbers: true,
     color: 'white',
@@ -371,23 +405,35 @@ label input[type="checkbox"] {
     droppable: true, // this allows things to be dropped onto the calendar
 
 
-    eventClick: function( event, jsEvent, view ) {
-        var notiz = prompt("Notiz:", event.note);
-        event_new = event;
-        event_new.note = notiz;
-        $('#calendar').fullCalendar('removeEvents', event._id);
-        $('#calendar').fullCalendar( 'renderEvent', event_new , true );
-        saveMyData(event_new);
+    eventMouseover: function( event, jsEvent, view ) {
+
+           $(document).one('click', '#pop_save', function(){
+
+                console.log($('#' + event._id));
+                var txt = $('#' + event._id).val();
+                console.log(txt);
+                event.note = txt;
+                if(typeof txt !== "undefined")
+                {
+                    console.log("BHÄÄÄÄÄ");
+                    saveMyData(event);
+                    $('#calendar').fullCalendar('removeEvents', event._id);
+                    $('#calendar').fullCalendar( 'renderEvent', event, true );
+                    $('.popover').popover('hide');
+                };
+                });
     },
 
     eventReceive: function(event) {
+            console.log("Recieve")
             latest_id++;
             event.id = latest_id;
-            event.note = ""
-            event_new =event;
+            event.note = "";
+            event_new = event;
             $('#calendar').fullCalendar('removeEvents', event._id);
-            $('#calendar').fullCalendar( 'renderEvent', event_new , true )
+            $('#calendar').fullCalendar( 'renderEvent', event_new , true );
             saveMyData(event_new);
+
             },
 
     drop: function(date, jsEvent, ui, resourceId ) {
@@ -399,27 +445,30 @@ label input[type="checkbox"] {
     },
 
     eventDrop: function (event, delta, revertFunc, jsEvent, ui, view) {
+                $('.popover').popover('hide');
+                console.log("eventDrop");
                saveMyData(event);
            },
 
     eventResize: function (event, delta, revertFunc, jsEvent, ui, view) {
+                 console.log("eventResize");
                  saveMyData(event);
              }
   });
   var $tooltip = $("<div>").text("I'm a tooltip").addClass("tooltip");
     $("#calendar").on("mouseenter",".fc-title", function(){
-        $('tc-title').append($tooltip);
-        console.log($(this));
+        $('fc-title').append($tooltip);
+
         $tooltip.position({
             my:"left top",
             at:"middle middle",
             of:$(this),
 
         });
-        console.log("in");
+
     }).on("mouseleave",".fc-title", function(){
         $tooltip = $tooltip.detach();
-        console.log("out");
+
 });
 
 

@@ -1,4 +1,4 @@
-from .models import Categorie, Element, Workingtime, Kategorie, KategorieElement, Calc_Choices
+from .models import Categorie, Element, Workingtime, Kategorie, KategorieElement, Calc_Choices, ElementTOKat
 from import_export.admin import ImportExportModelAdmin
 from django.contrib import admin
 from calender.models import CalendarEvent
@@ -29,6 +29,11 @@ class WieAdmin(ImportExportModelAdmin):
 class KategorieElement(ImportExportModelAdmin):
     class Meta:
         fields = ['kat_element']
+
+@admin.register(ElementTOKat)
+class CategorieAdmin(ImportExportModelAdmin):
+    class Meta:
+        fields = ['katgroup', 'ele']
 
 admin.site.register(Workingtime)
 admin.site.register(CalendarEvent)

@@ -22,7 +22,12 @@
     margin: 10px;
     box-shadow: inset 0 0 10px #000000;
     background-color: #24282C;
-    padding: 20px;
+    padding: 10px;
+    width: 80%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    overflow: auto;
 }
 
 
@@ -32,13 +37,13 @@ td{
 
 </style>
     </head>
-<center>
+
 <div class="table-container" id="panel_id">
   <!-- Content here -->
     <a class="btn btn-primary" href="{% querystring '_export'='xlsx' %}" role="button">Download</a>
     {% render_table table %}
 </div>
-    </center>
+
 
 </html>
 {% endblock %}

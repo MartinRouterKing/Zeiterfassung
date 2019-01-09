@@ -38,7 +38,7 @@ class Element(models.Model):
     categories = models.ForeignKey(Categorie, on_delete=models.CASCADE)
     kategorie = models.ForeignKey(Kategorie, on_delete=models.CASCADE, default=None)
     wie = models.TextField(max_length=100, default=None)
-    obj = models.TextField( max_length=100, default=None)
+    obj = models.TextField( max_length=100, default=None, null=True)
     element = models.ForeignKey(KategorieElement, on_delete=models.CASCADE, default=None)
     calc = models.ForeignKey(Calc_Choices, on_delete=models.CASCADE, default=None)
 

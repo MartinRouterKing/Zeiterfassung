@@ -87,24 +87,41 @@ def ajaxtable(request):
 
         id = 1
         data = []
+        calulate = {}
         for ele in elements:
             t = obj.filter(title=ele, type__in=cat_choice).aggregate(Sum('hours'))
+            if t['hours__sum'] is None:
+                calulate['Gesamt'] = 0
+            else:
+                calulate['Gesamt'] = t['hours__sum']
+
+            for cal in calc:
+                print(cal)
+                c = obj.filter(title=ele, type__in=cat_choice, calc=cal).aggregate(Sum('hours'))
+                print(c)
+                if c['hours__sum'] is None:
+                    calulate[cal] = 0
+                else:
+                    calulate[cal] = c['hours__sum']
+
             ele_obj = Element.objects.filter(element__kat_element=ele).first()
 
-            data.append({'Wie': ele_obj.wie, 'Objekt': ele_obj.obj, 'id': id, 'Kategorie': ele, 'Gesamt': t['hours__sum']})
+            data.append({**{'Wie': ele_obj.wie, 'Objekt': ele_obj.obj, 'id': id, 'Kategorie': ele}, **calulate})
 
-            for key in calc:
-                data[len(data)-1][key] = ""
-
-
-            id = id + 1
-
-        ges_sum = 0
+        ges_sum = {}
         for d in data:
-            if d['Gesamt'] is not None:
-                ges_sum = ges_sum + float(d['Gesamt'])
+            for key, value in d.items():
+                if key != 'Wie' and key != 'Objekt' and key != 'id' and key != 'Kategorie':
+                    try:
+                        ges_sum[key] = ges_sum[key]  + float(value)
+                    except (KeyError):
+                        ges_sum[key] = 0 + float(value)
 
-        data.append({'Wie': '', 'Objekt': '', 'id': '', 'Kategorie': 'Gesamtsumme:', 'Gesamt': ges_sum})
+
+        print(ges_sum)
+
+
+        data.append({**{'Wie': '', 'Objekt': '', 'id': '', 'Kategorie': 'Gesamtsumme:'}, **ges_sum})
 
 
         import django_tables2 as tables
