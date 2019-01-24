@@ -14,7 +14,6 @@ class ElementAdmin(ImportExportModelAdmin):
     class Meta:
         fields = ['categories', 'element']
 
-
 @admin.register(Calc_Choices)
 class Calc_ChoicesAdmin(ImportExportModelAdmin):
     class Meta:
@@ -35,5 +34,8 @@ class CategorieAdmin(ImportExportModelAdmin):
     class Meta:
         fields = ['katgroup', 'ele']
 
-admin.site.register(Workingtime)
 admin.site.register(CalendarEvent)
+admin.site.register(Workingtime)
+
+
+

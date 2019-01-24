@@ -1,0 +1,55 @@
+
+
+<form method="post" style="color: white">
+    {% csrf_token %}
+    <p><label for="id_username">Benutzername:</label>
+        <select name="username" class="form-control" required="" id="id_username">
+
+        <option value="" >---------</option>
+        {% for ob in options%}
+            {% if ob.username == userdata.username %}
+                <option value="{{ob.id}}" selected="">{{ob.username}}</option>
+            {% else %}
+                <option value="{{ob.id}}">{{ob.username}}</option>
+            {% endif %}
+            {% endfor %}
+        </select><p>
+<p>
+    <label for="id_email">Email:</label>
+    <input type="email" class="form-control" name="email" value="{{userdata.email}}" required="" id="id_email">
+</p>
+    <p>
+    <label for="id_first_name">Arbeitszeit pro Woche</label>
+    <input type="text" value="{{workingtime}}" class="form-control" name="working_time" maxlength="30" id="id_working_time"></p>
+<p>
+<p>
+    <label for="id_first_name">Vorname:</label>
+    <input type="text" value="{{userdata.first_name}}" class="form-control" name="first_name" maxlength="30" id="id_first_name"></p>
+<p>
+    <label for="id_last_name">Nachname:</label>
+    <input type="text" value="{{userdata.last_name}}" class="form-control" name="last_name" maxlength="150" id="id_last_name"></p>
+
+    <input type="submit" class="btn btn-primary inline" style="margin: 10px;" value="Speichern">
+</form>
+
+<script>
+    $('#id_username').change( function(){
+        var selecteduser = $(this).children("option:selected").val();
+        console.log(selecteduser);
+
+        $.ajax({
+          type: 'POST',
+          url: 'ajax_load_userdata',
+          data:{
+          selecteduser: selecteduser,
+          csrfmiddlewaretoken: "{{ csrf_token }}"
+          },
+          success: function(data){
+          $('#load_data').html(data);
+          }
+        });
+
+
+    });
+
+</script>

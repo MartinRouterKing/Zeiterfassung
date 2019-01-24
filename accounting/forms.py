@@ -20,5 +20,9 @@ class WieForm(forms.Form):
         model = Element
         field = ['wie']
 
+class ObjForm(forms.Form):
+    class Meta:
+        model = Element
+        field = ['obj']
 
 

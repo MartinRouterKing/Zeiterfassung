@@ -39,11 +39,27 @@ td{
     </head>
 
 <div class="table-container" id="panel_id">
+
   <!-- Content here -->
-    <a class="btn btn-primary" href="{% querystring '_export'='xlsx' %}" role="button">Download</a>
+    <div class="input-group">
+        <span class="input-group-btn">
+            <a class="btn btn-primary" href="{% querystring '_export'='xlsx' %}" role="button">Download</a>
+        </span>
+        <input class="form-control" id="myInput" type="text" placeholder="Suchen..">
+    </div>
     {% render_table table %}
 </div>
 
+ <script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $(".table tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+</script>
 
 </html>
 {% endblock %}

@@ -1,5 +1,4 @@
 
-{% block content %}
 {% load static %}
 {% load widget_tweaks %}
 
@@ -7,28 +6,47 @@
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
+<style>
 
+  body{
+  background-color: #24282c
+  }
+
+  img{
+  width: 100%;
+  border-bottom: 1px solid white;
+  }
+.container-fluid{
+  width: 100%;
+
+  padding-left: 150px;
+  padding-right: 150px;
+
+}
+
+</style>
 </head>
 
 
 <body>
+<img src="\static\wirtschaftsfoerderung_login.jpg" alt="Trulli" width="500" height="333">
 
-<div class="container-fluid">
-  <div class="panel panel-default">
-    <div class="panel-heading">Login</div>
+
+<div class="container-fluid" >
+  <div class="panel panel-default" style="background-color: #343a40; border: none;">
+    <div class="panel-heading" style="background-color: #202427; color: white;">Login</div>
     <div class="panel-body">
-      <form method="post">
+      <form method="post" style="color: white;">
         {% csrf_token %}
-        {{ form.username|add_label_class:'Username' }}
+        {{ form.username|add_label_class:'Benutzername' }}
         {{ form.username|add_class:'form-control' }}
         {{ form.password|add_label_class:'Password' }}
         {{ form.password|add_class:'form-control' }}
-        <button type="submit" class="btn btn-secondary btn-lg btn-block" >Login</button>
+        <button type="submit" class="btn btn-primary btn-lg btn-block" style="margin-top: 10px;">Login</button>
       </form>
+      <p><a href="{% url 'password_reset' %}">Passwort vergessen?</a></p>
     </div>
   </div>
 </div>
 
 </body>
-
-{% endblock %}

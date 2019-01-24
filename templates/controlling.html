@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 <head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
     select{
         width: 100%;
@@ -168,9 +167,8 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js"></script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 
 </head>
@@ -210,7 +208,7 @@
                     </span>
                 </div>
 
-            <button type="submit" style="margin: 10px;" onclick="search()" class="btn btn-primary" >Berechnen</button>
+            <button type="submit" style="margin: 10px; margin-left: 0px; height: 35px; width: 100px;" id="sub_button" onclick="search()" class="btn btn-primary" >Berechnen</button>
             </div>
         </div>
         <div class="col-sm-8">
@@ -315,6 +313,10 @@ function selectedValue(id){
 }
 
 function search(){
+    var inner = '<i  id="load_icon" class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:18px; color:#f8f9fa;"></i>'
+    load_icon = document.getElementById('sub_button');
+    load_icon.innerHTML = inner;
+
     var search_user = selectedValue("id_user");
     var search_cat = selectedValue("cat_select");
     var start_date = document.getElementById("start_date").value;
@@ -353,6 +355,7 @@ function search(){
             },
             success: function(data){
                 $('#line_container').html(data);
+                load_icon.innerHTML = "Berechnen";
 
             }
         });

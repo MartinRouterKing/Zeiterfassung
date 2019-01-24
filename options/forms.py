@@ -1,27 +1,25 @@
 from bootstrap_datepicker_plus import TimePickerInput
 from django import forms
-from tracking.models import Element, Categorie, Workingtime, Kategorie, Calc_Choices,KategorieElement
+from tracking.models import Element, Categorie, Workingtime, Kategorie, Calc_Choices, KategorieElement
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
+from options.admin import UserCreationForm
+from django import forms
 
-class MyRegistrationForm(UserCreationForm):
-    email = forms.EmailField(required=True)
-    name = forms.CharField(required=True)
+
+class UsereditForm(forms.Form):
+    username = forms.ModelChoiceField(queryset=User.objects.all(), widget=forms.Select(attrs={'class': 'form-control'}))
+    email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    first_name = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    last_name = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    working_time = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+class SignupForm(UserCreationForm):
+    email = forms.EmailField(max_length=200)
+    is_superuser = forms.CheckboxInput()
 
     class Meta:
         model = User
-        fields = {'name', 'username', 'password1', 'password2', 'email', 'is_superuser', 'first_name', 'last_name'}
-        widgets = {
-            'username': forms.TextInput(attrs={'class': 'form-control'}),
-            'password1': forms.TextInput(attrs={'class': 'form-control'}),
-            'password2': forms.TextInput(attrs={'class': 'form-control'}),
-            'email': forms.TextInput(attrs={'class': 'form-control'}),
-            'is_superuser': forms.CheckboxInput(attrs={'class': 'form-control'}),
-            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
-        }
-
-
+        fields = ('username', 'email', 'is_superuser')
 
 class CalcForm(forms.ModelForm):
     class Meta:
@@ -31,9 +29,12 @@ class CalcForm(forms.ModelForm):
             'calc': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
-class calcchoiceform(forms.Form):
-    choice = forms.ModelChoiceField(queryset=Calc_Choices.objects.all(), widget=forms.Select(attrs={'class': 'form-control'}))
+class calcchoiceForm(forms.Form):
+    choice = forms.ModelChoiceField(label='Kostenträger auswählen:', queryset=Calc_Choices.objects.all(), widget=forms.Select(attrs={'class': 'form-control'}))
 
+class editCalcForm(forms.Form):
+    choice = forms.ModelChoiceField(label="Kostenträger auswählen:",required=True,queryset=Calc_Choices.objects.all(), widget=forms.Select(attrs={'class': 'form-control'}))
+    edit = forms.CharField(label="Kostenträger ändern:",required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
 
 class Worktimefrom(forms.ModelForm):
     class Meta:
@@ -45,36 +46,35 @@ class Worktimefrom(forms.ModelForm):
 
 class Categorieform(forms.ModelForm):
     class Meta:
-        model = Kategorie
-        fields = ['kategorie']
+        model = Categorie
+        fields = ['cat']
         widgets = {
-            'kategorie': forms.TextInput(attrs={'class': 'form-control'})
+            'cat': forms.TextInput(attrs={'class': 'form-control'})
         }
 
-class editcatchoiceform(forms.Form):
-    choice = forms.ModelChoiceField(queryset=Kategorie.objects.all(), widget=forms.Select(attrs={'class': 'form-control'}))
+class deletecatForm(forms.Form):
+    choice = forms.ModelChoiceField(label="Typ auswählen:", queryset=Categorie.objects.all(), widget=forms.Select(attrs={'class': 'form-control'}))
 
 
-class editcatform(forms.ModelForm):
-    class Meta:
-        model = Kategorie
-        fields = ['kategorie']
-        widgets = {
-            'kategorie': forms.TextInput(attrs={'class': 'form-control'}),
-        }
+class editcatForm(forms.Form):
+    choice = forms.ModelChoiceField(label="Typ auswählen:", queryset=Categorie.objects.all(), widget=forms.Select(attrs={'class': 'form-control'}))
+    edit = forms.CharField(label="Kostenträger ändern:",required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+
+class Categoriechoiceform(forms.Form):
+    cat_choice = forms.ModelChoiceField(queryset=Categorie.objects.all(),
+                                    widget=forms.Select(attrs={'class': 'form-control'}),label='')
 
 class Elementform(forms.ModelForm):
     class Meta:
         model = KategorieElement
         fields = ['kat_element']
         widgets = {
-            'kat_element': forms.TextInput()
+            'kat_element': forms.TextInput(attrs={'class': 'form-control'})
         }
 
-
-
 class editelechoiceform(forms.Form):
-      choice = forms.ModelChoiceField(queryset=KategorieElement.objects.all(), widget=forms.Select(attrs={'class': 'form-control'}))
+      choice = forms.ModelChoiceField(label="Kategorie auswählen:", queryset=KategorieElement.objects.all(), widget=forms.Select(attrs={'class': 'form-control'}))
 
 class Choicefrom(forms.ModelForm):
     class Meta:

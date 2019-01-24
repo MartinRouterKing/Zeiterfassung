@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 
-
+{% load querystring from django_tables2 %}
 {% block content %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
@@ -45,7 +45,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
 
 
-
 <div class="row row-eq-height">
     <div class="col">
         <div class="test">
@@ -77,10 +76,16 @@
                     </select>
                 </label>
             </form>
-            <div id="load_icon" style="visibility: hidden; margin-top: 10px;">
-                <i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:24px; color:#337ab7; "></i>
-                <span style="color: #337ab7; font-size:20px">Tabelle wird berechnet...</span>
-            </div>
+            <form method="post" id="id_obj">
+                <label>Auswahl der Wirtschaftseinheiten:
+                    <select id="obj_select" class="form-control" multiple data-live-search="true" multiple data-actions-box="true">
+                        {% for o in obj %}
+                        <option>{{ o }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+            </form>
+            <button type="submit" id="sub_button" style="margin: 15px; height:13%; width: 20%;" onclick="calculate()" class="btn btn-primary" >Berechnen</button>
         </div>
     </div>
     <div class="col">
@@ -165,54 +170,26 @@ function gen_pie() {
 }
 </script>
 
-
-
-<script>
-
-    $("#id_user").change(function () {
-      load_icon = document.getElementById('load_icon');
-      load_icon.style.visibility = 'visible';
-      var userId = $(this).val();
-      var cat_selected = $('#cat_select').val();
-      var wie_selected = $('#wie_select').val();
-      console.log(userId);
-      $.ajax({
-        type: "POST",
-        url: "table/",
-        data:{
-            csrfmiddlewaretoken: '{{ csrf_token }}',
-            'user': userId,
-            'wie': wie_selected,
-            'ca': cat_selected
-            },
-            success: function (data) {
-            load_icon.style.visibility = 'hidden';
-
-            $("#id_table").html(data);
-
-            gen_pie();
-
-        }
-        });
-    });
-
-
-</script>
-
-
-
 <script>
     $('#cat_select').selectpicker();
     $('#wie_select').selectpicker();
+    $('#obj_select').selectpicker();
     $('#id_user').selectpicker();
+</script>
 
-   $('#cat_select').on('change', function () {
-      load_icon = document.getElementById('load_icon');
-      load_icon.style.visibility = 'visible';
+
+<script>
+
+   function calculate() {
+      var inner = '<i  id="load_icon" class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:18px; color:#f8f9fa;"></i>'
+
+      load_icon = document.getElementById('sub_button');
+      load_icon.innerHTML = inner;
       var cat_selected = $('#cat_select').val();
       var wie_selected = $('#wie_select').val();
+      var obj_selected = $('#obj_select').val();
       var userId = $('#userId').val();
-      console.log($(this).val());
+
       $.ajax({
         type: "POST",
         url: "table/",
@@ -220,51 +197,61 @@ function gen_pie() {
             csrfmiddlewaretoken: '{{ csrf_token }}',
             'ca': cat_selected,
             'wie': wie_selected,
+            'obj': obj_selected,
             'user': userId
             },
             success: function (data) {
-            load_icon.style.visibility = 'hidden';
+            load_icon.innerHTML = 'Berechnen';
           $("#id_table").html(data);
           gen_pie();
         }
         });
-    });
-
-   $('#wie_select').on('change', function () {
-      load_icon = document.getElementById('load_icon');
-      load_icon.style.visibility = 'visible';
-      var cat_selected = $('#cat_select').val();
-      var wie_selected = $('#wie_select').val();
-      var userId = $('#userId').val();
-      console.log($(this).val());
-      $.ajax({
-        type: "POST",
-        url: "table/",
-        data:{
-            csrfmiddlewaretoken: '{{ csrf_token }}',
-            'ca': cat_selected,
-            'wie': wie_selected,
-            'user': userId
-            },
-            success: function (data) {
-           load_icon.style.visibility = 'hidden';
-          $("#id_table").html(data);
-          gen_pie();
-        }
-        });
-    });
+};
 
 </script>
 
 
 <div class="test">
+    <a class="btn btn-primary" type="submit" style="color: white;" onclick="ajax_exp()" role="button">Download</a>
 <container id="id_table" >
-
-
 
 </container>
     </div>
+<script>
+     function ajax_exp() {
+        console.log("click");
+        var table = document.getElementsByTagName("table")[0];
+        var data = [];
 
+        for (var c = 0; c< table.rows.length; c++) {
+            console.log(c);
+            rows = []
+            for (var i = 0; i< table.rows[0].cells.length; i++) {
+                if (c == 0){
+                   rows.push(table.rows[c].cells[i].innerText);
+                } else {
+                   rows.push(table.rows[c].cells[i].innerHTML);
+                }
+            };
+            data.push(rows);
+        };
+        console.log(data);
+
+        let csvContent = "data:text/csv;charset=utf-8,";
+        data.forEach(function(rowArray){
+        let row = rowArray.join(",");
+        csvContent += row + "\r\n";
+        });
+
+        var encodedUri = encodeURI(csvContent);
+        var encodedUri = encodeURI(csvContent);
+        var link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "my_data.csv");
+        document.body.appendChild(link); // Required for FF
+        link.click(); // This will download the data file named "my_data.csv".
+     };
+</script>
 
 
 

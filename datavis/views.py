@@ -21,7 +21,6 @@ def Analyticsview(request):
     currentmonth = datetime.now().month
     month_name_list = ["Unbekannt" ,"Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"]
     currentmonth_name = month_name_list[currentmonth]
-    print(currentmonth_name)
     currentyear = datetime.now().year
 
     '''
@@ -82,7 +81,6 @@ def Analyticsview(request):
         list_cat.append(h)
 
     user = request.user
-    print(user)
     data = {}
     counter = 0
     for c in list(set(Categorie.objects.all().values_list('cat', flat=True))):
@@ -91,7 +89,6 @@ def Analyticsview(request):
                                              user_id__username=user,
                                              start__month=currentmonth,
                                              type=c).aggregate(Sum('hours'))['hours__sum']
-        print(event)
         if event==None:
             data_list.append(0)
         else:
@@ -107,9 +104,7 @@ def Analyticsview(request):
             data[c].append(colors[counter])
 
         counter += 1
-    print(data)
-    print(currentmonth)
-    print(currentyear)
+
     currentdate = str(currentmonth) + "." + str(currentyear)
     return render(request, 'home.html',{
         'currentdate': currentdate,
@@ -137,10 +132,10 @@ def load_bar_cat(request):
         date = request.GET['selectedDate']
         date_iso = datetime.strptime(date + " +0000", '%m.%Y %z')
         date_iso.isoformat()
-        print(date_iso)
+
 
         user = request.user
-        print(user)
+
         colors = ['#1abc9c', '#34495e', '#2ecc71', '#3498db', '#9b59b6', '#f1c40f', '#e67e22', '#e74c3c', '#95a5a6',
                   "#bccad6", "#8d9db6", "#667292", "#f1e3dd", "#cfe0e8", "#b7d7e8", "#87bdd8", "#daebe8"]
 
@@ -152,7 +147,7 @@ def load_bar_cat(request):
                                                  user_id__username=user,
                                                  start__month=date_iso.month,
                                                  type=c).aggregate(Sum('hours'))['hours__sum']
-            print(event)
+
             if event == None:
                 data_list.append(0)
             else:
@@ -168,7 +163,7 @@ def load_bar_cat(request):
                 data[c].append(colors[counter])
 
             counter += 1
-        print(data)
+
 
     return render(request, 'load_bar_cat.html',
                   {'data': data}

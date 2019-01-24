@@ -3,11 +3,17 @@ from calender.models import CalendarEvent
 from .tables import TrackingTable
 from django_tables2.config import RequestConfig
 from django_tables2.export.export import TableExport
+from django_filters.views import FilterView
+from django_tables2.views import SingleTableMixin
+
+
 
 def tracking(request):
     table = TrackingTable(CalendarEvent.objects.filter(user_id=request.user.id),template_name = 'django_tables2/bootstrap.html')
 
     RequestConfig(request).configure(table)
+
+    table.paginate(page=request.GET.get('page', 1), per_page=1000)
 
     export_format = request.GET.get('_export', None)
     if TableExport.is_valid_format(export_format):

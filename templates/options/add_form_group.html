@@ -1,0 +1,32 @@
+
+
+<div class="form-group" style="border-top: 1px solid white; padding: 10px;">
+    <div class="row">
+        <div class="col-1">
+            <p style="color: white;">{{ counter }}</p>
+        </div>
+        <div class="col-4">
+            <select class="form-control" id="element_{{ counter }}">
+                {% for ele in elements %}
+                <option> {{ele}} </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-1">
+            <input type="text" class="form-control" id="wie_{{ counter }}">
+        </div>
+        <div class="col-1">
+            <input type="text" class="form-control" id="obj_{{ counter }}">
+        </div>
+        <div class="col-4">
+            <select class="form-control" id="calc_{{ counter }}">
+                {% for cal in calc %}
+                <option>{{cal}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col">
+            <span onclick="del_from_group(this)" style="color: red; float: right; cursor: pointer;" class="glyphicon glyphicon-minus"></span>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,415 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load bootstrap3 %}       {# import bootstra #}
+{% bootstrap_css %}         {# Embed Bootstrap CSS #}
+{% bootstrap_javascript jquery='full' %}  {# Embed Bootstrap JS+jQuery #}
+{{ form.media }}            {# Adds date-picker required JS and CSS #}
+{% load widget_tweaks %}
+
+<meta charset="UTF-8">
+<head>
+    <style>
+
+    a{
+        display: block;
+    }
+
+    table{
+        overflow: auto;
+    }
+
+    .glyphicon-arrow-right{
+        color: #337ab7;
+        margin-top: 45px;
+    }
+
+    .glyphicon-plus{
+        cursor: pointer;
+        color: #79c338;
+    }
+    .glyphicon glyphicon-minus{
+        cursor: pointer;
+    }
+
+    .glyphicon-pencil{
+        cursor: pointer;
+        color: #efb80b;
+    }
+
+    .glyphicon-remove{
+        cursor: pointer;
+        color: red;
+    }
+
+    .test{
+        background-color: #24282c;
+        box-shadow: inset 0 0 10px #000000;
+        margin: 10px;
+        margin-top: 0px;
+        padding: 20px;
+    }
+
+    .header-container{
+        border-bottom: white;
+        borderColor: #473939
+        margin: 10px;
+        margin-bottom: 0px;
+        font-size: 30px;
+        padding-left: 10px;
+    }
+
+    table{
+    table-layout: fixed;
+    width: 100%;
+    }
+
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+</head>
+
+<div class="container" style="padding: 10px;">
+<div class="header-container">
+    <strong style="color:white;">Benutzerkonto Hinzufügen:</strong>
+</div>
+<div class="test">
+    {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}" role="alert">
+                {{ message }}
+            </div>
+            {% endfor %}
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        <p>
+            <label style="margin: 5px; color: white;">*Benutzername:</label>
+            {{ userform.username |add_class:'form-control' }}
+            {{userform.username.errors}}
+            <label style="margin: 5px; color: white;">Es können maximal 150 Charakter (Buchstaben, Zahlen und @.+-_) verwendet werden.</label>
+        </p>
+        <p>
+            <label style="margin: 5px; color: white;">*E-Mail:</label>
+            {{ userform.email |add_class:'form-control'}}
+            {{ userform.email.help_text }}
+            {{userform.email.errors}}
+        </p>
+        <div class="row">
+            <div class="col">
+                <label style="margin: 5px; color: white;">Dem Benutzer Adminrechte erteilen: {{ userform.is_superuser |add_class:'form-control'}} </label>
+            </div>
+        </div>
+        <input type="submit" class="btn btn-primary inline" style="margin: 10px;" value="Benutzer erstellen">
+        <input type="button" onclick="return popitup('/options/admin_options/edit_user/')" class="btn btn-primary inline" style="margin: 10px;" value="Benutzer bearbeiten">
+        <p style="margin: 5px; color: white;">Felder mit einem * müssen ausgefüllt werden. Die weiteren Felder sind optional.</p>
+    </form>
+</div>
+    <div class="header-container">
+    <strong style="color:white;"> Typen, Kategorien oder Kostenträgen hinzufügen oder bearbeiten:</strong>
+</div>
+
+<div class="test">
+<div class="row" style="border-bottom: 1px solid white; margin-top: 20px; margin-bottom: 10px;">
+    <div class="col-6" style="color: white">
+        <a style="font-size: 20px">Typen</a>
+    </div>
+    <div class="col-2" >
+        <a class="glyp_container" href="/options/admin_options/addcategories/" data-toggle="modal" data-target="#myModal" data-keyboard="false" ><span style="font-size: 110%;" class="glyphicon glyphicon-plus"> Hinzufügen</span></a>
+    </div>
+    <div class="col-2">
+        <a class="glyp_container" href="/options/admin_options/editcategories/" data-toggle="modal" data-target="#myModal" data-keyboard="false"><span style="font-size: 110%;" class="glyphicon glyphicon-pencil"> Bearbeiten</span></a>
+    </div>
+    <div class="col-2">
+        <a class="glyp_container" href="/options/admin_options/deletecategories/" data-toggle="modal" data-target="#myModal" data-keyboard="false"><span style="font-size: 110%;" class="glyphicon glyphicon-remove"> Löschen</span></a>
+    </div>
+</div>
+    <div class="row" style="border-bottom: 1px solid white;  margin-top: 20px; margin-bottom: 10px;">
+    <div class="col-6" style="color: white">
+        <a style="font-size: 20px">Kategorien</a>
+    </div>
+    <div class="col-2" >
+        <a class="glyp_container" href="/options/admin_options/addelements/" data-toggle="modal" data-target="#myModal" data-keyboard="false" ><span style="font-size: 110%;" class="glyphicon glyphicon-plus"> Hinzufügen</span></a>
+    </div>
+    <div class="col-2">
+        <a class="glyp_container" href="/options/admin_options/editelements/" data-toggle="modal" data-target="#myModal" data-keyboard="false"><span style="font-size: 110%;" class="glyphicon glyphicon-pencil"> Bearbeiten</span></a>
+    </div>
+    <div class="col-2">
+        <a class="glyp_container" href="/options/admin_options/deleteelements/" data-toggle="modal" data-target="#myModal" data-keyboard="false"><span style="font-size: 110%;" class="glyphicon glyphicon-remove"> Löschen</span></a>
+    </div>
+</div>
+    <div class="row" style="border-bottom: 1px solid white;  margin-top: 20px; margin-bottom: 10px;">
+    <div class="col-6" style="color: white">
+        <a style="font-size: 20px">Kostenträger</a>
+    </div>
+    <div class="col-2" >
+        <a class="glyp_container" href="/options/admin_options/addcalc/" data-toggle="modal" data-target="#myModal" data-keyboard="false" ><span style="font-size: 110%;" class="glyphicon glyphicon-plus"> Hinzufügen</span></a>
+    </div>
+    <div class="col-2">
+        <a class="glyp_container"  href="/options/admin_options/editcalc/" data-toggle="modal" data-target="#myModal" data-keyboard="false"><span style="font-size: 110%;" class="glyphicon glyphicon-pencil"> Bearbeiten</span></a>
+    </div>
+    <div class="col-2">
+        <a class="glyp_container"  href="/options/admin_options/deletecalc/" data-toggle="modal" data-target="#myModal" data-keyboard="false"><span style="font-size: 110%;" class="glyphicon glyphicon-remove"> Löschen</span></a>
+    </div>
+</div>
+
+</div>
+<div class="header-container">
+    <strong style="color:white;"> Einstellung der Kategorien und Typen Kombinationen:</strong>
+</div>
+<div class="test" >
+<form>
+        <div class="input-group">
+        <span class="input-group-btn">
+            <a class="btn btn-primary" id="load_cat_select" style="color:white; width: 150px;">Bitte Typ auswählen</a>
+        </span>
+    {{cat_choice}}
+        </div>
+</form>
+    <div class="row" style="margin-top: 30px;">
+        <div class="col-1">
+            <p style="color: white;">ID</p>
+        </div>
+        <div class="col-4" >
+            <p style="color: white;">Kategorie</p>
+        </div>
+        <div class="col-1">
+            <p style="color: white;">WIE</p>
+        </div>
+        <div class="col-1">
+            <p style="color: white;">Objekt</p>
+        </div>
+        <div class="col-4">
+            <p style="color: white;">Kostenträger</p>
+        </div>
+    </div>
+        <form id="from-group-container" class="form-horizontal" style="margin: 10px;">
+
+        </form>
+        <center style= "border-top: 1px solid white;">
+
+            <span onclick="add_from_group(this)" style="font-size: 20px; margin-top: 10px;" class="glyphicon glyphicon-plus" id="add_from_group"></span>
+
+        </center>
+    <button type="submit" style="margin: 10px; margin-left: 0px; height: 35px; width: 150px;" id="sub_button" onclick="save_element()" class="btn btn-primary" >Speichern</button>
+
+     </div>
+</div>
+
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content" id="modal_content_id" style="background-color: #343a40;">
+
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+      $('body').on('hidden.bs.modal', '.modal', function () {
+        $(this).removeData('bs.modal');
+        $("#modal_content_id").children().remove();;
+      });
+</script>
+<script>
+
+function ajax_save(){
+    var form = $('#modal_form');
+    url = $('#modal_form').attr('action');
+
+   $.ajax({
+            type: "POST",
+            url: url,
+            data: form.serialize(),
+            success: function (data) {
+                var newHTML = data;
+                $('#modal_content_id').html(newHTML);
+                }
+    });
+}
+</script>
+<script>
+
+$('#id_cat_choice').change( function () {
+    var inner = '<i  id="load_icon" class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:18px; color:#f8f9fa;"></i>'
+    load_icon = document.getElementById('load_cat_select');
+    load_icon.innerHTML = inner;
+
+    var cat_choice = $('#id_cat_choice option:selected').text();
+
+        $.ajax({
+          type: 'POST',
+          url: 'ajax_load_from_groups/',
+          data:{
+          cat_choice: cat_choice,
+          csrfmiddlewaretoken: "{{ csrf_token }}"
+          },
+          success: function(data){
+           $('#from-group-container').html(data);
+            load_icon.innerHTML = "Bitte Typ auswählen";
+          }
+        });
+
+});
+
+
+function add_from_group(event){
+
+    counter = ($('#from-group-container')[0].length/4)
+    counter ++;
+
+    var cat_choice = $('#id_cat_choice')[0][$('#id_cat_choice')[0].selectedIndex].text
+
+    $.ajax({
+          type: 'POST',
+          url: 'ajax_add_from_group/',
+          data:{
+          counter: counter,
+          cat_choice: cat_choice,
+          csrfmiddlewaretoken: "{{ csrf_token }}"
+          },
+          success: function(data){
+            $('#from-group-container').append(data).show('slow');
+          }
+        });
+
+}
+
+function del_from_group(event){
+    element = $(event).parent().parent().parent().remove().hide('slow');
+    element.remove()
+}
+
+function save_element(){
+    var cat_choice = $('#id_cat_choice')[0][$('#id_cat_choice')[0].selectedIndex].text
+    var inner = '<i  id="load_icon" class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:18px; color:#f8f9fa;"></i>'
+    load_icon = document.getElementById('sub_button');
+    load_icon.innerHTML = inner;
+
+    var count = $('#from-group-container')[0].length;
+    var element = [];
+    var wie = [];
+    var obj = [];
+    var calc = [];
+        var group = 0;
+        for (var i = 0, n = count; i < n; i++) {
+            group ++;
+            if (group==1){
+                element.push($('#from-group-container')[0][i][$('#from-group-container')[0][i].selectedIndex].text);
+            }
+            else if (group==2){
+                wie.push($('#from-group-container')[0][i].value);
+            }
+            else if (group==3){
+                obj.push($('#from-group-container')[0][i].value);
+            }
+            else if (group==4){
+                calc.push($('#from-group-container')[0][i][$('#from-group-container')[0][i].selectedIndex].text);
+                group = 0;
+
+            }
+          }
+
+         $.ajax({
+          type: 'POST',
+          url: 'ajax_save_element/',
+          data:{
+          cat_choice: cat_choice,
+          element: element,
+          wie: wie,
+          obj: obj,
+          calc: calc,
+          csrfmiddlewaretoken: "{{ csrf_token }}"
+          },
+          success: function(){
+
+              var inner = '<p>Gespeichert</p><iid="load_icon" class="glyphicon glyphicon-ok" style="font-size:18px; color:#f8f9fa;"></i>'
+              load_icon = document.getElementById('sub_button');
+              load_icon.innerHTML = inner;
+
+              load_icon.innerHTML = "Speichern";
+          }
+        });
+}
+
+</script>
+
+
+
+<script>
+       function popitup(url) {
+    newwindow=window.open(url,'{{title}}','width=350,height=300');
+    if (window.focus) {newwindow.focus()}
+    return false};
+
+
+</script>
+
+<script>
+    $("#id_categorie").change(function () {
+        var cat = document.getElementById("id_categorie");
+        var text = cat.options[cat.selectedIndex].text;
+        console.log(text);
+
+        $.ajax({
+            type: "POST",
+            url: 'load_elements/',
+            data: {
+            'categorie': text,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function (data) {
+
+                $('#id_element').html(data);
+                }
+    });
+
+            $.ajax({
+            type: "POST",
+            url: 'load_fav/',
+            data: {
+            'categorie': text,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function (data) {
+                $('#favorite').html(data);
+                }
+    });
+    });
+
+    function add(){
+    var cat = document.getElementById("id_element");
+    var text = cat.options[cat.selectedIndex].text;
+    var selectedID = cat.selectedIndex
+    console.log(selectedID)
+    cat.remove(cat.selectedIndex);
+
+    var x = document.getElementById("favorite");
+    var option = document.createElement("option");
+    option.text = text;
+    x.add(option);
+
+    $('#id_element').prop("selectedIndex",selectedID);
+
+    }
+
+    function remove(){
+    var fav = document.getElementById("favorite");
+    var text = fav.options[fav.selectedIndex].text;
+    var selectedID = fav.selectedIndex;
+    fav.remove(fav.selectedIndex);
+
+    var x = document.getElementById("id_element");
+    var option = document.createElement("option");
+    option.text = text;
+    x.add(option);
+
+    $('#favorite').prop("selectedIndex",selectedID);
+
+    }
+</script>
+
+{% endblock %}

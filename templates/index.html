@@ -5,13 +5,18 @@
 <head>
 
 <link crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 
     <style>
 
 .test{
     background-color: #343a40;
     padding: 10px;
+}
+
+.holiday {
+    background: rgba(211,211,211,0.1);
 }
 
 .popover-header{
@@ -23,15 +28,12 @@
     background-color: #676b70;
     box-shadow: 0 1px 5px rgba(0,0,0,0.95);
     transition: box-shadow 0.1s ease-in-out;
-
 }
-
 
 th, td, h2{
     color: white
 }
 .fc-time-grid-event{
-    background-color: #343a40;
     border: 1px solid #343a40;
     border-left: 5px solid Navy;
 }
@@ -44,10 +46,8 @@ th, td, h2{
           box-shadow: 0 1px 5px rgba(0,0,0,0.95);
           transition: box-shadow 0.1s ease-in-out;
           transform: scale(1.05, 1.05);
-    }
+          }
 
-
-/* Required Styling */
 
 label input[type="checkbox"] {
   display: none;
@@ -84,7 +84,6 @@ label input[type="checkbox"] {
   opacity: 1;
 }
 
-
 .fc-head{
  background-color: #343a40;
  box-shadow: inset 0 0 10px #000000;
@@ -106,7 +105,6 @@ label input[type="checkbox"] {
 }
 
 #fc-event ui-draggable ui-draggable-handle{
-
 }
 
 .fc-today-button{
@@ -121,6 +119,17 @@ label input[type="checkbox"] {
     color: #ffffff;
 }
 .fc-next-button{
+    background-color: #337ab7;
+    border-color: #337ab7;
+    color: #ffffff;
+}
+.fc-month-button{
+    background-color: #337ab7;
+    border-color: #337ab7;
+    color: #ffffff;
+
+
+.fc-agendaWeek-button{
     background-color: #337ab7;
     border-color: #337ab7;
     color: #ffffff;
@@ -147,16 +156,37 @@ label input[type="checkbox"] {
     popover-body: #409ded;
 }
 
+.fc-event .fc-bg{
 
+}
+
+.progress {
+    position:relative;
+}
+.progress span {
+    position:absolute;
+    left:0;
+    width:100%;
+    text-align:center;
+    z-index:2;
+    color:white;
+}
 </style>
 
 </head>
 
 
   <!-- Content here -->
+
+
             <div class="test" id='external-events'>
                 <div class="row">
                     <div class="col" style="border-bottom: 1px solid black;">
+                     <div class="progress position-relative">
+                        <div class="progress-bar" role="progressbar" style="width: {{workingtime.wk_month_perc}}%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
+                        </div>
+                            <span class="justify-content-center d-flex position-absolute w-100" style="font-size: 14px; color: #343a40;">{{workingtime.wk_per_month}} von {{workingtime.wk_max}} Stunden</span>
+                     </div>
                         <label  for="id-of-input" id="id_favorite" class="custom-checkbox" style="float: right;">
                         <input type="checkbox" id="id-of-input" onclick="myFunction()"/>
                         <i class="glyphicon glyphicon-star-empty" style="font-size: 12px;" ></i>
@@ -195,6 +225,8 @@ label input[type="checkbox"] {
                 </div>
             </center>
 
+
+
 <script>
 
 
@@ -213,9 +245,8 @@ label input[type="checkbox"] {
 
          $('#id_element .fc-event').each(function() {
             var colors = ['#1abc9c', '#2ecc71', '#3498db', '#9b59b6', '#34495e', '#f1c40f', '#e67e22', '#e74c3c', '#95a5a6',, '#34495e', '#f1c40f', '#e67e22', '#e74c3c', '#95a5a6',];
-            console.log(categoriesId)
             var color = colors[categoriesId];
-            $(this).css({"border-left": "5px solid #d31d1d"});
+            $(this).css({"border-left": "5px solid #20749b"});
 
                                                     // store data so the calendar knows to render an event upon drop
            $(this).data('event', {
@@ -240,9 +271,12 @@ label input[type="checkbox"] {
 </script>
 
 
-
 <script type="text/javascript">
+
+
+
     $(function() {
+
 
   // initialize the external events
   // -----------------------------------------------------------------
@@ -284,11 +318,11 @@ label input[type="checkbox"] {
                 start: event.start.toString(),
                 end:   event.end.toString(),
                 note: event.note,
+                save: event.save,
                 csrfmiddlewaretoken: '{{ csrf_token }}'
           },
     });
     }
-
 
   function deleteMyData(event){
     $.ajax({
@@ -301,18 +335,59 @@ label input[type="checkbox"] {
                 start: event.start.toString(),
                 end:   event.end.toString(),
                 note: event.note,
+                save: event.save,
                 csrfmiddlewaretoken: '{{ csrf_token }}'
           },
     });
     }
 
    var latest_id = {{ latest_id }};
+   var latest_notes_id = {{ latest_note_id }}
+
 
   $('#calendar').fullCalendar({
+    customButtons: {
+    myCustomButton: {
+      text: 'Freie Notiz',
+      click: function() {
+        latest_notes_id++;
+       Date.prototype.addHours= function(h){
+            this.setHours(this.getHours()+h);
+            return this;
+            }
+        var currentdate = new Date().setMinutes(00);
+        var currentdate_end =new Date().addHours(1).setMinutes(00);
+
+        event = {
+        title: "Freie Notiz",
+        id: latest_notes_id,
+        type: "",
+        start: currentdate,
+        end: currentdate_end,
+        note: "",
+        allDay: "False",
+        save: "note"
+        }
+
+        $('#calendar').fullCalendar( 'renderEvent', event , true );
+      }
+    }
+  },
+    header: {
+        right: 'prev,next,today,month,agendaWeek,myCustomButton'
+        },
       buttonsIcons : {
        prev: 'left-single-arrow',
        next: 'right-single-arrow',
     },
+      viewRender: function(view, element){
+
+        if(view.name == 'agendaWeek') {
+
+    } else if(view.name == 'month'){
+
+    }
+  },
 
     defaultView: (function (){ if($(window).width()<=768){
         return defaultView = 'agendaDay';} else { return defaultView = 'agendaWeek';}})(),
@@ -355,45 +430,70 @@ label input[type="checkbox"] {
                     end: "{{ i.end|date:"c" }}",
                     note: "{{ i.note }}",
                     allDay: "{{ all_day }}",
+                    save: "event",
                 },
                 {% endfor %}
+                {% for i in event_notes %}
+                {
+                    id: "{{i.id}}",
+                    title: "{{ i.title}}",
+                    type: "",
+                    start: "{{ i.start|date:"c" }}",
+                    end: "{{ i.end|date:"c" }}",
+                    note: "",
+                    allDay: "False",
+                    save: "note",
+                },
+                {% endfor %}
+
             ],
+            eventColor:'#676b70',
+            eventBackgroundColor: '#343a40',
+            timeFormat: 'H(:mm)',
+
             eventRender: function(event, element, view) {
 
+            element.attr("id","pop_" + event._id);
 
+                if (event.save=="note"){
+                    element.css({opacity: 0.5});
+
+                    saveMyData(event);
+                    element.css({"border-left": "5px solid #2de2a0"});
+                    }
+                else {
                 var colors = ['#1abc9c', '#2ecc71', '#3498db', '#9b59b6', '#34495e', '#f1c40f', '#e67e22', '#e74c3c', '#95a5a6', '#34495e', '#f1c40f', '#e67e22', '#e74c3c', '#95a5a6',];
                 var color = colors[event.type];
 
-                element.css({"border-left": "5px solid #d31d1d"});
 
-                $('#pop_xyz').val("wut");
+                element.css({"border-left": "5px solid #20749b"});
 
-                console.log(event._id);
-                element.popover({
-                    html: true,
-                    title: event.title,
-                    container: 'body',
-                    trigger: 'click',
-                    });
-                element.attr('data-content',"<div style='color: white;' id= '" + event._id + "cont' >Notizen: <textarea class='form-control' id='" + event._id + "'>" + event.note + " </textarea><button style='margin-top: 10px; margin-bottom: 10px; float: right;' type='button' id='pop_save' class='btn btn-primary'>Speichern</button></div",);
-
-                console.log(element);
-
+                if (event.note != "") {
+                        element.find(".fc-content").prepend("<div class='note_icon_cont'><span class='glyphicon glyphicon-flag' id='note_icon'></span></div>");
+                        }
+                }
 
             if (view.name == 'listDay') {
                 element.find(".fc-list-item-time").append("<span class='closeon'>&times;</span>");
 
-
-
             } else {
                 element.find(".fc-content").prepend("<span class='closeon'>&times;</span>");
             }
+
             element.find(".closeon").on('click', function () {
                 deleteMyData(event);
                 $('#calendar').fullCalendar('removeEvents', event._id);
             });
 
+            element.popover({
+                    html: true,
+                    animation: true,
+                    title: "" + event.title + "",
+                    trigger: "click",
+                    content: "<div style='color: white;' id= '" + event._id + "cont' >Notizen: <textarea class='form-control' id='" + event._id + "'>" + event.note + " </textarea><button style='margin-top: 10px; margin-bottom: 10px; float: right;' type='button' id='pop_save' class='btn btn-primary'>Speichern</button></div",
+                    });
         },
+
     weekNumbers: true,
     color: 'white',
     firstDay: 1,
@@ -402,26 +502,33 @@ label input[type="checkbox"] {
     eventLimit: true,
     handleWindowResize: true,
 
-    droppable: true, // this allows things to be dropped onto the calendar
-
+    droppable: true,
 
     eventMouseover: function( event, jsEvent, view ) {
 
            $(document).one('click', '#pop_save', function(){
 
-                console.log($('#' + event._id));
-                var txt = $('#' + event._id).val();
-                console.log(txt);
-                event.note = txt;
-                if(typeof txt !== "undefined")
-                {
-                    console.log("BHÄÄÄÄÄ");
+                if (event.save=="event"){
+                    var txt = $('#' + event._id).val();
+                    event.note = txt;
                     saveMyData(event);
+
+                }else if(event.save=="note"){
+                    var txt = $('#' + event._id).val();
+
+                    event.title = txt;
+                    console.log(event.title);
+
+                    }
+
+                if(typeof txt != "undefined")
+                {
                     $('#calendar').fullCalendar('removeEvents', event._id);
                     $('#calendar').fullCalendar( 'renderEvent', event, true );
                     $('.popover').popover('hide');
                 };
                 });
+
     },
 
     eventReceive: function(event) {
@@ -429,6 +536,7 @@ label input[type="checkbox"] {
             latest_id++;
             event.id = latest_id;
             event.note = "";
+            event.save = "event";
             event_new = event;
             $('#calendar').fullCalendar('removeEvents', event._id);
             $('#calendar').fullCalendar( 'renderEvent', event_new , true );
@@ -436,61 +544,69 @@ label input[type="checkbox"] {
 
             },
 
-    drop: function(date, jsEvent, ui, resourceId ) {
-      // is the "remove after drop" checkbox checked?
-      if ($('#drop-remove').is(':checked')) {
-        // if so, remove the element from the "Draggable Events" list
-        $(this).remove();
-      }
-    },
-
     eventDrop: function (event, delta, revertFunc, jsEvent, ui, view) {
                 $('.popover').popover('hide');
                 console.log("eventDrop");
-               saveMyData(event);
+                saveMyData(event);
            },
 
     eventResize: function (event, delta, revertFunc, jsEvent, ui, view) {
                  console.log("eventResize");
                  saveMyData(event);
-             }
+             },
+    eventAfterAllRender: function (view) {
+
+                    var currentDate = $('#calendar').fullCalendar('getDate');
+                    var currentYear = currentDate._i[0]
+                    $.ajax({
+                        url:"https://feiertage-api.de/api/?jahr="+"{{year}}"+"&nur_land=SH",
+                        type: "GET",
+                        success: function (data) {
+
+                        var holidays = []
+                        for (var f in data){
+                            var holiday_form = moment(data[f].datum,'YYYY-MM-DD');
+                            holidays.push([holiday_form, f]);
+                        };
+
+				        var holidayMoment = [];
+
+				        for(var i = 0; i < holidays.length; i++) {
+					        holidayMoment = holidays[i][0];
+					        if (view.name == 'month') {
+						        $("td[data-date=" + holidayMoment.format('YYYY-MM-DD') + "]").addClass('holiday');
+						        var holiday_name = $("td[data-date=" + holidayMoment.format('YYYY-MM-DD') + "]")
+
+                                check_month = holiday_name.find("span").text();
+                                if (check_month != holidays[i][1]){
+                                    holiday_name.find("span").text(holidays[i][1]);
+                                }
+
+					        } else if (view.name =='agendaWeek') {
+					            $(".fc-event .fc-bg").css('background-color','#343a40');
+					        	var days = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+                                var d = new Date(holidayMoment);
+						        var classNames =  $("th[data-date="+holidayMoment.format('YYYY-MM-DD')+"]").addClass('holiday');
+                                var holiday_name = $("th[data-date="+holidayMoment.format('YYYY-MM-DD')+"]");
+                                check_week = holiday_name.find("span").text();
+                                if (check_week != holidays[i][1]){
+                                    holiday_name.find("span").text(holidays[i][1]);
+                                }
+
+					        } else if (view.name == 'agendaDay') {
+						        if(holidayMoment.format('YYYY-MM-DD') == $('#calendar').fullCalendar('getDate').format('YYYY-MM-DD')) {
+							        $("td.fc-col0").addClass('holiday');
+						            };
+					            }
+				            }
+                        }
+                    });
+	}
   });
-  var $tooltip = $("<div>").text("I'm a tooltip").addClass("tooltip");
-    $("#calendar").on("mouseenter",".fc-title", function(){
-        $('fc-title').append($tooltip);
-
-        $tooltip.position({
-            my:"left top",
-            at:"middle middle",
-            of:$(this),
-
-        });
-
-    }).on("mouseleave",".fc-title", function(){
-        $tooltip = $tooltip.detach();
-
 });
-
-
-});
-
-
 
 </script>
 
-
-<script>
-
-      //Hamburger menu toggle
-  $(".navbar-nav li a").click(function (event) {
-    // check if window is small enough so dropdown is created
-    var toggle = $(".navbar-toggler").is(":visible");
-    if (toggle) {
-      $(".navbar-collapse").collapse('hide');
-    }
-  });
-
-</script>
 
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 

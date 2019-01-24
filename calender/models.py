@@ -3,7 +3,24 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
-from tracking.models import Categorie, Element
+
+
+
+class CalendarNote(models.Model):
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.TextField(('Note'), max_length=200)
+    start = models.DateTimeField(_('Start'))
+    end = models.DateTimeField(_('End'))
+    def __unicode__(self):
+        return self.title
+
+    def __str__(self):
+        return '{},{},{},{}'.format(
+            self.user_id,
+            self.title,
+            self.start,
+            self.end
+        )
 
 
 class CalendarEvent(models.Model):

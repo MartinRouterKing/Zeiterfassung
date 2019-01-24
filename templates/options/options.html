@@ -43,15 +43,15 @@ label{
     color: gold;
 }
 
-button{
-    color:
-}
 
 #glob_cont{
     padding: 10px;
 }
 
 </style>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 
 </head>
 
@@ -68,11 +68,11 @@ button{
             <strong>Success!</strong> Indicates a successful or positive action.
         </div>
         {% endif %}
-        <span style="color:white"><STRONG>Auswahl der Typen</STRONG></span>
+        <span style="color:white;">Typenauswahl</span>
         <form method="post" id="choiceForm" data-element-url="{% url 'ajax_load_element' %}" novalidate>
             {% csrf_token %}
             {{ choice_form.categories}}
-            <span style="color:white"><STRONG>Kategorie auswählen und den Favoriten Hinzufügen</STRONG></span>
+            <span style="color:white;">Kategorie auswählen und Favoriten Hinzufügen</span>
             <select class="form-control" id="id_element" name="groups_old"  multiple="multiple" >
 
             </select>
@@ -87,7 +87,8 @@ button{
 
             </select>
         </form>
-        <button style="margin-top: 10px; margin-bottom: 10px;" type="button" onclick="savefav()" class="btn btn-primary" >Speichern</button>
+        <button type="submit" id="sub_button" style=" margin: 15px; margin-left: 0px; height: 35px; width: 100px;" onclick="savefav()" class="btn btn-primary" >Speichern</button>
+
     </div>
     </div>
 </div>
@@ -96,7 +97,7 @@ button{
 
     $("#id_workingtime").attr('value', "{{workingtime}}");
     $("#id_categories").attr('class', 'form-control');
-    $('#id_categories').prop("selectedIndex",0);
+
 
     $("#id_categories").change(function () {
       $('#favorite').find('option').remove();
@@ -163,9 +164,15 @@ button{
     }
 
     function savefav(){
+        var inner = '<i  id="load_icon" class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:18px; color:#f8f9fa;"></i>'
+
+        load_icon = document.getElementById('sub_button');
+        load_icon.innerHTML = inner;
+
         console.log("save");
         var cat = document.getElementById("id_categories");
         var cat = cat.options[cat.selectedIndex].text;
+        console.log(cat);
 
         var fav = document.getElementById("favorite");
         txt = [];
@@ -183,7 +190,10 @@ button{
             csrfmiddlewaretoken: '{{ csrf_token }}'
             },
             success: function(data){
-            $('#alert_div').html('<div class="alert alert-success"><strong>Favoriten erfolgreich gespeichert</strong></div>');
+            console.log(load_icon);
+            load_icon.innerHTML = "Speichern";
+
+
             }
         });
     }

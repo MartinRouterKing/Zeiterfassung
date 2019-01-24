@@ -1,0 +1,16 @@
+{% extends 'modal_base.html' %}
+{% block content %}
+<form method="post" id="modal_form" action="deletecalc/">
+    {% csrf_token %}
+    {{ delform }}
+    <button type="button" onclick="ajax_save()" class="btn btn-primary" >Löschen</button>
+</form>
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-{{message.tags}} fade in" style="margin-top: 10px;" role="alert">
+    <strong{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</Strong>
+    {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}

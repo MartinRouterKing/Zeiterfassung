@@ -126,6 +126,16 @@ $('.input-daterange input').each(function() {
                     ],
                 },
                 options: {
+                                        scales: {
+                        yAxes: [{
+                            display: true,
+                                ticks: {
+                                    min: 0,
+
+                                    stepSize: 10
+                                }
+                            }]
+                        },
 
                     legend: { position: 'bottom' },
                 },
@@ -202,6 +212,15 @@ $('.input-daterange input').each(function() {
                     },
                     ]},
                 options: {
+                                    scales: {
+                        yAxes: [{
+                            display: true,
+                                ticks: {
+                                    min: 0,
+                                    stepSize: 10
+                                }
+                            }]
+                        },
                     title: {
                     showTooltips: true,
                     display: true,
@@ -244,6 +263,15 @@ $('.input-daterange input').each(function() {
                     },
                     ]},
                 options: {
+                            scales: {
+                        yAxes: [{
+                            display: true,
+                                ticks: {
+                                    min: 0,
+                                    stepSize: 10
+                                }
+                            }]
+                        },
                     title: {
                     display: true,
                     showTooltips: true,

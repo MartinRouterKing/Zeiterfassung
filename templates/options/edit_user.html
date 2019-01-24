@@ -1,0 +1,75 @@
+{% load bootstrap3 %}       {# import bootstra #}
+{% bootstrap_css %}         {# Embed Bootstrap CSS #}
+{% bootstrap_javascript jquery='full' %}  {# Embed Bootstrap JS+jQuery #}
+{{ form.media }}            {# Adds date-picker required JS and CSS #}
+{% load widget_tweaks %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>editUser</title>
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+</head>
+<body style="background-color: #343a40">
+    {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}" role="alert">
+                {{ message }}
+            </div>
+            {% endfor %}
+    {% endif %}
+
+<div id="load_data" style="margin: 10px">
+<form method="post" style="color:white">
+    {% csrf_token %}
+    <p><label for="id_username">Benutzername:</label>{{ usereditform.username }}</p>
+    <p>
+    <label for="id_email">Email:</label>
+    {{ usereditform.email |add_class:'form-control'}}
+    </p>
+        <p>
+    <label for="id_first_name">Arbeitszeit pro Woche:</label>
+    {{ usereditform.working_time}}
+    </p>
+    <p>
+    <label for="id_first_name">Vorname:</label>
+    {{ usereditform.first_name}}
+    </p>
+    <p>
+    <label for="id_last_name">Nachname:</label>
+    {{ usereditform.last_name}}
+    </p>
+    <input type="submit" class="btn btn-primary inline" style="margin: 10px;" value="Speichern">
+</form>
+</div>
+</body>
+
+<script>
+    $('#id_email').addClass('form_control');
+    $('#id_first_name').addClass('form_control');
+    $('#id_last_name').addClass('form_control');
+    $('#id_working_time').addClass('form_control');
+
+    $('#id_username').change( function(){
+        var selecteduser = $(this).children("option:selected").val();
+        console.log(selecteduser);
+
+        $.ajax({
+          type: 'POST',
+          url: 'ajax_load_userdata',
+          data:{
+          selecteduser: selecteduser,
+          csrfmiddlewaretoken: "{{ csrf_token }}"
+          },
+          success: function(data){
+          $('#load_data').html(data);
+          }
+        });
+
+
+    });
+
+</script>
+
+</html>

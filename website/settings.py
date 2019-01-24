@@ -20,10 +20,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'rlp(m_mnqu!4u57sa1=vo+l8%%z%*-7vh8^lym8gn471(j7i(-'
+with open('website/secret_key.txt') as f:
+    SECRET_KEY = f.read().strip()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -37,10 +38,13 @@ INSTALLED_APPS = [
     'fullcalendar',
     'import_export',
     'django_filters',
+    'django_cron',
     'options.apps.OptionsConfig',
     'chartjs',
     'datavis.apps.DatavisConfig',
     'tablib',
+    'mail_templated',
+    'background_task',
     'widget_tweaks',
     'login.apps.LoginConfig',
     'tracking.apps.TrackingConfig',
@@ -66,8 +70,6 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
-
-
 ROOT_URLCONF = 'website.urls'
 
 TEMPLATES = [
@@ -89,7 +91,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'website.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
@@ -110,7 +111,6 @@ DATABASES = {
         'PORT': '5432',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
-
 
 
 # Password validation
@@ -155,9 +155,9 @@ db_from_env = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(db_from_env)
 
 
-LOGIN_REDIRECT_URL = 'home/'
+LOGIN_REDIRECT_URL = 'calendar/'
 
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = '/'
 
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 
@@ -211,3 +211,18 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000000000
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
+
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'wiefoetimetracking@gmail.com'
+EMAIL_HOST_PASSWORD = 'luebeck01.'
+EMAIL_PORT = 587
+
+#producation
+
+SESSION_COOKIE_SECURE= True
+CSRF_COOKIE_SECURE = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS='DENY'

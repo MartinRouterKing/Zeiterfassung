@@ -1,0 +1,39 @@
+
+<style>
+    .panel-body {
+    background-color: #24282c;
+    border-color: white !important;
+    }
+    .panel-primary{
+        border: none;
+    }
+    .panel-heading {
+     border: none;
+     background-color: #343a40 !important;
+}
+    button {
+    margin-top: 10px;
+    }
+    form {
+    color: white;
+    }
+</style>
+
+  <div class="container-fluid" style="padding: 0px; margin: 0px; ">
+    <div class="panel panel-primary" style="padding: 0px; margin: 0px;">
+      <div class="panel-heading">Einstellungen <span class="glyphicon glyphicon-remove" style="float: right; color:white !important;" data-dismiss="modal"></span>
+      </div>
+        <div class="panel-body" style="padding: 0px;">
+            <div class="container-fluid" style="padding: 0px; margin: 0px">
+                <div class="panel-body">
+
+                    {% block content %}
+                    {% endblock %}
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>

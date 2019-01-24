@@ -19,11 +19,14 @@ def accounting(request):
     user = User.objects.all()
     cat = Categorie.objects.all()
     wie = list(set(Element.objects.all().values_list('wie', flat=True)))
-    print(wie)
+    obj = list(set(Element.objects.all().values_list('obj', flat=True)))
+
+    print(obj)
     return render(request, 'accounting.html',
                   {'form': user,
                    'categories': cat,
-                   'wie': wie
+                   'wie': wie,
+                   'obj': obj
                 })
 
 def ajaxpie(request):
@@ -61,12 +64,16 @@ def ajaxtable(request):
         '''
         wie_choice = request.POST.getlist("wie[]")
 
+        '''
+        Get the value from the Wie choice
+        '''
+        obj_choice = request.POST.getlist("obj[]")
 
         '''
         Get the elements for the selected categories and 
         delete double elements     
         '''
-        elements = list(set(Element.objects.filter(categories__cat__in= cat_choice, wie__in=wie_choice).values_list('element__kat_element', flat= True)))
+        elements = list(set(Element.objects.filter(categories__cat__in= cat_choice, wie__in=wie_choice, obj__in=obj_choice).values_list('element__kat_element', flat= True)))
 
         '''
         Get the Tracking data correspoonding on the user choice
@@ -126,6 +133,16 @@ def ajaxtable(request):
 
         import django_tables2 as tables
         table = TrackingTable(data=data,template_name='django_tables2/bootstrap.html', extra_columns=[(str(key), tables.Column()) for key in calc])
+
+        RequestConfig(request).configure(table)
+        from django_tables2.export.export import TableExport
+
+        export_format = request.POST.get('_export', None)
+        print(export_format)
+        if TableExport.is_valid_format(export_format):
+            exporter = TableExport('csv', table)
+            print(exporter.response('table.{}'.format('csv')))
+            return exporter.response('table.{}'.format('csv'))
 
         RequestConfig(request, paginate={'per_page': 150}).configure(table)
 

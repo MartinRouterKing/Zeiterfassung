@@ -1,0 +1,54 @@
+
+{% for tab in load_table %}
+            <div id="from_group_{{ forloop.counter }}" class="form-group" style= "padding: 10px; border-top: 1px solid white;">
+                <div class="row">
+                    <div class="col-1">
+                        <p style="color: white;">{{ forloop.counter }}</p>
+                    </div>
+                    <div class="col-4" >
+                        <select class="form-control" id ="element_{{ forloop.counter }}" >
+
+                            {% for ele in elements %}
+                                {% if ele == tab.element %}
+                                    <option selected>{{tab.element}}</option>
+                                {% else %}
+                                <option>{{ele}}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+
+                    </div>
+                    <div class="col-1">
+                        <input type="text" class="form-control" id = "wie_{{ forloop.counter }}" value="{{tab.wie}}" >
+                    </div>
+                    <div class="col-1">
+                        <input type="text" class="form-control" id = "obj_{{ forloop.counter }}" value="{{tab.obj}}">
+                    </div>
+                    <div class="col-4">
+                        <select class="form-control" id = "calc_{{ forloop.counter }}">
+                            <option selected>{{tab.calc}}</option>
+                            {% for cal in calc %}
+                                {% if cal == tab.calc %}
+                                    <option selected>{{tab.calc}}</option>
+                                {$ else $}
+                                <option>{{cal}}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col">
+                        <span onclick="del_from_group(this)" style="color: red; float: right; cursor: pointer;" class="glyphicon glyphicon-minus"></span>
+                    </div>
+                </div>
+            </div>
+            <script>
+                var counter = {{ forloop.counter }};
+                if (counter == undefined){
+                var counter = 0;
+                }
+                console.log(counter);
+
+            </script>
+            {% endfor %}
+
+
