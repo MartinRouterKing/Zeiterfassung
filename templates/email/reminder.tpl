@@ -28,7 +28,7 @@
         <p class="text-justify" style="background-color: #f2f2f2;">Vorsichtshalber möchte ich dich noch einmal daran erinnern, dass dir nur noch wenige Tage bleiben, bis der Zugriff für dieser Monat erlischt.</p>
         <p class="text-justify" style="background-color: #f2f2f2;">Logge dich doch schnell ein, um deine bisherigen Stunden zu überprüfen oder weitere einzutragen.</p>
 
-        <a type="button" class="btn btn-primary btn-lg" href="{{link}}">Zum Login</a>
+        <a href="{{link}}">Zum Login</a>
 
         </div>
     <div style=" height: 50px; position: relative; background-color: #24282c;">

@@ -490,7 +490,7 @@ def edit_user(request):
                 q.last_name = last_name
                 q.save()
         else:
-            messages.error(request,"Hoppla, da ist wohl etwas schief gelaufen. Bitte laden Sie die Seite erneut!")
+            messages.warning(request,"Hoppla, da ist wohl etwas schief gelaufen. Bitte laden Sie die Seite erneut!")
     return render(request, 'options/edit_user.html',
                   {
                       'usereditform': usereditform}
