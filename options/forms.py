@@ -7,11 +7,11 @@ from django import forms
 
 
 class UsereditForm(forms.Form):
-    username = forms.ModelChoiceField(queryset=User.objects.all(), widget=forms.Select(attrs={'class': 'form-control'}))
-    email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'class': 'form-control'}))
-    first_name = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    last_name = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    working_time = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    username_pop = forms.ModelChoiceField(queryset=User.objects.all(), widget=forms.Select(attrs={'class': 'form-control'}))
+    email_pop = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    first_name_pop = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    last_name_pop = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    working_time_pop = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
 
 class SignupForm(UserCreationForm):
     email = forms.EmailField(max_length=200)

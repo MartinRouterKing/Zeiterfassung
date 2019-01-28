@@ -1,10 +1,10 @@
 
 
-<form method="post" style="color: white">
+<form method="post" id="modal_form" action="edit_user/">
     {% csrf_token %}
-    <p><label for="id_username">Benutzername:</label>
-        <select name="username" class="form-control" required="" id="id_username">
-
+    <p>
+        <label for="id_username_pop">Benutzername:</label>
+        <select name="username_pop" class="form-control" required="" id="id_username_pop">
         <option value="" >---------</option>
         {% for ob in options%}
             {% if ob.username == userdata.username %}
@@ -13,43 +13,60 @@
                 <option value="{{ob.id}}">{{ob.username}}</option>
             {% endif %}
             {% endfor %}
-        </select><p>
-<p>
-    <label for="id_email">Email:</label>
-    <input type="email" class="form-control" name="email" value="{{userdata.email}}" required="" id="id_email">
-</p>
+        </select>
+    </p>
+
     <p>
-    <label for="id_first_name">Arbeitszeit pro Woche</label>
-    <input type="text" value="{{workingtime}}" class="form-control" name="working_time" maxlength="30" id="id_working_time"></p>
-<p>
-<p>
-    <label for="id_first_name">Vorname:</label>
-    <input type="text" value="{{userdata.first_name}}" class="form-control" name="first_name" maxlength="30" id="id_first_name"></p>
-<p>
-    <label for="id_last_name">Nachname:</label>
-    <input type="text" value="{{userdata.last_name}}" class="form-control" name="last_name" maxlength="150" id="id_last_name"></p>
+    <label for="id_email_pop">Email:</label>
+    <input type="email" class="form-control" name="email_pop" value="{{userdata.email}}" required="" id="id_email_pop">
+    </p>
 
-    <input type="submit" class="btn btn-primary inline" style="margin: 10px;" value="Speichern">
+    <p>
+    <label for="id_first_name_pop">Arbeitszeit pro Woche</label>
+    <input type="text" value="{{workingtime}}" class="form-control" name="working_time_pop" maxlength="30" id="id_working_time_pop">
+    </p>
+
+    <p>
+    <label for="id_first_name_pop">Vorname:</label>
+    <input type="text" value="{{userdata.first_name}}" class="form-control" name="first_name_pop" maxlength="30" id="id_first_name_pop">
+    </p>
+
+    <p>
+    <label for="id_last_name_pop">Nachname:</label>
+    <input type="text" value="{{userdata.last_name}}" class="form-control" name="last_name_pop" maxlength="150" id="id_last_name_pop">
+    </p>
+
+    <input type="button" onclick="ajax_save()" class="btn btn-primary inline" style="margin: 10px;" value="Speichern">
+
 </form>
-
 <script>
-    $('#id_username').change( function(){
-        var selecteduser = $(this).children("option:selected").val();
-        console.log(selecteduser);
+    $('#id_email_pop').addClass('form_control');
+    $('#id_first_name_pop').addClass('form_control');
+    $('#id_last_name_pop').addClass('form_control');
+    $('#id_working_time_pop').addClass('form_control');
+
+    $('#id_username_pop').change( function(){
+        console.log("CHANGE");
+        var selected_user = $(this).children("option:selected").val();
+        console.log(selected_user);
 
         $.ajax({
           type: 'POST',
-          url: 'ajax_load_userdata',
+          url: 'ajax_load_userdata/',
           data:{
-          selecteduser: selecteduser,
+          select: selected_user,
           csrfmiddlewaretoken: "{{ csrf_token }}"
           },
           success: function(data){
+          console.log(data);
           $('#load_data').html(data);
           }
         });
-
-
     });
-
 </script>
+<script>
+$("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
+    $("#success-alert").slideUp(500);
+});
+</script>
+

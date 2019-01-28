@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-{% load bootstrap3 %}       {# import bootstra #}
+{% load bootstrap3 %}       {# import bootstrap #}
 {% bootstrap_css %}         {# Embed Bootstrap CSS #}
 {% bootstrap_javascript jquery='full' %}  {# Embed Bootstrap JS+jQuery #}
 {{ form.media }}            {# Adds date-picker required JS and CSS #}
@@ -63,6 +63,10 @@
     width: 100%;
     }
 
+    #myModal{
+        top: 5%;
+    }
+
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -101,7 +105,7 @@
             </div>
         </div>
         <input type="submit" class="btn btn-primary inline" style="margin: 10px;" value="Benutzer erstellen">
-        <input type="button" onclick="return popitup('/options/admin_options/edit_user/')" class="btn btn-primary inline" style="margin: 10px;" value="Benutzer bearbeiten">
+        <input type="button" href="/options/admin_options/edit_user/" data-toggle="modal" data-target="#myModal" data-keyboard="false" class="btn btn-primary inline" style="margin: 10px;" value="Benutzer bearbeiten">
         <p style="margin: 5px; color: white;">Felder mit einem * müssen ausgefüllt werden. Die weiteren Felder sind optional.</p>
     </form>
 </div>
@@ -198,7 +202,7 @@
 
 
 <!-- Modal -->
-<div id="myModal" class="modal fade" role="dialog">
+<div id="myModal" class="modal fade" role="dialog" tabindex="-1" role="dialog" >
   <div class="modal-dialog">
 
     <!-- Modal content-->
@@ -208,6 +212,7 @@
     </div>
   </div>
 </div>
+
 <script>
       $('body').on('hidden.bs.modal', '.modal', function () {
         $(this).removeData('bs.modal');
@@ -231,6 +236,7 @@ function ajax_save(){
     });
 }
 </script>
+
 <script>
 
 $('#id_cat_choice').change( function () {
@@ -384,7 +390,6 @@ function save_element(){
     var cat = document.getElementById("id_element");
     var text = cat.options[cat.selectedIndex].text;
     var selectedID = cat.selectedIndex
-    console.log(selectedID)
     cat.remove(cat.selectedIndex);
 
     var x = document.getElementById("favorite");

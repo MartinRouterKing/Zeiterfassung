@@ -4,6 +4,7 @@ from tracking.models import Categorie, Element, FavoriteElement, Workingtime
 from datetime import datetime, timedelta
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.serializers.json import Serializer
 
 def all_events(request):
     today = datetime.now()
@@ -16,7 +17,9 @@ def all_events(request):
         workingtime = Workingtime.objects.get(user_id=user).get_wk_employ_month()
     except ObjectDoesNotExist:
         workingtime = 0
-    events = CalendarEvent.objects.filter(user_id=user, start__month=month, start__year=year)
+
+    events = CalendarEvent.objects.filter(user_id=user, start__month=month, start__year=year).only("id", "type", "title", "type", "start", "end", "note", "all_day")
+
     event_notes = CalendarNote.objects.filter(user_id=user, start__month=month, start__year=year)
 
     try:
@@ -39,7 +42,7 @@ def all_events(request):
         "latest_id": event_id
     }
 
-    return render(request,'index.html', context)
+    return render(request,'calender/calender.html', context)
 
 def postview(request):
 
@@ -54,13 +57,10 @@ def postview(request):
                 title = title.replace('\n', "")
                 start = request.POST['start']
                 end = request.POST['end']
-                id = request.POST['id']
+                id = request.POST['id'].split("_")[1]
                 start = datetime.strptime(start, '%a %b %d %Y %H:%M:%S %Z%z')
                 end = datetime.strptime(end, '%a %b %d %Y %H:%M:%S %Z%z')
 
-                print(title)
-                print(start)
-                print(end)
                 n = CalendarNote(
                     user_id=user_id,
                     title=title,
@@ -70,9 +70,9 @@ def postview(request):
                 n.id=id
                 n.save()
 
+
             else:
                 id = request.POST['id']
-                print(id)
                 title = request.POST['title']
                 type = request.POST['type']
                 start = request.POST['start']
@@ -83,7 +83,6 @@ def postview(request):
                 start = datetime.strptime(start, '%a %b %d %Y %H:%M:%S %Z%z')
                 end = datetime.strptime(end, '%a %b %d %Y %H:%M:%S %Z%z')
 
-                print(type)
 
 
                 hours = (end - start).seconds/3600
@@ -128,11 +127,11 @@ def postview(request):
 
             elif event_type == "note":
 
-                id = request.POST['id']
+                id = request.POST['id'].split("_")[1]
                 instance = CalendarNote.objects.get(id=id)
                 instance.delete()
 
-    return render(request,'index.html',{})
+    return render(request,'calender/calender.html',{})
 
 def load_elements(request):
     if request.method == 'GET':
@@ -144,7 +143,7 @@ def load_elements(request):
         else:
             element = FavoriteElement.objects.filter(fav_element__categories_id=categories_id)
 
-    return render(request, 'element_events.html',
+    return render(request, 'calender/element_events.html',
                   {
                       'element': element,
                       'checked': checked

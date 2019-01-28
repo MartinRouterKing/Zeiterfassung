@@ -1,0 +1,25 @@
+<style>
+
+
+#eventtext{
+   word-wrap: break-word;         /* All browsers since IE 5.5+ */
+   overflow-wrap: break-word;     /* Renamed property in CSS3 draft spec */
+   width: 100%;
+}
+
+</style>
+
+{% if checked == 'false' %}
+        <div id="element_scroll">
+{% for ele in element %}
+        <div class='fc-event'><span id="eventtext" style="margin: 3px; overflow-wrap: break-word; word-break: break-word;">{{ele.element}}</span></div>
+{% endfor %}
+        </div>
+
+{% else %}
+        <div id="element_scroll">
+        {% for ele in element %}
+                <div class='fc-event'>{{ele.fav_element}}</div>
+        {% endfor %}
+        </div>
+{% endif %}

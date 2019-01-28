@@ -48,17 +48,15 @@ td{
         <input class="form-control" id="myInput" type="text" placeholder="Suchen..">
     </div>
     {% render_table table %}
-</div>
 
- <script>
-$(document).ready(function(){
+</div>
+    <script>
   $("#myInput").on("keyup", function() {
     var value = $(this).val().toLowerCase();
     $(".table tr").filter(function() {
       $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
     });
   });
-});
 </script>
 
 </html>

@@ -457,11 +457,11 @@ def edit_user(request):
     if request.method == 'POST':
         usereditform = UsereditForm(request.POST)
         if usereditform.is_valid():
-            username = usereditform.cleaned_data['username']
-            email = usereditform.cleaned_data['email']
-            first_name = usereditform.cleaned_data['first_name']
-            last_name = usereditform.cleaned_data['last_name']
-            working_time = usereditform.cleaned_data['working_time']
+            username = usereditform.cleaned_data['username_pop']
+            email = usereditform.cleaned_data['email_pop']
+            first_name = usereditform.cleaned_data['first_name_pop']
+            last_name = usereditform.cleaned_data['last_name_pop']
+            working_time = usereditform.cleaned_data['working_time_pop']
 
             try:
                 match = User.objects.get(email=email)
@@ -473,10 +473,8 @@ def edit_user(request):
                     match.last_name = last_name
                     match.save()
 
-                    time = Workingtime(
-                        workingtime= working_time,
-                        user_id = User.objects.get(username=username)
-                    )
+                    time = Workingtime.objects.get(user_id=User.objects.get(username=username))
+                    time.workingtime = working_time
                     time.save()
                 else:
                     messages.warning(request,"E-Mail Adresse ist bereits vergeben")
@@ -489,8 +487,15 @@ def edit_user(request):
                 q.first_name = first_name
                 q.last_name = last_name
                 q.save()
+
+                time = Workingtime(
+                    workingtime=working_time,
+                    user_id=User.objects.get(username=username)
+                )
+                time.save()
+
         else:
-            messages.warning(request,"Hoppla, da ist wohl etwas schief gelaufen. Bitte laden Sie die Seite erneut!")
+            messages.warning(request,"Achtung! Die Eigabe der E-Mail-Adresse oder der Arbeitszeit pro Woche fehlen. ")
     return render(request, 'options/edit_user.html',
                   {
                       'usereditform': usereditform}
@@ -500,7 +505,7 @@ def ajax_load_userdata(request):
 
     if request.method == 'POST':
         usereditform = UsereditForm()
-        selecteduser = request.POST['selecteduser']
+        selecteduser = request.POST['select']
         options = User.objects.all()
         userdata = User.objects.get(id=selecteduser)
         try:
@@ -509,6 +514,7 @@ def ajax_load_userdata(request):
 
         except ObjectDoesNotExist:
             workingtime = ""
+        print(userdata)
 
     return render(request, 'options/ajax_load_userdata.html',
 

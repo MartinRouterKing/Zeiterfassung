@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 
-
 {% load querystring from django_tables2 %}
 {% block content %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -90,7 +89,6 @@
     </div>
     <div class="col">
         <div class="test">
-
             <canvas id="bar-chart" ></canvas>
         </div>
     </div>
@@ -182,7 +180,6 @@ function gen_pie() {
 
    function calculate() {
       var inner = '<i  id="load_icon" class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:18px; color:#f8f9fa;"></i>'
-
       load_icon = document.getElementById('sub_button');
       load_icon.innerHTML = inner;
       var cat_selected = $('#cat_select').val();

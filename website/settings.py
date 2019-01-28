@@ -24,7 +24,7 @@ with open('website/secret_key.txt') as f:
     SECRET_KEY = f.read().strip()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -203,11 +203,10 @@ TIME_INPUT_FORMATS = [
 ]
 
 STATIC_URL = '/static/'
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000000000
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
@@ -221,8 +220,12 @@ EMAIL_PORT = 587
 
 #producation
 
-SESSION_COOKIE_SECURE= True
-CSRF_COOKIE_SECURE = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_BROWSER_XSS_FILTER = True
-X_FRAME_OPTIONS='DENY'
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+#SESSION_COOKIE_SECURE= False
+#CSRF_COOKIE_SECURE = True
+#SECURE_CONTENT_TYPE_NOSNIFF = True
+#SECURE_BROWSER_XSS_FILTER = True
+#X_FRAME_OPTIONS='DENY'
