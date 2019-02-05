@@ -21,7 +21,7 @@ def tracking(request):
         return exporter.response('table.{}'.format('xlsx'))
 
 
-    return render(request, 'list.html', {
+    return render(request, 'tracking/list.html', {
         'table': table
     })
 

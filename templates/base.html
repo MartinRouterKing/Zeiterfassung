@@ -17,30 +17,8 @@
         {% fullcalendar_jquery_ui %}
         {% fullcalendar_javascript %}
 
-        {% calendar_init calendar_config_options %}
-
  <style>
 
-.fc-title {
-    height: 100%;
-    margin-top: 5px;
-    position: relative;
-    display: block;
-       -moz-hyphens: auto;
-   -o-hyphens: auto;
-   -webkit-hyphens: auto;
-   -ms-hyphens: auto;
-   hyphens: auto;
-}
-
-.fc td, .fc th {
-  border-style: none !important;
-}
-
-#calendar .fc-today {
-    background: #306882 !important;
-    opacity: 0.5;
-}
 
 .nav-link{
     margin: 5px;
@@ -52,26 +30,6 @@ nav {
      box-shadow: 0px 6px 6px 0px rgba(0,0,0,0.61);
 }
 
-#id_element .fc-event {
-  height: 50px;
-  word-wrap: break-word;
-  cursor: move;
-  margin: 5px;
-
-}
-
-.closeon {
-  color: white;
-	position: absolute;
-	top: -5px;
-	right: 0;
-       text-align:center;
-       border-radius:10%;
-       font-size: 18px;
-	   cursor: pointer;
-
-}
-
 .note_icon_cont {
   color: white;
 	position: absolute;
@@ -81,30 +39,11 @@ nav {
        border-radius:10%;
        font-size: 17px;
 	   cursor: pointer;
-
 }
-
-	.favorite {
-	    color: white;
-		position: absolute;
-		top: 0px;
-		right: 0;
-        text-align:center;
-        border-radius:10%;
-        font-size: 18px;
-		cursor: pointer;
-        background-color: #676b70
-	}
 
 .glyphicon glyphicon-log-out{
     margin: 20px;
 }
-
-  body {
-  //background-image: url( '/static/lubeck-skyline.jpg' );
-  //background-attachment: fixed;
-
-  }
 
 #sky{
     background-color: #ffffff;
@@ -128,7 +67,7 @@ nav {
 </head>
 <header>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar-fixed-top">
-        <a class="navbar-brand" href="{% url 'home' %}">Arbeitszeiterfassung</a>
+        <a class="navbar-brand" href="{% url 'calendar' %}">Arbeitszeiterfassung</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -167,13 +106,14 @@ nav {
         </div>
     </nav>
 </header>
+<!--#e0e2e5-->
+
+<body style="background-color: #313335; padding-top: 75px;">
     <center>
             <div class="form-control" id="sky">
                 <img style="max-height: 100%; max-width:50%;" src="/static/Wirtschaftsförderung_logo_inline.png">
             </div>
     </center>
-<body style="background-color: #343a40; padding-top: 100px;">
-
 {% block content %}
 {% endblock %}
 

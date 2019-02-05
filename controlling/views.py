@@ -10,7 +10,7 @@ def ControllingView(request):
     userform = User.objects.all()
     catform = Categorie.objects.all()
 
-    return render(request, 'controlling.html',
+    return render(request, 'controlling/controlling.html',
                   {'userform': userform,
                    'catform': catform}
                   )
@@ -84,7 +84,7 @@ def search(request):
                 data[key][0]= [round((values[0][0]/hour_sum)*100, 2)]
         print(data)
 
-    return render(request, 'controlling_load_pie.html',
+    return render(request, 'controlling/controlling_load_pie.html',
                   {'label_list': label_list,
                    'data': data,
                    'hours_list': hours_list}
@@ -137,7 +137,7 @@ def search_line(request):
                     data[user]['hours'].append(0)
         print(data)
         print(month_list)
-    return render(request, 'controlling_load_line.html',
+    return render(request, 'controlling/controlling_load_line.html',
                   {'data': data,
                    'month_list': month_list
                    }

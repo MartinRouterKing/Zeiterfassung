@@ -1,13 +1,5 @@
 
-.test{
-    background-color: #343a40;
-    padding: 10px;
-}
-
-.holiday {
-    background: rgba(211,211,211,0.1);
-}
-
+/*---- Popover ----*/
 .popover-header{
     background-color: #676b70;
     color: white;
@@ -19,9 +11,10 @@
     transition: box-shadow 0.1s ease-in-out;
 }
 
-th, td, h2{
-    color: white
+.popover-body{
+    popover-body: #409ded;
 }
+
 .fc-time-grid-event{
     border: 1px solid #343a40;
     border-left: 5px solid Navy;
@@ -29,6 +22,7 @@ th, td, h2{
 
 .fc-event{
     position: relative;
+    background-color: #343a40;
 }
 
 .fc-event:hover {
@@ -38,6 +32,7 @@ th, td, h2{
           }
 
 
+/*---- Favorite Icon ----*/
 label input[type="checkbox"] {
   display: none;
 }
@@ -47,7 +42,6 @@ label input[type="checkbox"] {
   position: relative;
   cursor: pointer;
 }
-
 .custom-checkbox .glyphicon {
   color: gold;
   position: absolute;
@@ -55,46 +49,92 @@ label input[type="checkbox"] {
   left: -1.25em;
   font-size: 0.75em;
 }
-
 .custom-checkbox .glyphicon-star-empty {
   color: gray;
 }
-
 .custom-checkbox .glyphicon-star {
   opacity: 0;
   transition: opacity 0.2s ease-in-out;
 }
-
 .custom-checkbox:hover .glyphicon-star{
   opacity: 0.5;
 }
-
 .custom-checkbox input[type="checkbox"]:checked ~ .glyphicon-star {
   opacity: 1;
 }
 
+
+/*---- Calender Design ----*/
+span.fc-time{
+    background-color: #313335;
+}
+/* Calender Text Color */
+th, td, h2{
+    color: white;
+}
+.fc td, .fc th {
+  border-style: none !important;
+}
+
+.fc-axis{
+    background-color: #313335;
+    border-right: 2px solid #4b4c4c;
+}
+
+.fc-day-header{
+    background-color: #313335;
+}
+
+.fc-title {
+    height: 100%;
+    margin-top: 5px;
+    position: relative;
+    display: block;
+       -moz-hyphens: auto;
+   -o-hyphens: auto;
+   -webkit-hyphens: auto;
+   -ms-hyphens: auto;
+   hyphens: auto;
+}
+
+
+.closeon {
+  color: white;
+	position: absolute;
+	top: -5px;
+	right: 0;
+       text-align:center;
+       border-radius:10%;
+       font-size: 18px;
+	   cursor: pointer;
+
+}
+
 .fc-head{
  background-color: #343a40;
- box-shadow: inset 0 0 10px #000000;
+ /*box-shadow: inset 0 0 10px #000000;*/
 }
 
-.table-bordered{
-    border: none;
+#calendar .fc-today {
+    background: #306882 !important;
+    opacity: 0.5;
 }
+.table-bordered{
+    border: 1px solid #4b4c4c;
+}
+
 
 .fc-view-container{
-    box-shadow: inset 0 0 10px #000000;
-    background-color: #24282C;
+    /*box-shadow: inset 0 0 10px #000000;*/
+    background-color: #2b2b2b;
 }
 
-#id_element .fc-event{
-    background-color: #676b70;
-    border: none;
+/* Color for holidays in month view  */
+.holiday {
+    background: rgba(211,211,211,0.1);
 }
 
-#fc-event ui-draggable ui-draggable-handle{
-}
-
+/* Calender Buttons */
 .fc-today-button{
     background-color: #337ab7;
     border-color: #337ab7;
@@ -115,8 +155,7 @@ label input[type="checkbox"] {
     background-color: #337ab7;
     border-color: #337ab7;
     color: #ffffff;
-
-
+}
 .fc-agendaWeek-button{
     background-color: #337ab7;
     border-color: #337ab7;
@@ -140,14 +179,46 @@ label input[type="checkbox"] {
     color: #ffffff;
 }
 
-.popover-body{
-    popover-body: #409ded;
+/* External Events */
+
+#external_menu{
+    background-color: #3c3f41;
+    border-right: 1px solid #2b2e2f;
+    border-top: 1px solid #2b2e2f;
+    border-bottom: 1px solid #2b2e2f;
+    margin-top: 0px;
 }
 
+#external{
+   height: 100%;
+}
+
+#id_element .fc-event {
+  height: 20px;
+  word-wrap: break-word;
+  cursor: move;
+  margin: 5px;
+}
+
+#element_scroll{
+    height: 100%;
+    min-height: 100%;
+    max-height: 500px;
+    background-color: #24282C;
+    margin-right: 10px;
+    margin-left: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    white-space: nowrap;
+}
+
+
+/*---- Progress Bar ----*/
 
 .progress {
     position:relative;
 }
+
 .progress span {
     position:absolute;
     left:0;
@@ -156,16 +227,19 @@ label input[type="checkbox"] {
     color:white;
 }
 
-#element_scroll{
-    height: 100%;
-    min-height: 100%;
-    box-shadow: inset 0 0 10px #000000;
-    background-color: #24282C;
+#progress_container{
     margin-top: 10px;
-    margin-right: 10px;
-    margin-left: 10px;
-    overflow-y: scroll;
-    overflow-x: hidden;
-    white-space: nowrap;
+    margin-right: 30px;
+    margin-left: 30px;
 }
+
+#progress_text{
+    font-size: 14px;
+    color: #343a40;
+}
+
+@media only screen and (max-device-width: 480px) {
+.dropdown-item{
+    max-width: 50px !Important;
+}}
 
