@@ -378,17 +378,17 @@ def load_favelements(request):
                    'fav_kat_element': fav_kat_element}
                   )
 
-def load_fav(request):
-
-    if request.method == 'POST':
-        cat = request.POST['categorie']
-
-        fav_kat_element = Element.objects.filter(categories__cat=cat).order_by('element').values_list('element', flat=True)
-
-    return render(request, 'options/load_favelements.html',
-                  {
-                   'fav_kat_element': fav_kat_element}
-                  )
+#def load_fav(request):
+#
+#    if request.method == 'POST':
+#        cat = request.POST['categorie']
+#
+#        fav_kat_element = Element.objects.filter(categories__cat=cat).order_by('element').values_list('element', flat=True)
+#
+#    return render(request, 'options/load_favelements.html',
+#                  {
+#                   'fav_kat_element': fav_kat_element}
+#                  )
 
 def ajax_save_element(request):
     if request.method == "POST":

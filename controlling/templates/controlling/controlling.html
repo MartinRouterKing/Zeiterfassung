@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<head>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css" rel="stylesheet">
+
+<link crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
+<div class="container">
+    <div class="row equal-height">
+        <div class="col-sm-4">
+            <div class="content-container">
+                <form method="post" id="user_selectform">
+                    <label>Auswahl der Mitarbeiter/-in:</label>
+                        <select class="form-control" id = "id_user" data-live-search="true" multiple data-actions-box="true" title="Mitarbeiter/in wählen...">
+                            {% for u in userform %}
+                                <option>{{ u }}</option>
+                            {% endfor %}
+                        </select>
+
+                </form>
+                <form method="post" id="cat_selectform">
+                    <label>Auswahl der Typen:</label>
+                        <select id="cat_select" class="form-control" data-live-search="true" multiple data-actions-box="true" title="Typen wählen...">
+                            {% for cat in catform %}
+                            <option>{{ cat }}</option>
+                            {% endfor %}
+                        </select>
+                </form>
+                <label>Zeitraum:</label>
+                <div class="input-group input-daterange">
+                    <input type="text" class="form-control" id="start_date" value="">
+                        <div class="input-group-addon">bis</div>
+                    <input type="text" class="form-control" id="end_date" value="">
+                </div>
+
+                <!-- Normal switch -->
+                <div class="form-group" style="margin: 10px;">
+                    <span class="switch">
+                        <input type="checkbox" class="switch" id="switch_per">
+                        <label for="switch_per">Prozentual</label>
+                    </span>
+                </div>
+
+            <button type="submit" style="margin: 10px; margin-left: 0px; height: 35px; width: 100px;" id="sub_button" onclick="search()" class="btn btn-primary" >Berechnen</button>
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <div class="content-container" id="line_container">
+            <canvas id="line-chart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div id="pie_container" class="content-container">
+                <canvas id="bar-chart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+   var crf_token = "{{ csrf_token }}";
+</script>
+
+<script type="text/javascript" language="Javascript" src="{% static 'controlling/js/default_line_chart.js' %}"></script>
+<script type="text/javascript" language="Javascript" src="{% static 'controlling/js/default_bar_chart.js' %}"></script>
+<script type="text/javascript" language="Javascript" src="{% static 'controlling/js/search.js' %}"></script>
+
+<link rel="stylesheet" href="{% static 'controlling/css/controlling.css' %}" type="text/css">
+
+
+{% endblock %}

@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load bootstrap3 %}       {# import bootstrap3 #}
+{% bootstrap_css %}         {# Embed Bootstrap CSS #}
+{% bootstrap_javascript jquery='full' %}  {# Embed Bootstrap JS+jQuery #}
+{{ form.media }}            {# Adds date-picker required JS and CSS #}
+
+<head>
+    <meta charset="UTF-8">
+    <title>Options</title>
+
+<style>
+
+.content-container{
+    background-color: #2b2b2b;
+    border: 1px solid #4b4c4c;
+    margin: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 20px;
+}
+
+
+.fav-changer{
+    margin-top: 10px;
+    margin-bottom: -5px;
+}
+
+.errorlist{
+    color: red;
+}
+
+#Worktimeform{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+label{
+    color: white;
+}
+
+.glyphicon-star{
+    color: gold;
+}
+
+
+#glob_cont{
+    padding: 10px;
+}
+
+</style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+</head>
+
+
+<div class="container" id="glob_cont" style="padding: 10px; height: 80%">
+    <div style="padding: 10px;">
+
+    <div id="alert_div">
+
+    </div>
+    <div class="content-container">
+        {% if saved %}
+        <div class="alert alert-success">
+            <strong>Success!</strong> Indicates a successful or positive action.
+        </div>
+        {% endif %}
+        <span style="color:white;">Typenauswahl</span>
+        <form method="post" id="choiceForm" data-element-url="{% url 'ajax_load_element' %}" novalidate>
+            {% csrf_token %}
+            {{ choice_form.categories}}
+            <span style="color:white;">Kategorie auswählen und Favoriten Hinzufügen</span>
+            <select class="form-control" id="id_element" name="groups_old"  multiple="multiple" >
+
+            </select>
+            <center>
+                <div class = "fav-changer">
+                    <a><span onclick="favadd()" style="font-size: 150%; color: #337ab7;" class="glyphicon glyphicon-arrow-down"></span></a>
+                    <a><span onclick="favremove()" style="font-size: 150%; color: #337ab7;" class="glyphicon glyphicon-arrow-up"></span></a>
+                </div>
+            </center>
+            <span style="color:gold" class="glyphicon glyphicon-star"><span style="color:white"><STRONG>Favoriten</STRONG></span></span>
+            <select class="form-control" id="favorite" name="groups_old" multiple="multiple" >
+
+            </select>
+        </form>
+        <button type="submit" id="sub_button" style=" margin: 15px; margin-left: 0px; height: 35px; width: 100px;" onclick="savefav()" class="btn btn-primary" >Speichern</button>
+
+    </div>
+    </div>
+</div>
+
+<script>
+
+    $("#id_workingtime").attr('value', "{{workingtime}}");
+    $("#id_categories").attr('class', 'form-control');
+
+
+    $("#id_categories").change(function () {
+      $('#favorite').find('option').remove();
+      var url = $("#choiceForm").attr("data-element-url");  // get the url of the `load_elements` view
+      var categoriesId = $(this).val();  // get the selected country ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: url,                    // set the url of the request (= localhost:8000/hr/ajax/element/)
+        data: {
+          'categories': categoriesId       // add the country id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_element` view function
+          $("#id_element").html(data);  // replace the contents of the city input with the data that came from the server
+        }
+      });
+    });
+
+
+    $("#id_categories").change(function () {
+      $('#favorite').find('option').remove();
+      var categoriesId = $(this).val();
+
+      $.ajax({
+        url: 'load_favorites/',
+        data: {
+          'categories': categoriesId
+        },
+        success: function (data) {
+          $("#favorite").html(data);
+        }
+      });
+    });
+
+
+    function favadd(){
+
+    var cat = document.getElementById("id_element");
+    var text = cat.options[cat.selectedIndex].text;
+    cat.remove(cat.selectedIndex);
+
+
+    var x = document.getElementById("favorite");
+    var option = document.createElement("option");
+    option.text = text;
+    x.add(option);
+
+    $('#id_element').prop("selectedIndex",0);
+
+    }
+
+    function favremove(){
+
+    var fav = document.getElementById("favorite");
+    var text = fav.options[fav.selectedIndex].text;
+    fav.remove(fav.selectedIndex);
+
+    var x = document.getElementById("id_element");
+    var option = document.createElement("option");
+    option.text = text;
+    x.add(option);
+
+    $('#favorite').prop("selectedIndex",0);
+
+    }
+
+    function savefav(){
+        var inner = '<i  id="load_icon" class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:18px; color:#f8f9fa;"></i>'
+
+        load_icon = document.getElementById('sub_button');
+        load_icon.innerHTML = inner;
+
+        console.log("save");
+        var cat = document.getElementById("id_categories");
+        var cat = cat.options[cat.selectedIndex].text;
+        console.log(cat);
+
+        var fav = document.getElementById("favorite");
+        txt = [];
+            for (i = 0; i < fav.length; i++) {
+            txt = txt + "," + fav.options[i].value;
+        console.log(txt);
+        };
+
+        $.ajax({
+            type: "POST",
+            url: 'addfavorites/',
+            data: {
+            'favorites': txt,
+            'categorie': cat,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function(data){
+            console.log(load_icon);
+            load_icon.innerHTML = "Speichern";
+
+
+            }
+        });
+    }
+
+
+
+
+</script>
+
+
+{% endblock %}

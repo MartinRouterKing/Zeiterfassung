@@ -106,7 +106,7 @@ def Analyticsview(request):
         counter += 1
 
     currentdate = str(currentmonth) + "." + str(currentyear)
-    return render(request, 'home.html',{
+    return render(request, 'datavis/home.html',{
         'currentdate': currentdate,
         'currentmonth_name': currentmonth_name,
         'data': data,
@@ -123,7 +123,7 @@ def load_canvas(request):
     if request.method == 'GET':
         type = request.GET['selectedOption']
     type = type + '-chart'
-    return render(request, 'load_canvas.html',
+    return render(request, 'datavis/load_canvas.html',
                   {'type': type}
                   )
 
@@ -165,6 +165,6 @@ def load_bar_cat(request):
             counter += 1
 
 
-    return render(request, 'load_bar_cat.html',
+    return render(request, 'datavis/load_bar_cat.html',
                   {'data': data}
                   )

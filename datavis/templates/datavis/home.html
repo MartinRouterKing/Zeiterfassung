@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<head>
+  <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js"></script>
+
+  <link rel="stylesheet" href="{% static 'datavis/css/home.css' %}" type="text/css">
+
+</head>
+
+<script>
+   var bar_chart_data = [ {% for key, value in data.items %}
+                        {
+                            label: "{{key}}",
+                            backgroundColor: "{{value.1}}",
+                            data: {{value.0}},
+                            },
+                          {% endfor %}
+                        ]
+   var chart_init_label = "{{user}}"
+
+   var chart_init_data = {{list_hours}}
+</script>
+
+
+<div class="container" style="height: 200%;">
+  <div class="row">
+    <div class="col">
+      <div class="container">
+            <div class="content-container">
+                <div>
+                    <center>
+                        <p>
+                            <font color="white" >Arbeitszeit pro Kategorie für: </font>
+                        </p>
+                    </center>
+                    <center>
+                        <div class="input-group input-daterange" id="date_range_input">
+                        <input type="text" class="form-control" id="start_date" value="{{currentdate}}">
+                        </div>
+                    </center>
+                </div>
+                <span class= "align-baseline">
+                    <div class="chart-container" id="canvas-container">
+                        <canvas id="bar-chart_cat"></canvas>
+                    </div>
+                </span>
+            </div>
+        </div>
+    </div>
+  </div>
+      <div class="row">
+          <div class="col">
+            <div class="container">
+                <!-- Content here -->
+                <div class="content-container">
+                    <span class= "align-baseline">
+                        <div>
+                            <form method="get">
+                                {% csrf_token %}
+                                    <div style="margin: 5px;" class="btn-group btn-group-toggle" data-toggle="buttons">
+                                        <label class="btn btn-primary">
+                                            <input type="radio" name="options" value="line" id="option1"> Line Chart
+                                        </label>
+                                        <label class="btn btn-primary">
+                                            <input type="radio" name="options" id="option2" value="bar"> Bar Chart
+                                        </label>
+                                    </div>
+                                <div class="chart-container" id="toggle_chart">
+                                    <canvas id="canvas_id"></canvas>
+                                </div>
+                            </form>
+                        </div>
+                    </span>
+                </div>
+            </div>
+          </div>
+      </div>
+</div>
+
+
+
+
+<script type="text/javascript" language="Javascript" src="{% static 'datavis/js/daterange_input.js' %}"></script>
+<script type="text/javascript" language="Javascript" src="{% static 'datavis/js/bar_chart.js' %}"></script>
+<script type="text/javascript" language="Javascript" src="{% static 'datavis/js/chart_init.js' %}"></script>
+<script type="text/javascript" language="Javascript" src="{% static 'datavis/js/chart_toggle.js' %}"></script>
+
+{% endblock %}

@@ -1,0 +1,29 @@
+    select{
+        width: 100%;
+        margin: 15px;
+    }
+
+    label{
+        width: 100%;
+        color: white;
+    }
+
+    .content-container{
+    background-color: #2b2b2b;
+    border: 1px solid #4b4c4c;
+    margin: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 20px;
+    height: 320px;
+}
+
+
+@media only screen and (max-device-width: 480px) {
+.dropdown-item{
+    max-width: 50px !Important;
+}}
+
+
+
+

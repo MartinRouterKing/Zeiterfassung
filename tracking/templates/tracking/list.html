@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load render_table from django_tables2 %}
+{% load static %}
+{% load widget_tweaks %}
+{% load querystring from django_tables2 %}
+{% load bootstrap3 %}
+<!doctype html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+        <style>
+
+
+#panel_id{
+    display: table;
+    padding: 10px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+tbody {
+   overflow-y: scroll;
+}
+
+td{
+   color: white
+}
+
+</style>
+    </head>
+
+<div class="table-container" id="panel_id">
+  <!-- Content here -->
+    <div class="input-group">
+        <span class="input-group-btn">
+            <a class="btn btn-primary" href="{% querystring '_export'='xlsx' %}" role="button">Download</a>
+        </span>
+        <input class="form-control" id="myInput" type="text" placeholder="Suchen..">
+    </div>
+    {% render_table table %}
+
+</div>
+    <script>
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $(".table tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+</script>
+
+</html>
+{% endblock %}

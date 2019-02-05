@@ -1,5 +1,6 @@
      $("#id_categories").change(function () {
       var categoriesId = $(this).val();                         // get the selected country ID from the HTML input
+      console.log(categoriesId)
       var checkBox = document.getElementById("id-of-input");
       $.ajax({                                                  // initialize an AJAX request
         url: 'load_elements/',                                  // set the url of the request (= localhost:8000/hr/ajax/element/)

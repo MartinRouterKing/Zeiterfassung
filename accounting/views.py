@@ -21,8 +21,8 @@ def accounting(request):
     wie = list(set(Element.objects.all().values_list('wie', flat=True)))
     obj = list(set(Element.objects.all().values_list('obj', flat=True)))
 
-    print(obj)
-    return render(request, 'accounting.html',
+
+    return render(request, 'accounting/accounting.html',
                   {'form': user,
                    'categories': cat,
                    'wie': wie,
@@ -35,7 +35,7 @@ def ajaxpie(request):
 
         pie_data = 0
 
-    return render(request, 'accounting_pie.html',
+    return render(request, 'accounting/accounting_pie.html',
                   {'pie_data': pie_data}
                   )
 
@@ -90,7 +90,7 @@ def ajaxtable(request):
         '''
         from django.db.models import Sum
         calc = Calc_Choices.objects.all().values_list('calc',flat=True)
-        print(calc)
+
 
         id = 1
         data = []
@@ -103,9 +103,9 @@ def ajaxtable(request):
                 calulate['Gesamt'] = t['hours__sum']
 
             for cal in calc:
-                print(cal)
+
                 c = obj.filter(title=ele, type__in=cat_choice, calc=cal).aggregate(Sum('hours'))
-                print(c)
+
                 if c['hours__sum'] is None:
                     calulate[cal] = 0
                 else:
@@ -124,10 +124,6 @@ def ajaxtable(request):
                     except (KeyError):
                         ges_sum[key] = 0 + float(value)
 
-
-        print(ges_sum)
-
-
         data.append({**{'Wie': '', 'Objekt': '', 'id': '', 'Kategorie': 'Gesamtsumme:'}, **ges_sum})
 
 
@@ -138,15 +134,14 @@ def ajaxtable(request):
         from django_tables2.export.export import TableExport
 
         export_format = request.POST.get('_export', None)
-        print(export_format)
+
         if TableExport.is_valid_format(export_format):
             exporter = TableExport('csv', table)
-            print(exporter.response('table.{}'.format('csv')))
             return exporter.response('table.{}'.format('csv'))
 
         RequestConfig(request, paginate={'per_page': 150}).configure(table)
 
-        return render(request, 'table.html',
+        return render(request, 'accounting/table.html',
                           {
                               'table': table
                            })

@@ -18,7 +18,7 @@ urlpatterns = [
     path('load_favorites/', views.load_favorites, name='load_favorites'),
     path('admin_options/', views.admin_options, name='admin_options'),
     path('admin_options/load_elements/', views.load_favelements, name='load_elements'),
-    path('admin_options/load_fav/', views.load_fav, name='load_fav'),
+    #path('admin_options/load_fav/', views.load_fav, name='load_fav'),
 
     path('admin_options/ajax_save_element/', views.ajax_save_element, name='ajax_save_element'),
     path('admin_options/ajax_add_from_group/', views.ajax_add_from_group, name='ajax_add_from_group'),

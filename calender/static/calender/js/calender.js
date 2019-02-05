@@ -123,7 +123,7 @@
 
             element.popover({
                     html: true,
-                    animation: true,
+                    animation: false,
                     title: "" + event.title + "",
                     trigger: "click",
                     content: "<div style='color: white;' id= '" + event._id + "cont' >Notizen: <textarea class='form-control' id='" + event._id + "'>" + event.note + " </textarea><button style='margin-top: 10px; margin-bottom: 10px; float: right;' type='button' id='pop_save' onclick='save_note(this)' class='btn btn-primary'>Speichern</button></div",

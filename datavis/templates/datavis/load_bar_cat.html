@@ -1,0 +1,31 @@
+<canvas id="bar-chart_cat"></canvas>
+
+
+<script>
+              Chart.defaults.global.defaultFontColor = 'white';
+            new Chart(document.getElementById("bar-chart_cat"), {
+                type: 'bar',
+                data: {
+                labels: ['Typ'],
+                datasets: [
+                    {% for key, value in data.items %}
+
+                    {
+                    label: "{{key}}",
+                    backgroundColor: "{{value.1}}",
+                    data: {{value.0}},
+                    },
+
+                    {% endfor %}
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+
+
+                    legend: { position: 'bottom' },
+                },
+            });
+
+</script>
