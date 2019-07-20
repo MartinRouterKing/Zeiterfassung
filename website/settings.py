@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'fullcalendar',
     'import_export',
     'django_filters',
-    'django_cron',
     'options.apps.OptionsConfig',
     'chartjs',
     'datavis.apps.DatavisConfig',
@@ -89,28 +88,34 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'website.wsgi.application'
+#! Activate WSGi for production
+#WSGI_APPLICATION = 'website.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#    }
-#}
-
+#! change database for production
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',          # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'd5phr1i8d5bque',                           # Or path to database file if using sqlite3.
-        'USER': 'avppuhqopigdrs',                           # Not used with sqlite3.
-        'PASSWORD': 'c951e25594d2f6239a30eaa6d027b108a2a254892f74e8da87c351fb0857d942',                  # Not used with sqlite3.
-        'HOST': 'ec2-54-235-133-42.compute-1.amazonaws.com',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '5432',                      # Set to empty string for default. Not used with sqlite3.
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'test',
+        'USER': 'postgres',
+        'PASSWORD': 'gadeland01.',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
+
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql',          # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+#        'NAME': 'pze',                           # Or path to database file if using sqlite3.
+#        'USER': 'postgres',                           # Not used with sqlite3.
+#        'PASSWORD': 'P@ssword',                  # Not used with sqlite3.
+#        'HOST': '127.0.0.1',                      # Set to empty string for localhost. Not used with sqlite3.
+#        'PORT': '5432',                      # Set to empty string for default. Not used with sqlite3.
+#    }
+#}
 
 
 # Password validation
@@ -203,29 +208,31 @@ TIME_INPUT_FORMATS = [
 ]
 
 STATIC_URL = '/static/'
-
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000000000
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
 
 
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'wiefoetimetracking@gmail.com'
-EMAIL_HOST_PASSWORD = 'luebeck01.'
-EMAIL_PORT = 587
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = '192.168.125.120'
+EMAIL_PORT = 25
+
+EMAIL_HOST_USER = 'administrator@luebeck.org'
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = False
+
+#SERVER_MAIL= 'administrator@luebeck.org'
 
 #producation
-
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-#SESSION_COOKIE_SECURE= False
-#CSRF_COOKIE_SECURE = True
-#SECURE_CONTENT_TYPE_NOSNIFF = True
-#SECURE_BROWSER_XSS_FILTER = True
-#X_FRAME_OPTIONS='DENY'
+#SESSION_COOKIE_SECURE= True
+#CSRF_COOKIE_SECURE = False
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS='DENY'

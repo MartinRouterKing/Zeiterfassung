@@ -4,23 +4,21 @@ function gen_pie() {
     pie_labels = [];
     pie_values = [];
     var table = document.getElementsByTagName("table")[0];
-    console.log(table.rows.length);
-    console.log(table.rows[0].cells.length);
-    var ges =  parseInt(table.rows[table.rows.length-1].cells[3].innerHTML);
 
-    for (var c = 4; c< table.rows[0].cells.length; c++) {
-        console.log("new cell");
+    var ges =  parseInt(table.rows[table.rows.length-1].cells[4].innerHTML);
+
+    for (var c = 5; c< table.rows[0].cells.length; c++) {
+
         pie_labels.push(table.rows[0].cells[c].innerText);
         var percent = 0
         for (var i = 1; i< table.rows.length - 1; i++) {
-            console.log("new row");
+
             if (table.rows[i].cells[c].innerHTML != "—") {
 
                 var percent = percent + Math.round(parseFloat(table.rows[i].cells[c].innerHTML *100 / ges));
-                console.log(percent);
-
             };
         };
+
         pie_values.push(percent);
     }
 

@@ -5,7 +5,9 @@
       var cat_selected = $('#cat_select').val();
       var wie_selected = $('#wie_select').val();
       var obj_selected = $('#obj_select').val();
-      var userId = $('#userId').val();
+      var userId = $('#user_select').val();
+      var start_date = document.getElementById("start_date").value;
+      var end_date = document.getElementById("end_date").value;
 
       $.ajax({
         type: "POST",
@@ -15,7 +17,9 @@
             'ca': cat_selected,
             'wie': wie_selected,
             'obj': obj_selected,
-            'user': userId
+            'user': userId,
+            'start_date': start_date,
+            'end_date': end_date
             },
             success: function (data) {
             load_icon.innerHTML = 'Berechnen';

@@ -6,6 +6,14 @@ from datetime import datetime
 from django.db.models import Sum
 from django.core.exceptions import ObjectDoesNotExist
 
+
+class User_limitations(models.Model):
+    user_id = models.OneToOneField(User, on_delete=models.CASCADE)
+    limit = models.IntegerField(("Beschränkung in Montaten"))
+    
+    def __str__(self):
+        return self.limit
+
 class Workingtime(models.Model):
     user_id = models.OneToOneField(User, on_delete=models.CASCADE)
     workingtime = models.IntegerField(("Arbeitszeit pro Woche"), blank=True)
@@ -71,7 +79,7 @@ class Calc_Choices(models.Model):
 
 class Element(models.Model):
     categories = models.ForeignKey(Categorie, on_delete=models.CASCADE)
-    wie = models.TextField(max_length=100, default=None)
+    wie = models.TextField(max_length=100, default=None, null=True)
     obj = models.TextField( max_length=100, default=None, null=True)
     element = models.ForeignKey(KategorieElement, on_delete=models.CASCADE, default=None)
     calc = models.ForeignKey(Calc_Choices, on_delete=models.CASCADE, default=None)

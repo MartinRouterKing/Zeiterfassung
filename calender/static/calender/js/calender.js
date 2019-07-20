@@ -5,29 +5,15 @@
     customButtons: {
     myCustomButton: {
       text: 'Freie Notiz',
-      click: function() {
-        latest_notes_id++;
-       Date.prototype.addHours= function(h){
-            this.setHours(this.getHours()+h);
-            return this;
-            }
-        var currentdate = new Date().setMinutes(00);
-        var currentdate_end =new Date().addHours(1).setMinutes(00);
-
-        event = {
-        title: "Freie Notiz",
-        id: "note_" + latest_notes_id,
-        type: "",
-        start: currentdate,
-        end: currentdate_end,
-        note: "",
-        allDay: "False",
-        save: "note"
-        }
-
-        $('#calendar').fullCalendar( 'renderEvent', event , true );
+      click: function(){
+      console.log("BUTTON");
+        $(document).ready(function(){
+            $('.datepick').datetimepicker({
+                ignoreReadonly: true
+            });
+        });
       }
-    }
+      }
   },
     header: {
         right: 'prev,next,today,month,agendaWeek,myCustomButton'
@@ -75,7 +61,7 @@
     maxTime: '22:00:00',
     nowIndicator: true,
     eventTextColor: 'white',
-    themeSystem: 'bootstrap3',
+    themeSystem: 'bootstrap4',
     height: "auto",
     contentHeight: "auto",
     events: events,
@@ -200,6 +186,7 @@
   });
 
 
+
 function save_note(ev){
     console.log(ev.parentElement.id.replace(/cont/g,''));
     var id = ev.parentElement.id.replace(/cont/g,'')
@@ -226,3 +213,51 @@ function save_note(ev){
                     $('.popover').popover('hide');
                 };
 }
+
+$('.fc-myCustomButton-button').popover({
+                    html: true,
+                    animation: false,
+                    title: "Bitte Datum wählen",
+                    trigger: "click",
+                    content: '<div id="popover-content"><form role="form" method="post"><div class="form-group"><label>Datum</label><div class="input-group datepick" id="datetimepicker1"><input id="datepicker" type="text" class="form-control" placeholder="Beispiel: 01.10.2019" /> <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span></div></div><div class="form-group"><label>Uhrzeit</label><div class="input-group datepick" id="datetimepicker2"><input id="timepicker" type="text" class="form-control" placeholder="Beispiel: 13:00" /> <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span></div></div><div class="form-group"><label>Dauer in Stunden:</label><div class="input-group datepick" id="datetimepicker1"><input id="timeduration" type="text" class="form-control" placeholder="Beispiel: 3" /> <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span></div></div><button type="button" onClick="date_time_return()" class="btn btn-primary btn-block">Notiz Hinzufügen</button></div></form></div>'
+                    });
+
+function date_time_return(){
+      var date = $('#datepicker').val();
+      var date = date.split(".")
+
+      var start = $('#timepicker').val();
+      var start = start.split(":");
+
+      var duration = $('#timeduration').val();
+
+      latest_notes_id++;
+
+      Date.prototype.addHours= function(h){
+            this.setHours(this.getHours()+h);
+            return this;
+            }
+        var start_date_save = new Date(Date.UTC(parseInt(date[2]),parseInt(date[1])-1,parseInt(date[0]),parseInt(start[0]),0,0));
+        var end_date_save = new Date(Date.UTC(parseInt(date[2]),parseInt(date[1])-1,parseInt(date[0]),parseInt(start[0])+ parseInt(duration),0,0));
+
+        var start_date_render = new Date(Date.UTC(parseInt(date[2]),parseInt(date[1])-1,parseInt(date[0]),parseInt(start[0])-1,0,0));
+        var end_date_render = new Date(Date.UTC(parseInt(date[2]),parseInt(date[1])-1,parseInt(date[0]),parseInt(start[0])+ parseInt(duration)-1,0,0));
+
+
+        event = {
+        title: "Freie Notiz",
+        id: "note_" + latest_notes_id,
+        type: "",
+        start: start_date_render,
+        end: end_date_render,
+        note: "",
+        allDay: "False",
+        save: "note"
+        }
+
+        $('#calendar').fullCalendar( 'renderEvent', event , true );
+        event.start = start_date_save
+        event.end = end_date_save
+        saveMyData(event);
+      }
+

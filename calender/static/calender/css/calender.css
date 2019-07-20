@@ -243,3 +243,6 @@ th, td, h2{
     max-width: 50px !Important;
 }}
 
+.bootstrap-datetimepicker-widget dropdown-menu {
+        color: black; !Important;
+    }

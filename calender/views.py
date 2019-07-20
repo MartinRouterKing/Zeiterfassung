@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import Serializer
+import dateutil.relativedelta
 
 def all_events(request):
     today = datetime.now()
@@ -12,15 +13,41 @@ def all_events(request):
     year = today.year
     month =  today.month
 
+    last_month = (today + dateutil.relativedelta.relativedelta(months=-1)).month
+    day = today.day
+    limit = datetime(2019, 3, 20)
+
     categorie = Categorie.objects.all()
+
     try:
         workingtime = Workingtime.objects.get(user_id=user).get_wk_employ_month()
+
     except ObjectDoesNotExist:
         workingtime = 0
 
-    events = CalendarEvent.objects.filter(user_id=user, start__month=month, start__year=year).only("id", "type", "title", "type", "start", "end", "note", "all_day")
+    events = CalendarEvent.objects.filter(user_id=user,start__year=year).only("id",
+                                                                              "type",
+                                                                              "title",
+                                                                              "type",
+                                                                              "start",
+                                                                              "end",
+                                                                              "note",
+                                                                              "all_day")
+    event_notes = CalendarNote.objects.filter(user_id=user, start__year=year)
 
-    event_notes = CalendarNote.objects.filter(user_id=user, start__month=month, start__year=year)
+    #if today >= limit:
+    #    if day <= 5:
+    #        # only the events and notes for the current and last month
+    #        events = CalendarEvent.objects.filter(user_id=user, start__month__gte=last_month, start__year=year).only("id", "type", "title", "type", "start", "end", "note", "all_day")
+    #        event_notes = CalendarNote.objects.filter(user_id=user, start__month__gte=last_month, start__year=year)
+    #    if day > 5:
+    #        # only the events and notes for the current month
+    #        events = CalendarEvent.objects.filter(user_id=user, start__month__gte=month, start__year=year).only("id", "type", "title", "type", "start", "end", "note", "all_day")
+    #        event_notes = CalendarNote.objects.filter(user_id=user, start__month__gte=month, start__year=year)
+    #else:
+    #    # all events
+    #    events = CalendarEvent.objects.filter(user_id=user).only("id", "type", "title", "type", "start", "end", "note", "all_day")
+    #    event_notes = CalendarNote.objects.filter(user_id=user)
 
     try:
         event_id = CalendarEvent.objects.latest('id').id + 1
@@ -45,6 +72,12 @@ def all_events(request):
     return render(request,'calender/calender.html', context)
 
 def postview(request):
+    today = datetime.now()
+    month =  today.month
+    day = today.day
+    last_month = (today + dateutil.relativedelta.relativedelta(months=-1)).month
+    limit = datetime(2019, 3, 20)
+
 
     if request.method == 'POST':
         event_type = request.POST['save']
@@ -58,8 +91,9 @@ def postview(request):
                 start = request.POST['start']
                 end = request.POST['end']
                 id = request.POST['id'].split("_")[1]
-                start = datetime.strptime(start, '%a %b %d %Y %H:%M:%S %Z%z')
-                end = datetime.strptime(end, '%a %b %d %Y %H:%M:%S %Z%z')
+
+                start = datetime.strptime(start.split(" (")[0], '%a %b %d %Y %H:%M:%S %Z%z')
+                end = datetime.strptime(end.split(" (")[0], '%a %b %d %Y %H:%M:%S %Z%z')
 
                 n = CalendarNote(
                     user_id=user_id,
@@ -88,9 +122,9 @@ def postview(request):
                 hours = (end - start).seconds/3600
 
                 '''
-                The Event-ypes are first initialized with their id as int.
+                The Event-types are first initialized with their id as int.
                 In the Database we need the string value and for the later changing of Events on
-                the calendar we need to use the following exception to check wetther the type is a string
+                the calendar we need to use the following exception to check wether the type is a string
                 or and int. 
                 
                 '''
@@ -100,20 +134,21 @@ def postview(request):
                 except (ValueError):
                     type = [type]
 
-
                 calc = Element.objects.filter(element__kat_element=title, categories__cat=type[0]).values_list('calc__calc', flat=True)
-
-
+                '''
+                setup for the production date
+                only save specific events
+                '''
                 q = CalendarEvent(
-                    user_id=user_id,
-                    title=str(title),
-                    type=type[0],
-                    start=start,
-                    end=end,
-                    calc=calc[0],
-                    hours=hours,
-                    note= note,
-                    all_day=False)
+                            user_id=user_id,
+                            title=str(title),
+                            type=type[0],
+                            start=start,
+                            end=end,
+                            calc=calc[0],
+                            hours=hours,
+                            note= note,
+                            all_day=False)
 
                 q.id = id
                 q.save()

@@ -28,10 +28,8 @@
                         <select class="form-control" id = "calc_{{ forloop.counter }}">
                             <option selected>{{tab.calc}}</option>
                             {% for cal in calc %}
-                                {% if cal == tab.calc %}
-                                    <option selected>{{tab.calc}}</option>
-                                {$ else $}
-                                <option>{{cal}}</option>
+                                {% if cal != tab.calc %}
+                                    <option>{{cal}}</option>
                             {% endif %}
                             {% endfor %}
                         </select>

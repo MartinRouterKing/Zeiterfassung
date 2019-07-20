@@ -96,3 +96,11 @@ class Choicefrom(forms.ModelForm):
             self.fields['element'].queryset = self.instance.categorie.element_set.order_by('element')
 
 
+
+class Userlimitform(forms.Form):
+        users = forms.ModelChoiceField(queryset=User.objects.all(),
+                                    widget=forms.Select(attrs={'class': 'form-control'}),label='')
+
+
+    
+

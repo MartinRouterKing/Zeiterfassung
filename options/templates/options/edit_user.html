@@ -26,6 +26,9 @@
     {{ usereditform.last_name_pop}}
     </p>
     <input type="button" onclick="ajax_save()" class="btn btn-primary inline" style="margin: 10px;" value="Speichern">
+    <input type="button" onclick="user_delete()" class="btn btn-danger inline" style="margin: 10px;" value="Benutzer Löschen">
+    <p style="color: #d9534f;">Achtung! Beim löschen eines Benutzers werden auch die vom Benutzer bereits erfassten Arbeitzeiten gelöscht</p>
+
 </form>
 </div>
 
@@ -61,6 +64,27 @@
         });
     });
 </script>
+
+<script>
+
+    function user_delete(){
+
+         var selected_user = $('#id_username_pop').children("option:selected").val();
+         console.log(selected_user);
+         $.ajax({
+          type: 'POST',
+          url: 'ajax_delete_user/',
+          data:{
+          select: selected_user,
+          csrfmiddlewaretoken: "{{ csrf_token }}"
+          },
+          success: function(data){
+           $('#myModal').modal('toggle');
+          }
+        });
+    }
+</script>
+
 <script>
 $(".alert").fadeTo(2000, 500).slideUp(500, function(){
     $("#success-alert").slideUp(500);

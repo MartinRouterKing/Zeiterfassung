@@ -8,7 +8,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Options</title>
+    <title>Favoriten</title>
 
 <style>
 
@@ -19,6 +19,7 @@
     margin-top: 10px;
     margin-bottom: 10px;
     padding: 20px;
+    height. 100%;
 }
 
 
@@ -49,18 +50,15 @@ label{
     padding: 10px;
 }
 
+
+
 </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 </head>
 
 
-<div class="container" id="glob_cont" style="padding: 10px; height: 80%">
-    <div style="padding: 10px;">
 
-    <div id="alert_div">
-
-    </div>
     <div class="content-container">
         {% if saved %}
         <div class="alert alert-success">
@@ -72,7 +70,7 @@ label{
             {% csrf_token %}
             {{ choice_form.categories}}
             <span style="color:white;">Kategorie auswählen und Favoriten Hinzufügen</span>
-            <select class="form-control" id="id_element" name="groups_old"  multiple="multiple" >
+            <select class="form-control" id="id_element" name="groups_old"  multiple="multiple" style="height: 200px;">
 
             </select>
             <center>
@@ -82,15 +80,45 @@ label{
                 </div>
             </center>
             <span style="color:gold" class="glyphicon glyphicon-star"><span style="color:white"><STRONG>Favoriten</STRONG></span></span>
-            <select class="form-control" id="favorite" name="groups_old" multiple="multiple" >
+            <select class="form-control" id="favorite" name="groups_old" multiple="multiple" style="height: 200px;">
 
             </select>
         </form>
         <button type="submit" id="sub_button" style=" margin: 15px; margin-left: 0px; height: 35px; width: 100px;" onclick="savefav()" class="btn btn-primary" >Speichern</button>
 
     </div>
+
+
+    
+    <div class="content-container">
+        {% if saved %}
+        <div class="alert alert-success">
+            <strong>Success!</strong> Indicates a successful or positive action.
+        </div>
+        {% endif %}
+        <span style="color:white;">Typenauswahl</span>
+        <form method="post" id="choiceForm" data-element-url="{% url 'ajax_load_element' %}" novalidate>
+            {% csrf_token %}
+            {{ choice_form.categories}}
+            <span style="color:white;">Kategorie auswählen und Favoriten Hinzufügen</span>
+            <select class="form-control" id="id_element" name="groups_old"  multiple="multiple" style="height: 200px;">
+
+            </select>
+            <center>
+                <div class = "fav-changer">
+                    <a><span onclick="favadd()" style="font-size: 150%; color: #337ab7;" class="glyphicon glyphicon-arrow-down"></span></a>
+                    <a><span onclick="favremove()" style="font-size: 150%; color: #337ab7;" class="glyphicon glyphicon-arrow-up"></span></a>
+                </div>
+            </center>
+            <span style="color:gold" class="glyphicon glyphicon-star"><span style="color:white"><STRONG>Favoriten</STRONG></span></span>
+            <select class="form-control" id="favorite" name="groups_old" multiple="multiple" style="height: 200px;">
+
+            </select>
+        </form>
+        <button type="submit" id="sub_button" style=" margin: 15px; margin-left: 0px; height: 35px; width: 100px;" onclick="savefav()" class="btn btn-primary" >Speichern</button>
+
     </div>
-</div>
+
 
 <script>
 
@@ -196,9 +224,6 @@ label{
             }
         });
     }
-
-
-
 
 </script>
 

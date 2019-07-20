@@ -3,24 +3,22 @@
 {% load querystring from django_tables2 %}
 {% block content %}
 {% load static %}
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<head>
+<link rel="stylesheet" href=" https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css">
 <link crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/TableExport/4.0.11/css/tableexport.css">
-
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
 <div class="row row-eq-height">
     <div class="col">
         <div class="content-container">
             <form method="post">
                 <label>Auswahl der Mitarbeiter/-in:
-                    <select class="form-control" id = "id_user" title="Mitarbeiter/in wählen...">
-                        <option>--Alle--</option>
+                    <select class="form-control" id = "user_select" multiple data-live-search="true" multiple data-actions-box="true" title="Mitarbeiter/in wählen...">
                         {% for u in form %}
                             <option>{{ u }}</option>
                         {% endfor %}
@@ -38,7 +36,7 @@
             </form>
             <form method="post" id="id_wie">
                 <label>Auswahl der Wirtschaftseinheiten:
-                    <select id="wie_select" class="form-control" multiple data-live-search="true" multiple data-actions-box="true" title="WE wählen">
+                    <select id="wie_select" class="form-control" multiple data-live-search="true" multiple data-actions-box="true" title="WIE wählen">
                         {% for w in wie %}
                         <option>{{ w }}</option>
                         {% endfor %}
@@ -54,6 +52,12 @@
                     </select>
                 </label>
             </form>
+            <label>Zeitraum:</label>
+            <div class="input-group input-daterange">
+                <input type="text" class="form-control" id="start_date" value="">
+                <div class="input-group-addon">bis</div>
+                <input type="text" class="form-control" id="end_date" value="">
+            </div>
             <button type="submit" id="sub_button" style="margin: 15px; margin-left: 0px; height:13%; width: 20%;" onclick="calculate()" class="btn btn-primary inline" >Berechnen</button>
         </div>
     </div>
@@ -75,11 +79,11 @@
 <script>
     var csrf_token = '{{ csrf_token }}'
 </script>
-<link rel="stylesheet" href="{% static 'accounting/css/accounting.css' %}" type="text/css">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.2/dist/FileSaver.min.js"></script>
 <script src="https://rawgit.com/clarketm/js-xlsx/master/xlsx.core.js"></script>
-<script src="https://fastcdn.org/FileSaver.js/1.1.20151003/FileSaver.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/TableExport/4.0.11/js/tableexport.js"></script>
+<link rel="stylesheet" href=" https://cdnjs.cloudflare.com/ajax/libs/TableExport/4.0.11/css/tableexport.min.css">
+
+<link rel="stylesheet" href="{% static 'accounting/css/accounting.css' %}" type="text/css">
 
 {% endblock %}

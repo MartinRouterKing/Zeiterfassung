@@ -1,5 +1,6 @@
 
      function ajax_exp() {
+        console.log("TEST");
         var table = document.getElementsByTagName("table")[0];
         var data = [];
 
@@ -15,7 +16,6 @@
             };
             data.push(rows);
         };
-        console.log(data);
 
         let csvContent = "data:text/csv;charset=UTF-8,";
         data.forEach(function(rowArray){
@@ -26,6 +26,7 @@
         var encodedUri = encodeURI(csvContent);
         var encodedUri = encodeURI(csvContent);
         var link = document.createElement("a");
+        console.log(link);
         link.setAttribute("href", encodedUri);
         link.setAttribute("download", "my_data.csv");
         document.body.appendChild(link); // Required for FF

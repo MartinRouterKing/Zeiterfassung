@@ -6,7 +6,7 @@ from .forms import Choicefrom, Categorieform, editcatForm, Worktimefrom, deletec
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
-from .forms import SignupForm, UsereditForm
+from .forms import SignupForm, UsereditForm, Userlimitform
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -315,6 +315,7 @@ def admin_options(request):
     elements = KategorieElement.objects.all().order_by('kat_element')
     userform = SignupForm()
     user = request.user
+    users = Userlimitform()
 
     if request.method == 'POST':
         signupform = SignupForm(request.POST)
@@ -336,10 +337,10 @@ def admin_options(request):
                 message = EmailMessage('email\login.tpl', {'user': user,
                                                            'domain': current_site.domain,
                                                            'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode(),
-                                                           'token': PasswordResetTokenGenerator().make_token(user)}, to=[user.email])
+                                                           'token': PasswordResetTokenGenerator().make_token(user)}, from_email='administrator@luebeck.org', to=[user.email])
+
 
                 message.send()
-
 
                 messages.success(request, 'Benutzer wurde erfolgreich erstellt und eine E-Mail Verrifizierung an ' + to_email + ' versendet.')
 
@@ -347,7 +348,7 @@ def admin_options(request):
                 messages.warning(request,'E-Mail ' + to_email + ' ist bereits vergeben.')
 
         else:
-            messages.warning(request, 'Warnung: Benutzername oder E-mail bereits vergeben.')
+            messages.warning(request, 'Achtung! Überprüfen Sie die Eingabe der E-Mail und des Benutzernamen! Der Benutzername darf keine Leerzeichen enthalten. Folgende Zeichen dürfen verwendet werden: @/-/+/-/_')
 
     return render(request, 'options/admin_options.html',
                   {
@@ -359,7 +360,8 @@ def admin_options(request):
                       'typ': typ,
                       'kat_element': kat_element,
                       'userform': userform,
-                      'user': user
+                      'user': user,
+                      'users': users
                   })
 
 def load_favelements(request):
@@ -439,7 +441,8 @@ def ajax_load_from_groups(request):
 
     cat_choice = request.POST['cat_choice']
 
-    elements = KategorieElement.objects.all().order_by('kat_element')
+    elements = KategorieElement.objects.order_by('kat_element')
+    print(elements)
     load_table = Element.objects.filter(categories__cat=cat_choice)
     calc = Calc_Choices.objects.all()
 
@@ -495,6 +498,7 @@ def edit_user(request):
                 time.save()
 
         else:
+
             messages.warning(request,"Achtung! Die Eigabe der E-Mail-Adresse oder der Arbeitszeit pro Woche fehlen. ")
     return render(request, 'options/edit_user.html',
                   {
@@ -521,4 +525,18 @@ def ajax_load_userdata(request):
                   {   'options': options,
                       'workingtime': workingtime,
                       'userdata': userdata}
+                  )
+
+def ajax_delete_user(request):
+    if request.method == 'POST':
+        usereditform = UsereditForm()
+        selecteduser = request.POST['select']
+
+        user = User.objects.get(id=selecteduser)
+        user.delete()
+        messages.success(request, "Benutzer wurde gelöscht")
+
+    return render(request, 'options/edit_user.html',
+                  {
+                      'usereditform': usereditform}
                   )

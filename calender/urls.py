@@ -5,18 +5,19 @@ from django.conf import settings
 from django.conf.urls.static import static
 admin.autodiscover()
 
-from .tasks import notify_user
-from background_task.models import Task
-from django.core.exceptions import ObjectDoesNotExist
+#from .tasks import notify_user
 
-try:
-    task_list = Task.objects.all()
-except ObjectDoesNotExist:
-    check = None
-    notify_user(repeat=Task.DAILY)
-else:
-    Task.objects.all().delete()
-    notify_user(repeat=Task.DAILY)
+#from background_task.models import Task
+#from django.core.exceptions import ObjectDoesNotExist
+
+#try:
+#    task_list = Task.objects.all()
+#except ObjectDoesNotExist:
+#    check = None
+#    notify_user(repeat=Task.DAILY)
+#else:
+#    Task.objects.all().delete()
+#    notify_user(repeat=Task.DAILY)
 
 
 urlpatterns = [
