@@ -24,7 +24,7 @@ with open('website/secret_key.txt') as f:
     SECRET_KEY = f.read().strip()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -89,12 +89,13 @@ TEMPLATES = [
 ]
 
 #! Activate WSGi for production
-#WSGI_APPLICATION = 'website.wsgi.application'
+WSGI_APPLICATION = 'website.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
 #! change database for production
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -105,17 +106,19 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+'''
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.postgresql',          # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-#        'NAME': 'pze',                           # Or path to database file if using sqlite3.
-#        'USER': 'postgres',                           # Not used with sqlite3.
-#        'PASSWORD': 'P@ssword',                  # Not used with sqlite3.
-#        'HOST': '127.0.0.1',                      # Set to empty string for localhost. Not used with sqlite3.
-#        'PORT': '5432',                      # Set to empty string for default. Not used with sqlite3.
-#    }
-#}
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',          # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'pze',                           # Or path to database file if using sqlite3.
+        'USER': 'postgres',                           # Not used with sqlite3.
+        'PASSWORD': 'P@ssword',                  # Not used with sqlite3.
+        'HOST': '127.0.0.1',                      # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '5432',                      # Set to empty string for default. Not used with sqlite3.
+    }
+}
 
 
 # Password validation
