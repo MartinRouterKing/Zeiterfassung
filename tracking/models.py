@@ -9,10 +9,10 @@ from django.core.exceptions import ObjectDoesNotExist
 
 class User_limitations(models.Model):
     user_id = models.OneToOneField(User, on_delete=models.CASCADE)
-    limit = models.IntegerField(("Beschränkung in Montaten"))
+    limit = models.IntegerField(("Beschränkung in Montaten"), default=5)
     
     def __str__(self):
-        return self.limit
+        return str(self.limit)
 
 class Workingtime(models.Model):
     user_id = models.OneToOneField(User, on_delete=models.CASCADE)

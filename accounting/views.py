@@ -41,12 +41,9 @@ def ajaxpie(request):
                   )
 
 def ajaxtable(request):
-
-
     print("ACTION")
     if request.method == "POST":
 
-        
         '''
         Integrate the user choice field
         if nothing selected the empty list set to all users       
@@ -72,18 +69,11 @@ def ajaxtable(request):
         '''
         Get the value from the start and end date choice
         '''
-        
+
         start_date = request.POST.getlist("start_date")[0]
 
         end_date = request.POST.getlist("end_date")[0]
-
- 
-        '''
-        Get the elements for the selected categories and 
-        delete double elements     
-        '''
         
-        elements = list(set(Element.objects.filter(categories__cat__in= cat_choice, wie__in=wie_choice, obj__in=obj_choice).values_list('element__kat_element', flat= True)))
 
         '''
         Get the Tracking data correspoonding on the user choice
@@ -95,15 +85,9 @@ def ajaxtable(request):
         Filter the data corresonding to the disired time
         '''
 
-
         if start_date and end_date:
-            obj = obj.filter(start__year=start_date.split("-")[1], start__month__gte = start_date.split("-")[0])
-            obj = obj.filter(end__year=end_date.split("-")[1], end__month__lte = end_date.split("-")[0])
-        '''
-        if cat_choice:
-            print("####################################################")
-            obj = obj.filter(type__in=cat_choice)
-        '''
+            obj = obj.filter(start__year=start_date.split("-")[1], start__month__gte=start_date.split("-")[0])
+            obj = obj.filter(end__year=end_date.split("-")[1], end__month__lte=end_date.split("-")[0])
 
 
         obj = obj.filter(type__in=cat_choice)
@@ -113,20 +97,23 @@ def ajaxtable(request):
         '''
         import pandas as pd
         from django.db.models import Sum
-        calc = Calc_Choices.objects.all().values_list('calc',flat=True)
+        #calc = Calc_Choices.objects.all().values_list('calc', flat=True)
 
-        agg = obj.values('user_id__username', 'title','calc').annotate(Sum('hours')).order_by('user_id__username','title', 'calc')
+        agg = obj.values('user_id__username', 'title', 'calc', 'type').annotate(Sum('hours')).order_by(
+            'user_id__username', 'title', 'type')
 
-        agg_title = obj.values('user_id__username', 'title').annotate(Sum('hours')).order_by('user_id__username','title')
+
+        agg_title = agg.values('user_id__username', 'title', 'type').annotate(Sum('hours')).order_by(
+            'user_id__username', 'title', 'type')
 
         id = 1
         data = []
-        
+
         '''
         Build a table with the following structure
 
         Name    Wie     Obj     element     hours_ges       hours_per_cost
-        
+
         __
 
         -Names, element and hours_per_cost comes from calendar model
@@ -134,32 +121,50 @@ def ajaxtable(request):
         -hours_ges and hours_per_cost are aggregated from the calendar model 
         '''
 
-        for row, row_ges  in zip(agg, agg_title):
-            id =+ 1
-            
-            ele_obj = Element.objects.filter(element__kat_element=row['title'], obj__in=obj_choice, wie__in=wie_choice).first()
-          
-            if ele_obj == None:
-                continue
+        for row in agg:
+            id = + 1
+            print(row)
+            agg_ges = agg_title.filter(user_id__username=row['user_id__username'], title=row["title"], type=row["type"]).first()
+            print(agg_ges)
 
-            data_row = {'id': str(id), "Name": row['user_id__username'], 'Wie': ele_obj.wie, 'Objekt': ele_obj.obj,  'Kategorie': row['title'], 'Gesamt': row_ges['hours__sum']}
-            data_row.update( { x['calc']: str(x['hours__sum']) for x in agg.filter(title=row["title"], user_id__username= row['user_id__username'] )} )
-            data.append(data_row)
-       
+
+            ele_obj = Element.objects.filter(element__kat_element=row['title'], categories__cat=row["type"],
+                                             obj__in=obj_choice, wie__in=wie_choice).first()
+
+            if ele_obj == None:
+                wie = None
+                obj = None
+            else:
+                wie = ele_obj.wie
+                obj = ele_obj.obj
+
+            data_row = {'id': str(id), "Name": row['user_id__username'], 'Wie': wie, 'Objekt': obj,
+                        'Typ': row['type'], 'Kategorie': row['title'], 'Gesamt': str(agg_ges['hours__sum'])}
+
+            data_row.update({x['calc']: str(x['hours__sum']) for x in agg.filter(title=row["title"],
+                                                                                 type=row["type"],
+                                                                                 user_id__username=row['user_id__username'])})
+            if data_row not in data:
+                data.append(data_row)
+
         ges_sum = {}
+        calc = []
         for d in data:
             for key, value in d.items():
-                if key !='Name' and key != 'Wie' and key != 'Objekt' and key != 'id' and key != 'Kategorie':
+                if key != 'Name' and key != 'Wie' and key != 'Objekt' and key != 'Typ' and key != 'id' and key != 'Kategorie':
+                    calc.append(key)
+                    print(key)
                     try:
-                        ges_sum[key] = ges_sum[key]  + float(value)
+                        ges_sum[key] = ges_sum[key] + float(value)
                     except (KeyError):
                         ges_sum[key] = 0 + float(value)
-
-        data.append({**{'Name': '','Wie': '', 'Objekt': '', 'id': '', 'Kategorie': ''}, **ges_sum})
-
-
+        print(ges_sum)
+        data.append({**{'Name': '', 'Wie': '', 'Objekt': '', 'Typ': '', 'id': '', 'Kategorie': ''}, **ges_sum})
+        calc = set(calc)
+        print(calc)
         import django_tables2 as tables
-        table = TrackingTable(data=data,template_name='django_tables2/bootstrap.html', extra_columns=[(str(key), tables.Column()) for key in calc])
+        table = TrackingTable(data=data, template_name='django_tables2/bootstrap.html',
+                              extra_columns=[(str(key), tables.Column()) for key in calc])
 
         RequestConfig(request).configure(table)
         from django_tables2.export.export import TableExport
@@ -170,10 +175,9 @@ def ajaxtable(request):
             exporter = TableExport('csv', table)
             return exporter.response('table.{}'.format('csv'))
 
-        RequestConfig(request, paginate={'per_page': 150}).configure(table)
+        RequestConfig(request, paginate={'per_page': 50000}).configure(table)
 
         return render(request, 'accounting/table.html',
-                          {
-                              'table': table
-                           })
-
+                      {
+                          'table': table
+                      })

@@ -52,7 +52,7 @@ class CalendarEvent(models.Model):
     hours = models.DecimalField(('Workingtime'), blank=True, max_digits=5, decimal_places=1)
     end = models.DateTimeField(_('End'))
     calc = models.TextField(('Calc'), max_length=200, blank=True)
-    note = models.TextField(('Notiz'), blank=True, max_length=200)
+    note = models.TextField(('Notiz'), blank=True, max_length=200, null=True)
     all_day = models.BooleanField(_('All day'), default=False)
 
     class Meta:

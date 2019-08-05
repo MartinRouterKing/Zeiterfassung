@@ -99,6 +99,13 @@
 </div>
 <div class="header-container">
     <strong style="color:white;"> Einstellung der Kategorien und Typen Kombinationen:</strong>
+    <a style="color: white;font-size: 13px; ">
+            Mit dieser Einstellungen können die Kombinationen der Kategorien, Typen und Verrechnungsschlüssel definiert werden. Diese Kombinationen werden den
+            Mitarbeitern als Auswähl für die Arbeitszeiterfassung bereitgestellt. Der Verrechnungsschlüssel sowie die Wirtschaftseinheiten und Objekte werden für 
+            die Aggragation der Arbeitszeiten in der Analyse genutzt.
+            Neue Kombinationen sowie Änderungen müssen in dieser Einstellung eingetragen werden, damit den Mitarbeitern die geänderten Kombinationen bereitgestellt werden.
+            
+        </a>
 </div>
 <div class="content-container" >
 <form>
@@ -137,8 +144,149 @@
     <button type="submit" style="margin: 10px; margin-left: 0px; height: 35px; width: 150px;" id="sub_button" onclick="save_element()" class="btn btn-primary" >Speichern</button>
 
      </div>
+
+
      <div class="header-container">
-        <strong style="color:white;"> Einstellung der Eingabegrenze pro Mitarbeiter: (Noch in der Entwicklung)</strong>
+        <strong style="color:white;"> Zuordnung bereits getätigter Einträge:</strong>
+        <a style="color: white;font-size: 13px; ">
+            Mit dieser Option können die bereits getätigten Zeiterfassungen in der Datenbank geändert werden. Es werden für den gewählten Typ alle Kategorien aus der Datenbank
+            aufgelistet und die entsprechenden Wirtschaftseinheiten, Objekte und Verrechnungsschlüssel mit angegeben. Eine Änderung in diesen Optionen überschreibt die
+            Einträge der erfassten Arbeitszeiten in der Datenbank. Daher sollten Änderungen nur mit Vorsicht getätigt werden. 
+
+            Ein Rot eingefärbtes Feld weisst auf eine fehlerhafte Zuornung hin. Die Daten der roten Felder
+            sind zwar in der Datenbank der erfassten Arbeitzeiten vorhanden, aber nicht mehr in der Datenbank der Kategorien und Typen Kombinationen definiert. 
+        </a>
+    </div>
+    <div class="content-container" >
+    <form>
+            <div class="input-group">
+            <span class="input-group-btn">
+                <a class="btn btn-primary" id="load_event_cat_select" style="color:white; width: 150px;">Bitte Typ auswählen</a>
+            </span>
+        {{event_cat_choice}}
+            </div>
+    </form>
+        <div class="row" style="margin-top: 30px;">
+            <div class="col-1">
+                <p style="color: white;">ID</p>
+            </div>
+            <div class="col-2" >
+                    <p style="color: white;">Typ</p>
+                </div>
+            <div class="col-2" >
+                <p style="color: white;">Kategorie</p>
+            </div>
+            <div class="col-1">
+                <p style="color: white;">WIE</p>
+            </div>
+            <div class="col-1">
+                <p style="color: white;">Objekt</p>
+            </div>
+            <div class="col-4">
+                <p style="color: white;">Kostenträger</p>
+            </div>
+        </div>
+            <form id="from-group-container_events" class="form-horizontal" style="margin: 10px;">
+    
+            </form>
+            <center style= "border-top: 1px solid white;">
+    
+            </center>
+        <button type="submit" style="margin: 10px; margin-left: 0px; height: 35px; width: 150px;" id="event_sub_button" onclick="save_event_element()" class="btn btn-primary" >Speichern</button>
+    
+         </div>
+
+<script>
+
+$('#id_event_cat_choice').change( function () {
+    console.log("TEST");
+    var inner = '<i  id="load_icon" class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:18px; color:#f8f9fa;"></i>'
+    load_icon = document.getElementById('load_event_cat_select');
+    load_icon.innerHTML = inner;
+
+    var event_cat_choice = $('#id_event_cat_choice option:selected').text();
+
+        $.ajax({
+          type: 'POST',
+          url: 'ajax_load_event_elements/',
+          data:{
+          event_cat_choice: event_cat_choice,
+          csrfmiddlewaretoken: csrf_token
+          },
+          success: function(data){
+           $('#from-group-container_events').html(data);
+            load_icon.innerHTML = "Bitte Typ auswählen";
+          }
+        });
+
+});
+
+function save_event_element(){
+    var cat_choice = $('#id_event_cat_choice')[0][$('#id_event_cat_choice')[0].selectedIndex].text
+    var inner = '<i  id="load_icon" class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:18px; color:#f8f9fa;"></i>'
+    load_icon = document.getElementById('event_sub_button');
+    load_icon.innerHTML = inner;
+
+    var count = $('#from-group-container_events')[0].length;
+    var element = [];
+    type = [];
+    var wie = [];
+    var obj = [];
+    var calc = [];
+        var group = 0;
+        for (var i = 0, n = count; i < n; i++) {
+            group ++;
+            if (group==1){
+                type.push($('#from-group-container_events')[0][i][$('#from-group-container_events')[0][i].selectedIndex].text);
+            }
+            else if (group==2){
+                element.push($('#from-group-container_events')[0][i][$('#from-group-container_events')[0][i].selectedIndex].text);
+            }
+            else if (group==3){
+                wie.push($('#from-group-container_events')[0][i].value);
+            }
+            else if (group==4){
+                obj.push($('#from-group-container_events')[0][i].value);
+            }
+            else if (group==5){
+                calc.push($('#from-group-container_events')[0][i][$('#from-group-container_events')[0][i].selectedIndex].text);
+                group = 0;
+
+            }
+          }
+
+         $.ajax({
+          type: 'POST',
+          url: 'ajax_save_event_element/',
+          data:{
+          cat_choice: cat_choice,
+          element: element,
+          type: type,
+          wie: wie,
+          obj: obj,
+          calc: calc,
+          csrfmiddlewaretoken: csrf_token
+          },
+          success: function(){
+
+              var inner = '<p>Gespeichert</p><iid="load_icon" class="glyphicon glyphicon-ok" style="font-size:18px; color:#f8f9fa;"></i>'
+              load_icon = document.getElementById('event_sub_button');
+              load_icon.innerHTML = inner;
+
+              load_icon.innerHTML = "Speichern";
+          }
+        });
+}
+</script>
+
+
+     <div class="header-container">
+        <strong style="color:white;"> Einstellung der Eingabegrenze pro Mitarbeiter: </strong>
+        <a style="color: white;font-size: 13px; ">
+                In dieser Einstellung kann der Bearbeitungzeitraum für die Erfassung und Änderung der Arbeitzeiten pro Mitarbeiter angepasst werden.
+                Die Zeitangaben sind pro Monat und ab dem aktuellen Monat angegeben. Somit kann bei einem Wert von 1 nur der aktuelle Monat bearbeitet werden.
+                Bei einem Wert von 2 kann der gewählte Nutzer für den aktuellen und vorherigen Monat Arbeitszeiten erfassen und verändern.  
+            </a>
     </div>
      <div class="content-container">
             <form>
@@ -179,7 +327,7 @@
                             </select>
                           </div>
             </form>
-            <button type="submit" style="margin: 10px; margin-left: 0px; height: 35px; width: 150px;" id="sub_button" onclick="save_limit()" class="btn btn-primary" >Speichern</button>
+            <button type="submit" style="margin: 10px; margin-left: 0px; height: 35px; width: 150px;" id="sub_button_limit" onclick="save_limit()" class="btn btn-primary" >Speichern</button>
     </div>
 </div>
 
@@ -204,9 +352,56 @@
 <script type="text/javascript" language="Javascript" src="{% static 'options/js/modal_remove.js' %}"></script>
 <script type="text/javascript" language="Javascript" src="{% static 'options/js/modal_save.js' %}"></script>
 <script type="text/javascript" language="Javascript" src="{% static 'options/js/modal_load.js' %}"></script>
-<script type="text/javascript" language="Javascript" src="{% static 'options/js/save_limit.js' %}"></script>
+
 
     <link rel="stylesheet" href="{% static 'options/css/admin_options.css' %}" type="text/css">
 
+<script>
+    $('#id_users').change( function () {
+        var username = $('#id_users option:selected').text();
+        console.log("CHANGE");
+        $.ajax({
+          type: 'POST',
+          url: 'ajax_load_limit/',
+          data:{
+          username: username,
+          csrfmiddlewaretoken: '{{csrf_token}}'
+          },
+          success: function(data){
+              console.log(data);
+              document.getElementById("sel1").selectedIndex = data-1;
+          }
+        });
 
+});
+
+    function save_limit(){
+
+        var user = $('#id_users')[0][$('#id_users')[0].selectedIndex].text
+        var inner = '<i  id="load_icon" class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:18px; color:#f8f9fa;"></i>'
+        load_icon = document.getElementById('sub_button_limit');
+        load_icon.innerHTML = inner;
+        var limit = $('#sel1')[0][$('#sel1')[0].selectedIndex].text;
+        console.log(user);
+        console.log(limit);
+        $.ajax({
+          type: 'POST',
+          url: 'ajax_user_limit/',
+          data:{
+          user_choice: user,
+          limit: limit,
+          csrfmiddlewaretoken: '{{csrf_token}}'
+          },
+          success: function(){
+
+              var inner = '<p>Gespeichert</p><iid="load_icon" class="glyphicon glyphicon-ok" style="font-size:18px; color:#f8f9fa;"></i>'
+              load_icon = document.getElementById('sub_button_limit');
+              load_icon.innerHTML = inner;
+
+              load_icon.innerHTML = "Speichern";
+          }
+        });
+
+    };
+</script>
 {% endblock %}

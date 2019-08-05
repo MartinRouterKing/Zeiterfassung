@@ -1,0 +1,104 @@
+
+{% for event in events %}
+<div id="from_group_{{ forloop.counter }}" class="form-group" style= "padding: 10px; border-top: 1px solid white;">
+    <div class="row">
+        <div class="col-1">
+            <p style="color: white;">{{ forloop.counter }}</p>
+        </div>
+
+        <div class="col-2" >
+                <select class="form-control" id ="element_{{ forloop.counter }}" >
+                        <option selected>{{event.type}}</option>
+                    {% for cat in cats %}
+                        <option>{{cat}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+        {% if event.title in elements %}
+        <div class="col-2" >
+            <select class="form-control" id ="element_{{ forloop.counter }}" >
+                    <option selected>{{event.title}}</option>
+                {% for ele in elements %}
+                    <option>{{ele}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% else %}
+        <div class="col-2" >
+                <select style="background-color: red" class="form-control" id ="element_{{ forloop.counter }}" >
+                        <option selected>{{event.title}}</option>
+                    {% for ele in elements %}
+                        <option>{{ele}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        {% endif %}
+        {% if event.title in load_table_list %}
+        
+        {% for tab in load_table %}
+        
+        {% if event.title == tab.element.kat_element %}
+        <div class="col-1">
+            <input type="text"  class="form-control" id = "wie_{{ forloop.counter }}" value="{{tab.wie}}" >
+        </div>
+        <div class="col-1">
+            <input type="text"  class="form-control" id = "obj_{{ forloop.counter }}" value="{{tab.obj}}">
+        </div>
+        
+        {% endif %}
+        {% endfor %}
+        
+
+        {% else %}
+
+        <div class="col-1">
+                <input type="text" style="background-color: red" class="form-control" id = "wie_{{ forloop.counter }}" value="None" >
+            </div>
+            <div class="col-1">
+                <input type="text" style="background-color: red" class="form-control" id = "obj_{{ forloop.counter }}" value="None">
+            </div>
+
+        {% endif %}
+        
+
+        {% if event.calc in calc %}
+
+        <div class="col-4">
+            <select  class="form-control" id = "calc_{{ forloop.counter }}">
+                <option selected>{{event.calc}}</option>
+
+                {% for cal in calc %}
+                    <option>{{cal}}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        {% else %}
+        <div class="col-4">
+                <select style="background-color: red" class="form-control" id = "calc_{{ forloop.counter }}">
+                    <option selected>{{event.calc}}</option>
+    
+                    {% for cal in calc %}
+                        <option>{{cal}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+        {% endif %}
+        <div class="col">
+            
+        </div>
+    </div>
+</div>
+<script>
+    var counter = {{ forloop.counter }};
+    if (counter == undefined){
+    var counter = 0;
+    }
+    console.log(counter);
+
+</script>
+{% endfor %}
+
+

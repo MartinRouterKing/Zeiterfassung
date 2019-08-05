@@ -29,5 +29,11 @@ urlpatterns = [
     path('admin_options/edit_user/',views.edit_user, name='edit_user'),
     path('admin_options/ajax_load_userdata/',views.ajax_load_userdata, name='ajax_load_userdata'),
     path('admin_options/ajax_delete_user/', views.ajax_delete_user, name='ajax_delete_user'),
+    path('admin_options/ajax_user_limit/', views.ajax_user_limit, name='ajax_user_limit'),
+    path('admin_options/ajax_load_limit/', views.ajax_load_limit, name='ajax_load_limit'),
+    path('admin_options/ajax_load_event_elements/', views.ajax_load_event_elements, name='ajax_load_event_elements'),
+    path('admin_options/ajax_save_event_element/', views.ajax_save_event_element, name='ajax_save_event_element'),
+    
 ]
+
 

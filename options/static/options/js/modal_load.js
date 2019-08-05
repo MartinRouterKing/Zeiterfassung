@@ -21,6 +21,7 @@ $('#id_cat_choice').change( function () {
 });
 
 
+
 function add_from_group(event){
 
     counter = ($('#from-group-container')[0].length/4)
@@ -99,3 +100,4 @@ function save_element(){
           }
         });
 }
+

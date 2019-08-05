@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import CalendarEvent, CalendarNote
-from tracking.models import Categorie, Element, FavoriteElement, Workingtime
+from tracking.models import Categorie, Element, FavoriteElement, Workingtime, User_limitations
 from datetime import datetime, timedelta
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
@@ -10,12 +10,18 @@ import dateutil.relativedelta
 def all_events(request):
     today = datetime.now()
     user = request.user
+    print(user.username)
     year = today.year
     month =  today.month
+    month_limit = User_limitations.objects.get(user_id=request.user).limit
+    
+    today = today - timedelta(month_limit*365/12)
+    print(today)
 
-    last_month = (today + dateutil.relativedelta.relativedelta(months=-1)).month
-    day = today.day
-    limit = datetime(2019, 3, 20)
+    #last_month = (today + dateutil.relativedelta.relativedelta(months=-1)).month
+    #day = today.day
+    #limit = datetime(2019, 3, 20)
+
 
     categorie = Categorie.objects.all()
 
@@ -25,15 +31,19 @@ def all_events(request):
     except ObjectDoesNotExist:
         workingtime = 0
 
-    events = CalendarEvent.objects.filter(user_id=user,start__year=year).only("id",
-                                                                              "type",
-                                                                              "title",
-                                                                              "type",
-                                                                              "start",
-                                                                              "end",
-                                                                              "note",
-                                                                              "all_day")
-    event_notes = CalendarNote.objects.filter(user_id=user, start__year=year)
+    events = CalendarEvent.objects.filter(
+        user_id=user,
+        start__gte=today).only(
+            "id",
+            "type",
+            "title",
+            "type",
+            "start",
+            "end",
+            "note",
+            "all_day")
+
+    event_notes = CalendarNote.objects.filter(user_id=user, start__gte=today)
 
     #if today >= limit:
     #    if day <= 5:
@@ -73,11 +83,14 @@ def all_events(request):
 
 def postview(request):
     today = datetime.now()
-    month =  today.month
-    day = today.day
-    last_month = (today + dateutil.relativedelta.relativedelta(months=-1)).month
-    limit = datetime(2019, 3, 20)
-
+    #month =  today.month
+    #day = today.day
+    #last_month = (today + dateutil.relativedelta.relativedelta(months=-1)).month
+    #limit = datetime(2019, 3, 20)
+    
+    month_limit = User_limitations.objects.get(user_id=request.user).limit
+    today = today - timedelta(month_limit*365/12)
+    print(today)
 
     if request.method == 'POST':
         event_type = request.POST['save']
@@ -117,41 +130,42 @@ def postview(request):
                 start = datetime.strptime(start, '%a %b %d %Y %H:%M:%S %Z%z')
                 end = datetime.strptime(end, '%a %b %d %Y %H:%M:%S %Z%z')
 
+                if start.isoformat()>=today.isoformat():
 
+                    hours = (end - start).seconds/3600
 
-                hours = (end - start).seconds/3600
+                    '''
+                    The Event-types are first initialized with their id as int.
+                    In the Database we need the string value and for the later changing of Events on
+                    the calendar we need to use the following exception to check wether the type is a string
+                    or and int. 
 
-                '''
-                The Event-types are first initialized with their id as int.
-                In the Database we need the string value and for the later changing of Events on
-                the calendar we need to use the following exception to check wether the type is a string
-                or and int. 
-                
-                '''
-                try:
-                    type = int(type)
-                    type = Categorie.objects.filter(id=type).values_list('cat', flat=True)
-                except (ValueError):
-                    type = [type]
+                    '''
+                    try:
+                        type = int(type)
+                        type = Categorie.objects.filter(id=type).values_list('cat', flat=True)
+                    except (ValueError):
+                        type = [type]
 
-                calc = Element.objects.filter(element__kat_element=title, categories__cat=type[0]).values_list('calc__calc', flat=True)
-                '''
-                setup for the production date
-                only save specific events
-                '''
-                q = CalendarEvent(
-                            user_id=user_id,
-                            title=str(title),
-                            type=type[0],
-                            start=start,
-                            end=end,
-                            calc=calc[0],
-                            hours=hours,
-                            note= note,
-                            all_day=False)
+                    calc = Element.objects.filter(element__kat_element=title, categories__cat=type[0]).values_list('calc__calc', flat=True)
+                   
+                    '''
+                    setup for the production date
+                    only save specific events
+                    '''
+                    q = CalendarEvent(
+                                user_id=user_id,
+                                title=str(title),
+                                type=type[0],
+                                start=start,
+                                end=end,
+                                calc=calc[0],
+                                hours=hours,
+                                note= note,
+                                all_day=False)
 
-                q.id = id
-                q.save()
+                    q.id = id
+                    q.save()
 
         if action == 'delete':
             if event_type == "event":

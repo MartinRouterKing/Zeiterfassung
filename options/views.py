@@ -1,12 +1,12 @@
 from tracking.models import Element, Categorie, Workingtime, FavoriteElement, ElementTOKat
-from tracking.models import KategorieElement, Kategorie, Calc_Choices
+from tracking.models import KategorieElement, Kategorie, Calc_Choices, User_limitations
 from .forms import Choicefrom, Categorieform, editcatForm, Worktimefrom, deletecatForm, CalcForm,\
     Elementform, editelechoiceform, SignupForm, Categoriechoiceform, calcchoiceForm, editCalcForm
 
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
-from .forms import SignupForm, UsereditForm, Userlimitform
+from .forms import SignupForm, UsereditForm, Userlimitform,EventsCategoriechoiceform
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -16,6 +16,8 @@ from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
+from calender.models import CalendarEvent
+from tracking.models import KategorieElement 
 
 def load_elements(request):
     categories_id = request.GET.get('categories')
@@ -317,6 +319,10 @@ def admin_options(request):
     user = request.user
     users = Userlimitform()
 
+    event_cat_choice = EventsCategoriechoiceform()
+    
+    
+
     if request.method == 'POST':
         signupform = SignupForm(request.POST)
 
@@ -361,7 +367,8 @@ def admin_options(request):
                       'kat_element': kat_element,
                       'userform': userform,
                       'user': user,
-                      'users': users
+                      'users': users,
+                      'event_cat_choice': event_cat_choice,
                   })
 
 def load_favelements(request):
@@ -373,7 +380,7 @@ def load_favelements(request):
         # WARUM ELEMENTTOKAT?
         fav_kat_element = ElementTOKat.objects.filter(katgroup__kategorie=cat).values_list('ele', flat=True)
         kat_element = KategorieElement.objects.exclude(id__in=fav_kat_element)
-
+        
     return render(request, 'options/load_elements_opt.html',
                   {
                    'kat_element': kat_element,
@@ -395,13 +402,13 @@ def load_favelements(request):
 def ajax_save_element(request):
     if request.method == "POST":
 
+
         element = request.POST.getlist('element[]')
         cat_choice = request.POST['cat_choice']
         wie = request.POST.getlist('wie[]')
         obj = request.POST.getlist('obj[]')
         calc = request.POST.getlist('calc[]')
-
-
+       
         try:
             d = Element.objects.filter(categories__cat = cat_choice)
             d.delete()
@@ -540,3 +547,82 @@ def ajax_delete_user(request):
                   {
                       'usereditform': usereditform}
                   )
+
+def ajax_load_limit(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        print(username)
+        u = User_limitations.objects.filter(user_id__username=username)
+        print(str(u))
+
+    return HttpResponse(u, content_type='application/json')
+
+def ajax_user_limit(request):
+
+    from django.db.utils import IntegrityError
+
+    if request.method == 'POST':
+        user = request.POST['user_choice']
+        limit = request.POST['limit']
+        print(user)
+
+        try:
+            u = User_limitations(user_id=User.objects.get(username=user), limit=limit)
+            u.save()
+        except IntegrityError:
+            u = User_limitations.objects.filter(user_id__username=user).update(limit=limit)
+        
+    return render(request, 'options/admin_options.html' ,
+           {}
+           )
+
+def ajax_load_event_elements(request):
+    event_cat_choice = request.POST['event_cat_choice']
+
+    events = CalendarEvent.objects.filter(type=event_cat_choice).distinct("title", "calc")
+
+    cats = Categorie.objects.order_by("cat").values_list('cat', flat=True)
+
+    elements = KategorieElement.objects.order_by('kat_element').values_list('kat_element', flat=True)
+    
+    load_table = Element.objects.filter(categories__cat=event_cat_choice)
+    load_table_list = Element.objects.filter(categories__cat=event_cat_choice).values_list("element__kat_element", flat=True)
+    
+    calc = Calc_Choices.objects.values_list('calc', flat=True)
+   
+    return render(request, 'options/ajax_load_event_groups.html',
+                  {   'events': events,
+                      'elements':elements,
+                      'load_table': load_table,
+                      'calc': calc,
+                      'load_table_list': load_table_list,
+                      'cats': cats
+                   }
+                  )
+
+def ajax_save_event_element(request):
+    if request.method == "POST":
+
+
+        element = request.POST.getlist('element[]')
+        type = request.POST.getlist('type[]')
+        cat_choice = request.POST['cat_choice']
+        wie = request.POST.getlist('wie[]')
+        obj = request.POST.getlist('obj[]')
+        calc = request.POST.getlist('calc[]')
+        print(element)
+        print(type)
+
+
+        events = CalendarEvent.objects.filter(type=cat_choice).distinct("title", "calc")
+        
+        for event, i in zip(events, range(len(element))):
+            ev = CalendarEvent.objects.filter(type=cat_choice, title=event.title)
+            ev.update(title=element[i])
+            ev.update(calc=calc[i])   
+            ev.update(type=type[i])
+
+
+    return render(request, 'options/admin_options.html' ,
+           {}
+           )

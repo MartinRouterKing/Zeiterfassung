@@ -4,7 +4,7 @@ from tracking.models import Element, Categorie, Workingtime, Kategorie, Calc_Cho
 from django.contrib.auth.models import User
 from options.admin import UserCreationForm
 from django import forms
-
+from calender.models import CalendarEvent
 
 class UsereditForm(forms.Form):
     username_pop = forms.ModelChoiceField(queryset=User.objects.all(), widget=forms.Select(attrs={'class': 'form-control'}))
@@ -63,6 +63,10 @@ class editcatForm(forms.Form):
 
 class Categoriechoiceform(forms.Form):
     cat_choice = forms.ModelChoiceField(queryset=Categorie.objects.all(),
+                                    widget=forms.Select(attrs={'class': 'form-control'}),label='')
+
+class EventsCategoriechoiceform(forms.Form):
+    event_cat_choice = forms.ModelChoiceField(queryset=CalendarEvent.objects.values_list('type', flat=True).order_by('type').distinct(),
                                     widget=forms.Select(attrs={'class': 'form-control'}),label='')
 
 class Elementform(forms.ModelForm):
