@@ -49,7 +49,7 @@ heroku==0.1.4
 html5lib==0.9999999
 idna==2.7
 jdcal==1.4
-Jinja2==2.10
+Jinja2==2.11.3
 kombu==4.2.2.post1
 Mako==1.0.7
 Markdown==2.6.9
