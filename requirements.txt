@@ -69,7 +69,7 @@ PyPI-Browser==1.5
 pystache==0.5.4
 python-dateutil==2.7.5
 pytz==2017.3
-PyYAML==3.13
+PyYAML==5.4
 reportlab==3.4.0
 requests==2.20.0
 six==1.11.0
