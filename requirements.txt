@@ -79,7 +79,7 @@ static-foundation==6.3.1.1
 tablib==0.11.5
 unicodecsv==0.14.1
 Unidecode==1.0.22
-urllib3==1.24
+urllib3==1.26.5
 vine==1.2.0
 wagtail==2.3
 Werkzeug==0.12.2
