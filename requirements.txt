@@ -62,7 +62,7 @@ openpyxl==2.4.9
 pandas==0.23.4
 Pillow==4.3.0
 pipreqs==0.4.9
-protobuf==3.4.0
+protobuf==3.18.3
 psycopg2==2.7.5
 pyparsing==2.2.0
 PyPI-Browser==1.5
